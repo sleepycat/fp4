@@ -1,13 +1,13 @@
-import { createSchema } from 'graphql-yoga'
-import { rateLimitDirective } from 'graphql-rate-limit-directive'
-import { EmailAddressTypeDefinition, EmailAddressResolver } from 'graphql-scalars';
+import { createSchema } from "npm:graphql-yoga"
+import { rateLimitDirective } from "npm:graphql-rate-limit-directive"
+import { EmailAddressResolver } from "npm:graphql-scalars"
 
-const { rateLimitDirectiveTypeDefs, rateLimitDirectiveTransformer } = rateLimitDirective();
+const { rateLimitDirectiveTypeDefs, rateLimitDirectiveTransformer } =
+  rateLimitDirective()
 
- 
 export const schema = rateLimitDirectiveTransformer(createSchema({
   typeDefs: [
-    rateLimitDirectiveTypeDefs, 
+    rateLimitDirectiveTypeDefs,
     /* GraphQL */ `
     scalar EmailAddress
 
@@ -21,11 +21,12 @@ export const schema = rateLimitDirectiveTransformer(createSchema({
       # Verify the token you recieved to create a session.
       verify(token: String!): String @rateLimit(limit: 5, duration: 60)
     }
-  `],
+  `,
+  ],
   resolvers: {
     EmailAddress: EmailAddressResolver,
     Mutation: {
-      login: (parent, {email}) => {
+      login: (_parent, { _email }) => {
         // DONE: Check rate limit. Handled at the schema level by graphql-rate-limit-directive
         // TODO: Split user from domain and check if email is on allow-list: Check ALLOWED_DOMAINS env var. return generic message
         // TODO: Find or create user/email in sqlite
@@ -36,7 +37,7 @@ export const schema = rateLimitDirectiveTransformer(createSchema({
         // DONE: Return generic message to prevent user enumeration:
         return "If an account exists for this email, a login link has been sent."
       },
-      verify: (parent: {token}) => {
+      verify: (_parent, { token }) => {
         // Stateless expiry check because of ulid timestamp: decodeTime(token) reject if older than 15 minutes.
         // Create a SHA-256 Hash of token
         // Look up hash in magic_links in transaction: (learn how to do this in sqlite)
@@ -50,10 +51,10 @@ export const schema = rateLimitDirectiveTransformer(createSchema({
         // * Expires: Set the cookie expiration to match the session's expires_at time.
         // * Path: '/'
         return token
-      }
+      },
     },
     Query: {
-      hello: () => 'world'
-    }
-  }
+      hello: () => "world",
+    },
+  },
 }))
