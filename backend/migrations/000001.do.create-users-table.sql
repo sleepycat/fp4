@@ -1,0 +1,5 @@
+CREATE TABLE users (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  email TEXT,
+ created_at TEXT
+);
