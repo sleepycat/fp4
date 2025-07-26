@@ -1,3 +1,4 @@
+import { Context } from "./main.ts"
 import { createSchema } from "npm:graphql-yoga"
 import { rateLimitDirective } from "npm:graphql-rate-limit-directive"
 import { EmailAddressResolver } from "npm:graphql-scalars"
@@ -26,9 +27,10 @@ export const schema = rateLimitDirectiveTransformer(createSchema({
   resolvers: {
     EmailAddress: EmailAddressResolver,
     Mutation: {
-      login: (_parent, { _email }) => {
+      login: (_parent, { email }, { isAllowed }: Context) => {
         // DONE: Check rate limit. Handled at the schema level by graphql-rate-limit-directive
-        // TODO: Split user from domain and check if email is on allow-list: Check ALLOWED_DOMAINS env var. return generic message
+        // DONE: Split user from domain and check if email is on allow-list: Check ALLOWED_DOMAINS env var. return generic message
+        console.log({ isAllowed: isAllowed(email) })
         // TODO: Find or create user/email in sqlite
         // TODO: generate monotonic ulid (monotonicUlid) token: embedded timestamp + 80 bits of randomness. https://jsr.io/@std/ulid/doc/decode-time/~/decodeTime This allows us skip storing created_at/expires_at values.
         // TODO: hashed_token = SHA256(monoticUlid())
@@ -37,7 +39,7 @@ export const schema = rateLimitDirectiveTransformer(createSchema({
         // DONE: Return generic message to prevent user enumeration:
         return "If an account exists for this email, a login link has been sent."
       },
-      verify: (_parent, { token }) => {
+      verify: (_parent, { token }: { token: string }) => {
         // Stateless expiry check because of ulid timestamp: decodeTime(token) reject if older than 15 minutes.
         // Create a SHA-256 Hash of token
         // Look up hash in magic_links in transaction: (learn how to do this in sqlite)

@@ -1,5 +1,10 @@
-import { createYoga } from "npm:graphql-yoga"
+import { createYoga, YogaInitialContext } from "npm:graphql-yoga"
 import { schema } from "./schema.ts"
+import { allowList } from "./src/allowList.ts"
+
+export interface Context extends YogaInitialContext {
+  isAllowed: ReturnType<typeof allowList>
+}
 
 // Functional core, imparative shell pattern:
 // Read from the environment here in the entry point,
@@ -13,7 +18,16 @@ if (ALLOWED_DOMAINS === undefined) {
 const PORT = Deno.env.get("PORT") || 3000
 const HOST = Deno.env.get("HOST") || "0.0.0.0"
 
-const yoga = createYoga({ schema, graphiql: true, landingPage: false })
+const yoga = createYoga<Context>({
+  schema,
+  graphiql: true,
+  landingPage: false,
+  context: () => {
+    return {
+      isAllowed: allowList(ALLOWED_DOMAINS),
+    }
+  },
+})
 Deno.serve(
   {
     // @ts-expect-error: the types here are wrong. Correct: https://docs.deno.com/runtime/fundamentals/http_server/#listening-on-a-specific-port
