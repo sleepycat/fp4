@@ -3,7 +3,7 @@ import { expect } from "jsr:@std/expect"
 
 import { allowList } from "../allowList.ts"
 
-describe("allowList", () => {
+describe("allowList()", () => {
   describe("given a comma separated list of domains", () => {
     describe("when passed an email whose domain is included in the list", () => {
       it("returns true ", () => {
