@@ -6,6 +6,15 @@ type FindOrCreateUser = (
   email: string,
 ) => Record<string, SQLOutputValue> | undefined
 
+interface saveHashArguments {
+  hash: string
+  email: string
+}
+
+type SaveHash = (
+  options: saveHashArguments,
+) => Record<string, SQLOutputValue> | undefined
+
 export interface Context extends YogaInitialContext {
   isAllowed: ReturnType<typeof allowList>
   sql: (
@@ -14,4 +23,5 @@ export interface Context extends YogaInitialContext {
   ) => StatementSync
   db: DatabaseSync
   findOrCreateUser: FindOrCreateUser
+  saveHash: SaveHash
 }

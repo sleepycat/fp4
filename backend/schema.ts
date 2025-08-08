@@ -2,9 +2,25 @@ import { Context } from "./src/types/Context.ts"
 import { createSchema } from "npm:graphql-yoga"
 import { rateLimitDirective } from "npm:graphql-rate-limit-directive"
 import { EmailAddressResolver } from "npm:graphql-scalars"
+import { monotonicUlid } from "jsr:@std/ulid"
+import { crypto } from "jsr:@std/crypto"
+import { encodeHex } from "jsr:@std/encoding/hex"
 
 const { rateLimitDirectiveTypeDefs, rateLimitDirectiveTransformer } =
   rateLimitDirective()
+
+async function generateUlidAndHash() {
+  const token = monotonicUlid()
+  const hashbuffer = await crypto.subtle.digest(
+    "SHA-256",
+    new TextEncoder().encode(token),
+  )
+  const hashed_token = encodeHex(hashbuffer)
+  return Promise.resolve({
+    ulid: token,
+    hash: hashed_token,
+  })
+}
 
 export const schema = rateLimitDirectiveTransformer(createSchema({
   typeDefs: [
@@ -27,28 +43,38 @@ export const schema = rateLimitDirectiveTransformer(createSchema({
   resolvers: {
     EmailAddress: EmailAddressResolver,
     Mutation: {
-      login: (
+      login: async (
         _parent,
         { email },
-        { isAllowed, findOrCreateUser }: Context,
+        { isAllowed, findOrCreateUser, saveHash }: Context,
       ) => {
-        // DONE: Check rate limit. Handled at the schema level by graphql-rate-limit-directive
+        // DONE: Check rate limit. Handled at the schema level by graphql-rate-limit-directive to prevent brute force guessing.
+        const abiguousMessage =
+          "If an account exists for this email, a login link has been sent."
         // DONE: Split user from domain and check if email is on allow-list: Check ALLOWED_DOMAINS env var. return generic message
         console.log({ email, isAllowed: isAllowed(email) })
-        if (isAllowed(email)) {
-          // DONE: Find or create user/email in sqlite
-          const user = findOrCreateUser(email)
-          console.log({ user })
+        if (!isAllowed(email)) {
+          // DONE: Return generic message to prevent user enumeration:
+          return abiguousMessage
         }
-        // TODO: generate monotonic ulid (monotonicUlid) token: embedded timestamp + 80 bits of randomness. https://jsr.io/@std/ulid/doc/decode-time/~/decodeTime This allows us skip storing created_at/expires_at values.
-        // TODO: hashed_token = SHA256(monoticUlid())
-        // TODO: Save hashed_token to sqlite: CREATE TABLE magic_links (id: integer primary key autoincrement, token_hash: text, user_id: integer)
+        // DONE: Find or create user/email in sqlite
+        findOrCreateUser(email)
+        // DONE: generate monotonic ulid (monotonicUlid) token: tokens at the same time are still different
+        // ulid: embedded timestamp + 80 bits of randomness.
+        // This allows us skip storing created_at/expires_at values.
+        // DONE: hashed_token = SHA256(monoticUlid())
+        const { ulid, hash } = await generateUlidAndHash()
+        // DONE: CREATE TABLE magic_links (id: integer primary key autoincrement, token_hash: text, email: string);
+        // DONE: Save hashed token (not the token) to sqlite. This prevents leaks of tokens (assuming a breach of the database).
+        saveHash({ hash, email })
         // TODO: send email using notification.canada.ca. Use client provided by graphql context.
+        console.log({ sending: true, email, ulid, hash })
         // DONE: Return generic message to prevent user enumeration:
-        return "If an account exists for this email, a login link has been sent."
+        return abiguousMessage
       },
       verify: (_parent, { token }: { token: string }) => {
         // Stateless expiry check because of ulid timestamp: decodeTime(token) reject if older than 15 minutes.
+        // https://jsr.io/@std/ulid/doc/decode-time/~/decodeTime
         // Create a SHA-256 Hash of token
         // Look up hash in magic_links in transaction: (learn how to do this in sqlite)
         // * no records == invalid

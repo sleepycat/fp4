@@ -38,7 +38,27 @@ export function dataAccessors(db: DatabaseSync) {
     }
   }
 
+  // TODO: this is duplicated in Context.ts. Extract.
+  interface saveHashArguments {
+    hash: string
+    email: string
+  }
+
+  function saveHash({ hash, email }: saveHashArguments) {
+    db.exec("BEGIN TRANSACTION;")
+    try {
+      return db.prepare(
+        "INSERT INTO magic_links (email, token_hash) VALUES (@email, @hash);",
+      ).run({ email, hash })
+    } catch (e) {
+      db.exec("ROLLBACK")
+      console.error({ rollback: true, error: e })
+      return undefined
+    }
+  }
+
   return {
     findOrCreateUser,
+    saveHash,
   }
 }

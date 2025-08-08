@@ -5,11 +5,14 @@
     "jsr:@gordonb/sqlite-migrate@0.1": "0.1.0",
     "jsr:@std/assert@1": "1.0.13",
     "jsr:@std/assert@^1.0.13": "1.0.13",
+    "jsr:@std/crypto@*": "1.0.5",
+    "jsr:@std/encoding@*": "1.0.10",
     "jsr:@std/expect@*": "1.0.16",
     "jsr:@std/internal@^1.0.6": "1.0.9",
     "jsr:@std/internal@^1.0.7": "1.0.9",
     "jsr:@std/internal@^1.0.8": "1.0.9",
     "jsr:@std/testing@*": "1.0.14",
+    "jsr:@std/ulid@*": "1.0.0",
     "npm:@types/node@^24.2.0": "24.2.0",
     "npm:graphql-rate-limit-directive@*": "2.0.6_@graphql-tools+utils@10.9.1__graphql@16.11.0_graphql@16.11.0_rate-limiter-flexible@5.0.5",
     "npm:graphql-scalars@*": "1.24.2_graphql@16.11.0",
@@ -25,6 +28,12 @@
       "dependencies": [
         "jsr:@std/internal@^1.0.6"
       ]
+    },
+    "@std/crypto@1.0.5": {
+      "integrity": "0dcfbb319fe0bba1bd3af904ceb4f948cde1b92979ec1614528380ed308a3b40"
+    },
+    "@std/encoding@1.0.10": {
+      "integrity": "8783c6384a2d13abd5e9e87a7ae0520a30e9f56aeeaa3bdf910a3eaaf5c811a1"
     },
     "@std/expect@1.0.16": {
       "integrity": "ceeef6dda21f256a5f0f083fcc0eaca175428b523359a9b1d9b3a1df11cc7391",
@@ -42,6 +51,9 @@
         "jsr:@std/assert@^1.0.13",
         "jsr:@std/internal@^1.0.8"
       ]
+    },
+    "@std/ulid@1.0.0": {
+      "integrity": "d41c3d27a907714413649fee864b7cde8d42ee68437d22b79d5de4f81d808780"
     }
   },
   "npm": {

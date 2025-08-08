@@ -9,4 +9,13 @@ export default [
       );
     `)
   },
+  (db: DatabaseSync) => {
+    db.exec(`
+      CREATE TABLE magic_links (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        token_hash TEXT,
+        user_id INTEGER
+      );
+    `)
+  },
 ]
