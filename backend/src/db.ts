@@ -38,6 +38,41 @@ export function dataAccessors(db: DatabaseSync) {
     }
   }
 
+  function consumeMagicLink(
+    hash: string,
+  ): {
+    err: false | string
+    results: Record<string, SQLOutputValue> | undefined
+  } {
+    try {
+      const results = db.prepare(
+        "DELETE FROM magic_links WHERE token_hash = ? RETURNING email;",
+      ).get(hash)
+      return { err: false, results }
+    } catch (e: unknown) {
+      if (e instanceof Error) {
+        return { err: e.message, results: undefined }
+      } else {
+        return { err: String(e), results: undefined }
+      }
+    }
+  }
+
+  function deleteHash(hash: string) {
+    try {
+      const results = db.prepare(
+        "DELETE FROM magic_links WHERE token_hash = ?;",
+      ).run(hash)
+      return { err: false, results }
+    } catch (e: unknown) {
+      if (e instanceof Error) {
+        return { err: e.message, results: {} }
+      } else {
+        return { err: e, results: {} }
+      }
+    }
+  }
+
   // TODO: this is duplicated in Context.ts. Extract.
   interface saveHashArguments {
     hash: string
@@ -45,13 +80,12 @@ export function dataAccessors(db: DatabaseSync) {
   }
 
   function saveHash({ hash, email }: saveHashArguments) {
-    db.exec("BEGIN TRANSACTION;")
     try {
       return db.prepare(
         "INSERT INTO magic_links (email, token_hash) VALUES (@email, @hash);",
       ).run({ email, hash })
     } catch (e) {
-      db.exec("ROLLBACK")
+      // TODO: do better here.
       console.error({ rollback: true, error: e })
       return undefined
     }
@@ -59,6 +93,8 @@ export function dataAccessors(db: DatabaseSync) {
 
   return {
     findOrCreateUser,
+    consumeMagicLink,
     saveHash,
+    deleteHash,
   }
 }

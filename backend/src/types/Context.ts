@@ -1,10 +1,17 @@
 import type { YogaInitialContext } from "npm:graphql-yoga"
 import { allowList } from "../allowList.ts"
 import type { DatabaseSync, SQLOutputValue, StatementSync } from "node:sqlite"
+import { EmailPersonalisation } from "notifications-node-client"
+import { StatementResultingChanges } from "node:sqlite"
 
 type FindOrCreateUser = (
   email: string,
 ) => Record<string, SQLOutputValue> | undefined
+
+type SendMagicLink = (
+  emailAddress: string,
+  variables: EmailPersonalisation,
+) => Promise<unknown>
 
 interface saveHashArguments {
   hash: string
@@ -15,6 +22,22 @@ type SaveHash = (
   options: saveHashArguments,
 ) => Record<string, SQLOutputValue> | undefined
 
+type DeletionResult = {
+  err: unknown
+  results: Record<string, unknown>
+}
+
+type ConsumeMagicLink = (
+  hash: string,
+) => {
+  err: false | string
+  results: Record<string, SQLOutputValue> | undefined
+}
+
+type DeleteHash = (
+  email: string,
+) => DeletionResult
+
 export interface Context extends YogaInitialContext {
   isAllowed: ReturnType<typeof allowList>
   sql: (
@@ -24,4 +47,7 @@ export interface Context extends YogaInitialContext {
   db: DatabaseSync
   findOrCreateUser: FindOrCreateUser
   saveHash: SaveHash
+  deleteHash: DeleteHash
+  sendMagicLink: SendMagicLink
+  consumeMagicLink: ConsumeMagicLink
 }

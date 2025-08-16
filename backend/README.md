@@ -10,3 +10,12 @@ While The TBS Standard on APIs says that APIs should use REST "[by default](http
 The scope of responsibility is that it presents a public API, and produces only JSON as output. Internally it manages it's state in Sqlite for a low cost, operations-free database.
 
 
+## Debugging Notifications
+Sometimes it's tricky to figure out how to get a notification sent via notify. Sending a few with `curl` can help clarify what is going on since the [node client](https://docs.notifications.service.gov.uk/node.html#node-js-client-documentation) is simply a wrapper around the [REST API](https://documentation.notification.canada.ca/en/start.html).
+This is an example of how use curl
+```sh
+curl -H 'Content-Type: application/json' \
+ -H 'Authorization: ApiKey-v1 gcntfy-my_test_key-XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX-XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX' \
+ -d '{"template_id":"XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX","email_address":"test@example.com","personalisation":{"myvariable":"foo"}}' \
+ 'https://api.notification.canada.ca/v2/notifications/email'
+```
