@@ -1,19 +1,22 @@
-import { defineConfig } from '@rsbuild/core';
-import { pluginReact } from '@rsbuild/plugin-react';
+import { defineConfig } from "@rsbuild/core";
+import { pluginReact } from "@rsbuild/plugin-react";
 
 export default defineConfig({
   plugins: [pluginReact()],
+  server: {
+    open: false,
+  },
   html: {
     // use a custom template to address A11y and SEO issues.
-    template: './static/index.html',
+    template: "./static/index.html",
   },
   output: {
     // This will prevent .LICENSE.txt files from being generated
-    legalComments: 'none',
+    legalComments: "none",
   },
   performance: {
     preload: {
-      type: 'all-assets',
+      type: "all-assets",
     },
   },
 });

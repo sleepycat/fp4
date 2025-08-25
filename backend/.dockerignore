@@ -1,0 +1,11 @@
+# Never include .env files
+**/*.env
+
+# Don't include markdown documentation
+*.md
+
+# ignore test coverage report directories at any depth
+**/coverage
+
+# ignore test file directories at any depth
+**/__tests__/
