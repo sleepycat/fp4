@@ -1,8 +1,8 @@
 import { afterEach, beforeEach, describe, it } from "jsr:@std/testing/bdd"
 import { expect } from "jsr:@std/expect"
-import { dataAccessors } from "./db.ts"
+import { dataAccessors } from "../db.ts"
 import migrate from "@gordonb/sqlite-migrate"
-import migrations from "../migrations.ts"
+import migrations from "../../migrations.ts"
 import { DatabaseSync } from "node:sqlite"
 
 describe("dataAccessors()", () => {
