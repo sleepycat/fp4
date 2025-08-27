@@ -1,0 +1,15 @@
+direction: right
+browser: Browser {
+	shape: image
+	icon: https://icons.terrastruct.com/tech%2Fbrowser-2.svg
+	height: 60
+	width: 60
+}
+proxy
+frontend: UI
+backend: API
+
+browser -> proxy: localhost:3000
+
+proxy -> frontend: path: /
+proxy -> backend: path: /graphql
