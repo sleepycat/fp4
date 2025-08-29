@@ -46,6 +46,7 @@ export const schema = rateLimitDirectiveTransformer(createSchema({
 
     type Query {
       hello: String
+      seizures: String
     }
 
     type Mutation {
@@ -86,7 +87,7 @@ export const schema = rateLimitDirectiveTransformer(createSchema({
         saveHash({ hash, email })
         // TODO: send email using notification.canada.ca. Use client provided by graphql context.
         const response = await sendMagicLink(email, { code: ulid })
-        console.log({ email, ulid, hash })
+        console.log({ email, ulid, hash, notify: response })
         // DONE: Return generic message to prevent user enumeration:
         return abiguousMessage
       },
@@ -94,7 +95,7 @@ export const schema = rateLimitDirectiveTransformer(createSchema({
       verify: async (
         _parent,
         { token }: { token: string },
-        { deleteHash, consumeMagicLink, request },
+        { encrypt, deleteHash, consumeMagicLink, request },
       ) => {
         // Stateless expiry check because of ulid timestamp: decodeTime(token) reject if older than 15 minutes.
 
@@ -106,10 +107,13 @@ export const schema = rateLimitDirectiveTransformer(createSchema({
           deleteHash(hash)
           return "Your token has expired."
         }
-        // Look up hash in magic_links in transaction: (learn how to do this in sqlite)
+        // DONE: Look up hash in magic_links in transaction:
         // * no records == invalid
         // * user_id returned == valid
         // * immediately delete in same transation
+        // XXX: we seem to be able to reuse tokens here.
+        // Write a test that validates the same token twice. It shouldn't be possible.
+        // this should delete what it finds!
         const { err, results } = consumeMagicLink(hash)
         console.log({
           err,
@@ -118,31 +122,50 @@ export const schema = rateLimitDirectiveTransformer(createSchema({
           email: results?.email,
         })
 
-        // Set cookie with expiry date:
+        // XXX: Align jwt expiry with cookie expiry
+        //
+        // DONE: Set cookie with expiry date:
         // * HttpOnly: True (prevents JavaScript access, to prevent theft/reuse)
         // * Secure: True (only sent over HTTPS)
         // * SameSite: 'Strict' or 'Lax' (CSRF protection: can't be sent from another site)
         // * Expires: Set the cookie expiration to match the session's expires_at time.
         // * Path: '/'
         await request.cookieStore?.set({
+          // TODO: make this a variable if it's going to be used all over the place.
           name: "__Host-fp4auth", // __Host- prefix attaches the cookie to the host and not the registrable domain and requires https
-          value: String(results?.email),
+          value: await encrypt({ email: results?.email }), // TODO: need to pass expiry to align with cookie
           // expires: without explicit expiry, cookies are deleted when "the current session is over",
           // but browsers keep/restore browsing sessions making it unclear
           // when/if these cookies would expire https://issues.chromium.org/issues/40217179
-          // This is creating a unix timestamp + a days worth of milliseconds and then dividing to get seconds
-          expires: Math.floor((Date.now() + 86400000) / 1000), // Basically a unix timestamp for  "tomorrow"
+          // This is creating a unix timestamp + a days worth of milliseconds
+          expires: Date.now() + 60000, // one minute // one day: 86400000, // TODO: this needs some thinking.
           path: "/", // This controls the paths (example.com/foo/bar) the cookie will be sent to. '/' means all of them.
           domain: "", // no domain can be set when using __Host-
           secure: true, // secure (only send when using https)
           sameSite: "lax", // don't send from other sites
-          httpOnly: true, // do not make this cookie available to Javascript via document.cookie
+          // httpOnly: true, // do not make this cookie available to Javascript via document.cookie
         })
         return token
       },
     },
     Query: {
       hello: () => "world",
+      seizures: async (_root, _args, { decrypt, request }) => {
+        // TODO: simplify this. It's way to complicated.
+        const cookie = await request.cookieStore?.get("__Host-fp4auth")
+        if (cookie) {
+          const { err, payload } = await decrypt(String(cookie?.value))
+          if (err) {
+            await request.cookieStore?.delete("__Host-fp4auth")
+          } else {
+            console.log({ authenticated: true, cookie: cookie.value, payload })
+            return "logged in!"
+          }
+        } else {
+          console.log({ authenticated: false, public: true })
+          return "not logged in. Public access only."
+        }
+      },
     },
   },
 }))

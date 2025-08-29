@@ -1,4 +1,10 @@
 import { createYoga } from "npm:graphql-yoga"
+import {
+  createInlineSigningKeyProvider,
+  extractFromCookie,
+  extractFromHeader,
+  useJWT,
+} from "npm:@graphql-yoga/plugin-jwt"
 import { useCookies } from "npm:@whatwg-node/server-plugin-cookies"
 import { schema } from "./schema.ts"
 import type { Context } from "./src/types/Context.ts"
@@ -9,8 +15,9 @@ import {
   EmailPersonalisation,
   NotifyClient,
 } from "npm:notifications-node-client"
+import { useEncryptedJWT } from "./src/useEncryptedJWT.ts"
 
-// Functional core, imparative shell pattern:
+// Functional core, imperative shell pattern:
 // Read from the environment here in the entry point,
 // not elsewhere deeper in the application.
 const ALLOWED_DOMAINS = Deno.env.get("ALLOWED_DOMAINS")
@@ -28,6 +35,18 @@ if (NOTIFY_TEMPLATE_ID === undefined) {
     "The NOTIFY_TEMPLATE_ID envrionmental variable must be defined.",
   )
 }
+const JWT_SECRET = Deno.env.get("JWT_SECRET")
+if (JWT_SECRET === undefined || JWT_SECRET == "") {
+  throw new Error(
+    "The JWT_SECRET envrionmental variable must be defined.",
+  )
+}
+const JWT_ISSUER = Deno.env.get("JWT_ISSUER")
+if (JWT_ISSUER === undefined || JWT_ISSUER == "") {
+  throw new Error(
+    "The JWT_ISSUER envrionmental variable must be defined.",
+  )
+}
 
 // Reasonable defaults:
 const PORT = Deno.env.get("PORT") || 3000
@@ -40,11 +59,19 @@ export const db: DatabaseSync = new DatabaseSync("./seizures.db")
 const { findOrCreateUser, consumeMagicLink, saveHash, deleteHash } =
   dataAccessors(db)
 
+const { encrypt, decrypt } = useEncryptedJWT({
+  base64secret: JWT_SECRET,
+  enforce: { issuer: JWT_ISSUER, audience: "fp4" },
+})
+
+// TODO: extract and import for reuse in tests
 const yoga = createYoga<Context>({
   schema,
   graphiql: true,
   landingPage: false,
-  plugins: [useCookies()],
+  plugins: [
+    useCookies(),
+  ],
   context: () => {
     return {
       isAllowed: allowList(ALLOWED_DOMAINS),
@@ -60,6 +87,8 @@ const yoga = createYoga<Context>({
       saveHash,
       deleteHash,
       consumeMagicLink,
+      decrypt,
+      encrypt,
       sendMagicLink(address: string, variables: EmailPersonalisation) {
         const client = new NotifyClient(
           "https://api.notification.canada.ca",

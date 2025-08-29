@@ -1,8 +1,9 @@
 import type { YogaInitialContext } from "npm:graphql-yoga"
 import { allowList } from "../allowList.ts"
 import type { DatabaseSync, SQLOutputValue, StatementSync } from "node:sqlite"
-import { EmailPersonalisation } from "notifications-node-client"
+import { EmailPersonalisation } from "npm:notifications-node-client"
 import { StatementResultingChanges } from "node:sqlite"
+import type { JwtFunctions } from "../useEncryptedJWT.ts"
 
 type FindOrCreateUser = (
   email: string,
@@ -50,4 +51,6 @@ export interface Context extends YogaInitialContext {
   deleteHash: DeleteHash
   sendMagicLink: SendMagicLink
   consumeMagicLink: ConsumeMagicLink
+  decrypt: JwtFunctions["decrypt"]
+  encrypt: JwtFunctions["encrypt"]
 }

@@ -5,6 +5,7 @@
   },
   "imports": {
     "@gordonb/sqlite-migrate": "jsr:@gordonb/sqlite-migrate@^0.1.0",
+    "@graphql-yoga/plugin-jwt": "npm:@graphql-yoga/plugin-jwt@^3.9.1",
     "@std/assert": "jsr:@std/assert@1",
     "@types/node": "npm:@types/node@^24.2.0",
     "@whatwg-node/server-plugin-cookies": "npm:@whatwg-node/server-plugin-cookies@^1.0.5",

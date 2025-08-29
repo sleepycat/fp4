@@ -1,5 +1,5 @@
 import { DatabaseSync } from "node:sqlite"
-import migrate from "@gordonb/sqlite-migrate"
+import migrate from "jsr:@gordonb/sqlite-migrate"
 import migrations from "./migrations.ts"
 
 const db = new DatabaseSync("./seizures.db")
