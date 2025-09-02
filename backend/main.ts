@@ -41,6 +41,12 @@ if (JWT_ISSUER === undefined || JWT_ISSUER == "") {
     "The JWT_ISSUER envrionmental variable must be defined.",
   )
 }
+const DB_PATH = Deno.env.get("DB_PATH")
+if (DB_PATH === undefined || DB_PATH == "") {
+  throw new Error(
+    "The DB_PATH envrionmental variable must be defined.",
+  )
+}
 
 // Reasonable defaults:
 const PORT = Deno.env.get("PORT") || 3000
@@ -49,7 +55,7 @@ const HOST = Deno.env.get("HOST") || "0.0.0.0"
 // Env vars should not be read anywhere else in the app.
 
 // Dependency Injection for database functions allows for easy testing.
-export const db: DatabaseSync = new DatabaseSync("./seizures.db")
+export const db: DatabaseSync = new DatabaseSync(DB_PATH)
 const { findOrCreateUser, consumeMagicLink, saveHash, deleteHash } =
   dataAccessors(db)
 
