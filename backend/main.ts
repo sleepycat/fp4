@@ -1,10 +1,4 @@
 import { createYoga } from "npm:graphql-yoga"
-import {
-  createInlineSigningKeyProvider,
-  extractFromCookie,
-  extractFromHeader,
-  useJWT,
-} from "npm:@graphql-yoga/plugin-jwt"
 import { useCookies } from "npm:@whatwg-node/server-plugin-cookies"
 import { schema } from "./schema.ts"
 import type { Context } from "./src/types/Context.ts"
