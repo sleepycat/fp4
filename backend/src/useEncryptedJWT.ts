@@ -24,7 +24,6 @@ export async function generateSecret(
   algorithm: Algorithm = "A256GCM",
 ): Promise<string> {
   const key = await jose.generateSecret(algorithm, { extractable: true })
-  // @ts-expect-error: types are wrong for exportKey.
   const exported = await crypto.subtle.exportKey("raw", key)
   return Buffer.from(new Uint8Array(exported)).toString("base64")
 }
