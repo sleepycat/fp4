@@ -1,14 +1,19 @@
-import './App.css';
+import { Trans } from "@lingui/react/macro";
+import LocaleSwitcher from "./LocaleSwitcher.tsx";
+import "./App.css";
 import { Flag, SVG } from "./Signature.tsx";
 
 const App = () => {
   return (
     <div className="content" style={{ justifySelf: "center" }}>
+      <LocaleSwitcher />
       <section
         style={{ display: "flex" }}
       >
         <SVG>
-          <title>Canadian Flag</title>
+          <title>
+            <Trans>Canadian Flag</Trans>
+          </title>
           <Flag style={{ fill: "#ea2d37" }} />
         </SVG>
         <span
@@ -18,10 +23,14 @@ const App = () => {
             textAlignLast: "left",
           }}
         >
-          Government of<br /> Canada
+          <Trans>
+            Government of<br /> Canada
+          </Trans>
         </span>
       </section>
-      <p>Start building amazing things with Rsbuild.</p>
+      <p>
+        <Trans>Start building amazing things with Rsbuild.</Trans>
+      </p>
     </div>
   );
 };
