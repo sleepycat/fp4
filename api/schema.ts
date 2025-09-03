@@ -2,6 +2,7 @@ import { Context } from "./src/types/Context.ts"
 import { createSchema } from "npm:graphql-yoga"
 import { rateLimitDirective } from "npm:graphql-rate-limit-directive"
 import { EmailAddressResolver } from "npm:graphql-scalars"
+import { GraphQLULID } from "./src/ULID.ts"
 import { decodeTime, monotonicUlid } from "jsr:@std/ulid"
 import { crypto } from "jsr:@std/crypto"
 import { encodeHex } from "jsr:@std/encoding/hex"
@@ -43,6 +44,7 @@ export const schema = rateLimitDirectiveTransformer(createSchema({
     rateLimitDirectiveTypeDefs,
     /* GraphQL */ `
     scalar EmailAddress
+    scalar ULID
 
     type Query {
       hello: String
@@ -53,12 +55,13 @@ export const schema = rateLimitDirectiveTransformer(createSchema({
       # Provide an email address to log in via magic links
       login(email: EmailAddress!): String @rateLimit(limit: 5, duration: 60)
       # Verify the token you recieved to create a session.
-      verify(token: String!): String @rateLimit(limit: 5, duration: 60)
+      verify(token: ULID!): String @rateLimit(limit: 5, duration: 60)
     }
   `,
   ],
   resolvers: {
     EmailAddress: EmailAddressResolver,
+    ULID: GraphQLULID,
     Mutation: {
       login: async (
         _parent,
@@ -69,7 +72,6 @@ export const schema = rateLimitDirectiveTransformer(createSchema({
         const abiguousMessage =
           "If an account exists for this email, a login link has been sent."
         // DONE: Split user from domain and check if email is on allow-list: Check ALLOWED_DOMAINS env var. return generic message
-        console.log({ email, isAllowed: isAllowed(email) })
         if (!isAllowed(email)) {
           // DONE: Return generic message to prevent user enumeration:
           return abiguousMessage
@@ -86,8 +88,8 @@ export const schema = rateLimitDirectiveTransformer(createSchema({
         // DONE: Save hashed token (not the token) to sqlite. This prevents leaks of tokens (assuming a breach of the database).
         saveHash({ hash, email })
         // TODO: send email using notification.canada.ca. Use client provided by graphql context.
-        const response = await sendMagicLink(email, { code: ulid })
-        console.log({ email, ulid, hash, notify: response })
+        const _response = await sendMagicLink(email, { code: ulid })
+        console.log({ email, isAllowed: isAllowed(email), ulid, hash })
         // DONE: Return generic message to prevent user enumeration:
         return abiguousMessage
       },
