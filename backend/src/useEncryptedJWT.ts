@@ -23,9 +23,15 @@ type Algorithm =
 export async function generateSecret(
   algorithm: Algorithm = "A256GCM",
 ): Promise<string> {
-  const key = await jose.generateSecret(algorithm, { extractable: true })
-  const exported = await crypto.subtle.exportKey("raw", key)
-  return Buffer.from(new Uint8Array(exported)).toString("base64")
+  const key: Uint8Array | CryptoKey = await jose.generateSecret(algorithm, {
+    extractable: true,
+  })
+  if (key instanceof CryptoKey) {
+    const exported = await crypto.subtle.exportKey("raw", key)
+    return Buffer.from(new Uint8Array(exported)).toString("base64")
+  } else {
+    return Buffer.from(key).toString("base64")
+  }
 }
 
 type Validations = {

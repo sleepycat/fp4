@@ -9,6 +9,14 @@ describe("generateSecret()", () => {
     // these secrets appear to be fixed length random strings.
     expect(base64key).toMatch(/\S{44}/)
   })
+
+  it("still works when selecting algorithms that generate different return types", async () => {
+    // GenerateSecret returns a Uint8Array for certain algorithms that can't be represented by a CryptoKey object.
+    // https://github.com/panva/jose/blob/main/docs/key/generate_secret/functions/generateSecret.md#function-generatesecret
+    const base64key = await generateSecret("A128CBC-HS256")
+    // these secrets appear to be fixed length random strings.
+    expect(base64key).toMatch(/\S{44}/)
+  })
 })
 
 describe("createEncryptedJwt()", () => {
