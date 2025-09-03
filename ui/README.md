@@ -1,4 +1,6 @@
-# Rsbuild project
+# FP4 frontend
+
+This project is based on the Rsbuild quickstart and follows the ideas described for logos and internationalization
 
 ## Setup
 

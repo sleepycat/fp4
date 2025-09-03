@@ -23,28 +23,28 @@ static_resources:
           route_config:
             name: local_route
             virtual_hosts:
-            - name: backend
+            - name: api
               domains: ["*"]
               routes:
               - match: { prefix: "/graphql" }
-                route: { cluster: backend }
+                route: { cluster: api }
               - match: { prefix: "/" }
-                route: { cluster: frontend }
+                route: { cluster: ui }
   clusters:
-  - name: frontend
+  - name: ui
     connect_timeout: 0.25s
     type: strict_dns
     lb_policy: round_robin
     load_assignment:
-      cluster_name: frontend
+      cluster_name: ui
       endpoints:
       - lb_endpoints:
         - endpoint:
             address:
               socket_address:
-                address: frontend
+                address: ui
                 port_value: 3000
-  - name: backend
+  - name: api
     connect_timeout: 0.40s
     type: strict_dns
     lb_policy: round_robin
@@ -55,7 +55,7 @@ static_resources:
         - endpoint:
             address:
               socket_address:
-                address: backend
+                address: api
                 port_value: 3000
 
 admin:
