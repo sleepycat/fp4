@@ -14,13 +14,29 @@ msgstr ""
 "Plural-Forms: \n"
 
 #: src/App.tsx:15
-msgid "Canadian Flag"
-msgstr "Canadian Flag"
+#~ msgid "Canadian Flag"
+#~ msgstr "Canadian Flag"
+
+#: src/TitleBar.tsx:21
+msgid "Federal Policing"
+msgstr "Federal Policing"
 
 #: src/App.tsx:26
-msgid "Government of<0/> Canada"
-msgstr "Government of<0/> Canada"
+#~ msgid "Government of<0/> Canada"
+#~ msgstr "Government of<0/> Canada"
 
-#: src/App.tsx:32
+#: src/Header.tsx:38
+msgid "Royal Canadian<0/>Mounted Police"
+msgstr "Royal Canadian<0/>Mounted Police"
+
+#: src/App.tsx:29
 msgid "Start building amazing things with Rsbuild."
 msgstr "Start building amazing things with Rsbuild."
+
+#: src/Footer.tsx:26
+msgid "Symbol of the Government of Canada"
+msgstr "Symbol of the Government of Canada"
+
+#: src/Header.tsx:29
+msgid "The logo of the RCMP"
+msgstr "The logo of the RCMP"
