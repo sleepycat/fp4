@@ -24,6 +24,14 @@ const App = () => {
   return (
     <div className={content}>
       <Header />
+      {
+        /*
+         No need for "skip to main content" links:
+         "The main role is a non-obtrusive alternative for "skip to main content" links"
+         https://www.w3.org/TR/wai-aria/#main
+         The <main> element has the role="main" by default.
+        */
+      }
       <main className={mainClass}>
         <p>
           <Trans>Start building amazing things with Rsbuild.</Trans>
