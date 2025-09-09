@@ -5,21 +5,10 @@ import { EmailAddressResolver } from "npm:graphql-scalars"
 import { GraphQLULID } from "./src/ULID.ts"
 import { monotonicUlid } from "jsr:@std/ulid"
 import { isExpired } from "./src/isExpired.ts"
-import { crypto } from "jsr:@std/crypto"
-import { encodeHex } from "jsr:@std/encoding/hex"
+import { sha256 } from "./src/sha256.ts"
+
 const { rateLimitDirectiveTypeDefs, rateLimitDirectiveTransformer } =
   rateLimitDirective()
-
-async function sha256(token: string) {
-  const hashbuffer = await crypto.subtle.digest(
-    "SHA-256",
-    new TextEncoder().encode(token),
-  )
-  const hashed_token = encodeHex(hashbuffer)
-  return Promise.resolve(
-    hashed_token,
-  )
-}
 
 export const schema = rateLimitDirectiveTransformer(createSchema({
   typeDefs: [
