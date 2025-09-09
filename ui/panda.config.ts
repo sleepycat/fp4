@@ -40,9 +40,6 @@ export default defineConfig({
           },
           lightgray: { value: "#f1f2f3;" },
           white: { value: "#ffffff" },
-          background: {
-            value: "#272727",
-          },
         },
       },
       semanticTokens: {

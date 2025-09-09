@@ -11,7 +11,7 @@
     "dev:css": "panda --watch",
     "format": "biome format --write",
     "preview": "rsbuild preview",
-    "extract": "lingui extract",
+    "extract": "lingui extract --clean",
     "compile": "lingui compile",
     "panda:init": "panda init --postcss"
   },
@@ -19,7 +19,8 @@
     "@lingui/core": "^5.4.1",
     "@lingui/react": "^5.4.1",
     "react": "^19.1.1",
-    "react-dom": "^19.1.1"
+    "react-dom": "^19.1.1",
+    "react-router": "^7.8.2"
   },
   "devDependencies": {
     "@biomejs/biome": "^2.0.6",
