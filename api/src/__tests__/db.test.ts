@@ -82,7 +82,7 @@ describe("dataAccessors()", () => {
 
   describe("consumeMagicLink()", () => {
     describe("given a hash", () => {
-      it("retrieves the user and deletes the record from the magic_links table", () => {
+      it("retrieves the user from the magic_links table", () => {
         const hash =
           "f2ca1bb6c7e907d06dafe4687e579fce76b37e4e93b7605022da52e6ccc26fd2"
 
@@ -106,6 +106,33 @@ describe("dataAccessors()", () => {
           err: false,
           results: { email: "test@example.com" },
         })
+      })
+
+      it("deletes the record from the magic_links table", () => {
+        const hash =
+          "f2ca1bb6c7e907d06dafe4687e579fce76b37e4e93b7605022da52e6ccc26fd2"
+
+        // insert a test record
+        db.prepare(
+          "INSERT INTO magic_links (email, token_hash) VALUES (@email, @hash);",
+        ).run({ hash, email: "test@example.com" })
+
+        // We're expecting a 1 record to exist before calling consumeMagicLink
+        expect(
+          db.prepare(
+            "SELECT * FROM magic_links",
+          ).all(),
+        ).toEqual([{ email: "test@example.com", id: 1, token_hash: hash }])
+
+        // create the accessor functions and call the consumeMagicLink function
+        dataAccessors(db).consumeMagicLink(hash)
+
+        // Run the query again and no records should exist:
+        expect(
+          db.prepare(
+            "SELECT * FROM magic_links",
+          ).all(),
+        ).toEqual([])
       })
     })
   })
