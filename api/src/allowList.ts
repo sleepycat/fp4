@@ -1,3 +1,5 @@
+export type AllowListChecker = ReturnType<typeof allowList>
+
 export function allowList(list: string) {
   const allowedDomains = list.split(",")
 

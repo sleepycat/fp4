@@ -6,6 +6,7 @@
   "imports": {
     "@gordonb/sqlite-migrate": "jsr:@gordonb/sqlite-migrate@^0.1.0",
     "@std/assert": "jsr:@std/assert@^1.0.14",
+    "@std/testing": "jsr:@std/testing@^1.0.15",
     "@types/node": "npm:@types/node@^24.3.0",
     "@whatwg-node/server-plugin-cookies": "npm:@whatwg-node/server-plugin-cookies@^1.0.5",
     "graphql-scalars": "npm:graphql-scalars@^1.24.2",

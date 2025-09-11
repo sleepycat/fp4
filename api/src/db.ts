@@ -14,6 +14,8 @@ export function migrate(db: DatabaseSync) {
   db.close()
 }
 
+export type DataAccessors = ReturnType<typeof dataAccessors>
+
 export function dataAccessors(db: DatabaseSync) {
   function findOrCreateUser(
     email: string,

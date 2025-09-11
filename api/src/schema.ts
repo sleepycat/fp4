@@ -1,11 +1,11 @@
-import { Context } from "./src/types/Context.ts"
+import { Context } from "./types/Context.ts"
 import { createSchema } from "npm:graphql-yoga"
 import { rateLimitDirective } from "npm:graphql-rate-limit-directive"
 import { EmailAddressResolver } from "npm:graphql-scalars"
-import { GraphQLULID } from "./src/ULID.ts"
+import { GraphQLULID } from "./ULID.ts"
 import { monotonicUlid } from "jsr:@std/ulid"
-import { isExpired } from "./src/isExpired.ts"
-import { sha256 } from "./src/sha256.ts"
+import { isExpired } from "./isExpired.ts"
+import { sha256 } from "./sha256.ts"
 
 const { rateLimitDirectiveTypeDefs, rateLimitDirectiveTransformer } =
   rateLimitDirective()

@@ -1,9 +1,8 @@
-import { createYoga } from "npm:graphql-yoga"
-import { useCookies } from "npm:@whatwg-node/server-plugin-cookies"
-import { schema } from "./schema.ts"
-import type { Context } from "./src/types/Context.ts"
+import { Server } from "./src/Server.ts"
+import { schema } from "./src/schema.ts"
 import { allowList } from "./src/allowList.ts"
 import { DatabaseSync } from "node:sqlite"
+import type { Context } from "./src/types/Context.ts"
 import { dataAccessors } from "./src/db.ts"
 import {
   EmailPersonalisation,
@@ -56,50 +55,31 @@ const HOST = Deno.env.get("HOST") || "0.0.0.0"
 
 // Dependency Injection for database functions allows for easy testing.
 export const db: DatabaseSync = new DatabaseSync(DB_PATH)
-const { findOrCreateUser, consumeMagicLink, saveHash, deleteHash } =
-  dataAccessors(db)
 
-const { encrypt, decrypt } = useEncryptedJWT({
+const jwtfunctions = useEncryptedJWT({
   base64secret: JWT_SECRET,
   enforce: { issuer: JWT_ISSUER, audience: "fp4" },
 })
 
-// TODO: extract and import for reuse in tests
-const yoga = createYoga<Context>({
-  schema,
-  graphiql: true,
-  landingPage: false,
-  plugins: [
-    useCookies(),
-  ],
-  context: () => {
-    return {
-      isAllowed: allowList(ALLOWED_DOMAINS),
-      sql: (strings: TemplateStringsArray, ...vars: (string | number)[]) => {
-        // join the segments of the query with a placeholder value:
-        const statementWithPlaceholders = strings.join("?")
-        console.log({ query: statementWithPlaceholders, vars })
-        // use a prepared statement to avoid sql injections:
-        return db.prepare(statementWithPlaceholders).run(...vars)
-      },
-      db,
-      findOrCreateUser,
-      saveHash,
-      deleteHash,
-      consumeMagicLink,
-      decrypt,
-      encrypt,
-      sendMagicLink(address: string, variables: EmailPersonalisation) {
-        const client = new NotifyClient(
-          "https://api.notification.canada.ca",
-          NOTIFY_API_KEY,
-        )
-        return client.sendEmail(NOTIFY_TEMPLATE_ID, address, {
-          personalisation: variables,
-        })
-      },
-    }
+const context: Partial<Context> = {
+  db,
+  ...dataAccessors(db),
+  ...jwtfunctions,
+  isAllowed: allowList(ALLOWED_DOMAINS),
+  sendMagicLink(address: string, variables: EmailPersonalisation) {
+    const client = new NotifyClient(
+      "https://api.notification.canada.ca",
+      NOTIFY_API_KEY,
+    )
+    return client.sendEmail(NOTIFY_TEMPLATE_ID, address, {
+      personalisation: variables,
+    })
   },
+}
+
+const server = Server({
+  schema,
+  context,
 })
 
 // @ts-expect-error the types are broken for this function.
@@ -109,9 +89,9 @@ Deno.serve(
     port: Number(PORT),
     onListen: ({ hostname, port }: { hostname: string; port: number }) => {
       console.info(
-        `Server is running on http://${hostname}:${port}${yoga.graphqlEndpoint} 🚀`,
+        `Server is running on http://${hostname}:${port}${server.graphqlEndpoint} 🚀`,
       )
     },
   },
-  yoga,
+  server,
 )
