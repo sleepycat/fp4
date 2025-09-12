@@ -9,6 +9,7 @@ import {
   NotifyClient,
 } from "npm:notifications-node-client"
 import { useEncryptedJWT } from "./src/useEncryptedJWT.ts"
+import { createContext } from "./src/context.ts"
 
 // Functional core, imperative shell pattern:
 // Read from the environment here in the entry point,
@@ -56,30 +57,16 @@ const HOST = Deno.env.get("HOST") || "0.0.0.0"
 // Dependency Injection for database functions allows for easy testing.
 export const db: DatabaseSync = new DatabaseSync(DB_PATH)
 
-const jwtfunctions = useEncryptedJWT({
-  base64secret: JWT_SECRET,
-  enforce: { issuer: JWT_ISSUER, audience: "fp4" },
-})
-
-const context: Partial<Context> = {
-  db,
-  ...dataAccessors(db),
-  ...jwtfunctions,
-  isAllowed: allowList(ALLOWED_DOMAINS),
-  sendMagicLink(address: string, variables: EmailPersonalisation) {
-    const client = new NotifyClient(
-      "https://api.notification.canada.ca",
-      NOTIFY_API_KEY,
-    )
-    return client.sendEmail(NOTIFY_TEMPLATE_ID, address, {
-      personalisation: variables,
-    })
-  },
-}
-
 const server = Server({
   schema,
-  context,
+  context: createContext({
+    db,
+    jwtSecret: JWT_SECRET,
+    jwtIssuer: JWT_ISSUER,
+    allowedDomains: ALLOWED_DOMAINS,
+    notifyApiKey: NOTIFY_API_KEY,
+    notifyTemplateId: NOTIFY_TEMPLATE_ID,
+  }),
 })
 
 // @ts-expect-error the types are broken for this function.
