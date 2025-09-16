@@ -16,24 +16,20 @@ services:
   api:
     build: ./api
     env_file: ./api/.env
-    ports:
-      - 3000
     expose:
       - 3000
     volumes:
     - type: bind
-      source: ./api
-      target: /api
+      source: ./api/
+      target: /app/api
   ui:
     build: ./ui
-    ports:
-      - 3000
     expose:
       - 3000
     command: npm run dev
     volumes:
       - type: bind
-        source: ./ui
-        target: /ui
+        source: ./ui/
+        target: /app/ui
 volumes:
   driver: {}
