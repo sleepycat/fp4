@@ -1,0 +1,32 @@
+magiclinks: Authentication flow {
+  shape: sequence_diagram
+  user: User
+  api: API
+  db: Database
+  notify: notify.canada.ca
+  login: login(email) {
+    user -> api: call login(email)
+    api -> api: is email domain on allowlist?
+    api -> db: find or create user
+    api -> api: generates ULID token
+    api -> db: stores hash of token
+    api -> notify: initiates email via https api call
+  }
+  notify -> user: email with login link
+  verify: verify(ulid) {
+    user -> api: call verify(ULID)
+    api -> api: is ULID expired?
+    api <-> db: token hash matches one we've issued?
+    api -> db: delete/consume token
+    api -> api: create excrypted auth jwt
+    api -> user: set jwt as authentication cookie
+  }
+}
+
+explaination: |md
+  # Auth
+  The `login(email)` and `verify(ulid)` functions <br/>are rate limited to prevent brute force guessing.
+
+  Both these functions are restricted to accepting inputs<br/> that conform to a know format (email and ulid) preventing malicious inputs. 
+|
+
