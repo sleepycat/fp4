@@ -1,6 +1,7 @@
 import { DatabaseSync, SQLOutputValue } from "node:sqlite"
 import { migrate as sqlitemigrate } from "jsr:@gordonb/sqlite-migrate"
 import migrations from "../migrations.ts"
+import { StatementResultingChanges } from "node:sqlite"
 
 export function migrate(db: DatabaseSync) {
   const result = sqlitemigrate(db, migrations)
@@ -14,12 +15,18 @@ export function migrate(db: DatabaseSync) {
   db.close()
 }
 
+export type User = {
+  id: number
+  email: string
+  created_at: string
+}
+
 export type DataAccessors = ReturnType<typeof dataAccessors>
 
 export function dataAccessors(db: DatabaseSync) {
   function findOrCreateUser(
     email: string,
-  ): Record<string, SQLOutputValue> | undefined {
+  ): User | undefined {
     let user
     db.exec("BEGIN TRANSACTION;")
     try {
@@ -32,7 +39,7 @@ export function dataAccessors(db: DatabaseSync) {
 
       user = select.get({ email })
       db.exec("COMMIT;")
-      return user
+      return user as User
     } catch (e) {
       db.exec("ROLLBACK")
       console.error({ rollback: true, error: e })
@@ -44,12 +51,66 @@ export function dataAccessors(db: DatabaseSync) {
     hash: string,
   ): {
     err: false | string
-    results: Record<string, SQLOutputValue> | undefined
+    results: User | undefined
+  } {
+    db.exec("BEGIN TRANSACTION;")
+    try {
+      const consume = db.prepare(
+        "DELETE FROM magic_links WHERE token_hash = @hash RETURNING user_id;",
+      )
+      const select = db.prepare("SELECT * FROM users WHERE id = @user_id;")
+
+      const user_id = consume.get({ hash })
+      const user = select.get({ user_id: Number(user_id?.user_id) })
+
+      db.exec("COMMIT;")
+      return { err: false, results: user as User }
+    } catch (e: unknown) {
+      db.exec("ROLLBACK")
+      if (e instanceof Error) {
+        return { err: e.message, results: undefined }
+      } else {
+        return { err: String(e), results: undefined }
+      }
+    }
+  }
+
+  function addSeizure(
+    record: {
+      substance: string
+      amount: number
+      seized_on: string
+      reported_on: string
+      user_id: number
+    },
+  ): {
+    err: false | string
+    results: StatementResultingChanges | undefined
   } {
     try {
       const results = db.prepare(
-        "DELETE FROM magic_links WHERE token_hash = ? RETURNING email;",
-      ).get(hash)
+        "INSERT INTO seizures (substance, amount, seized_on, reported_on, user_id ) VALUES (@substance, @amount, @seized_on, @reported_on, @user_id) RETURNING *;",
+      ).run(record)
+
+      return { err: false, results }
+    } catch (e: unknown) {
+      if (e instanceof Error) {
+        return { err: e.message, results: undefined }
+      } else {
+        return { err: String(e), results: undefined }
+      }
+    }
+  }
+
+  // TODO: need to deal with pagination.
+  function getSeizures(): {
+    err: false | string
+    results: Record<string, SQLOutputValue>[] | undefined
+  } {
+    try {
+      const results = db.prepare(
+        "SELECT * FROM seizures;",
+      ).all()
       return { err: false, results }
     } catch (e: unknown) {
       if (e instanceof Error) {
@@ -78,14 +139,14 @@ export function dataAccessors(db: DatabaseSync) {
   // TODO: this is duplicated in Context.ts. Extract.
   interface saveHashArguments {
     hash: string
-    email: string
+    user_id: number
   }
 
-  function saveHash({ hash, email }: saveHashArguments) {
+  function saveHash({ hash, user_id }: saveHashArguments) {
     try {
       return db.prepare(
-        "INSERT INTO magic_links (email, token_hash) VALUES (@email, @hash);",
-      ).run({ email, hash })
+        "INSERT INTO magic_links (user_id, token_hash) VALUES (@user_id, @hash);",
+      ).run({ user_id, hash })
     } catch (e) {
       // TODO: do better here.
       console.error({ rollback: true, error: e })
@@ -96,6 +157,8 @@ export function dataAccessors(db: DatabaseSync) {
   return {
     findOrCreateUser,
     consumeMagicLink,
+    getSeizures,
+    addSeizure,
     saveHash,
     deleteHash,
   }

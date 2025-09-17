@@ -4,6 +4,7 @@ import { dataAccessors } from "../db.ts"
 import migrate from "jsr:@gordonb/sqlite-migrate"
 import migrations from "../../migrations.ts"
 import { DatabaseSync } from "node:sqlite"
+import type { User } from "../db.ts"
 
 describe("dataAccessors()", () => {
   let db: DatabaseSync
@@ -29,15 +30,22 @@ describe("dataAccessors()", () => {
   })
 
   describe("saveHash()", () => {
-    describe("given a hash and email", () => {
+    describe("given a hash and a user id", () => {
       it("saves it to the magic_links table", () => {
+        // create a user
+        const user = db.prepare(
+          "INSERT INTO users (email) VALUES (@email) RETURNING *;",
+        ).get({
+          email: "test@example.com",
+        }) as User
+
         // create the accessor functions
         const { saveHash } = dataAccessors(db)
 
         const response = saveHash({
           hash:
             "f2ca1bb6c7e907d06dafe4687e579fce76b37e4e93b7605022da52e6ccc26fd2",
-          email: "test@example.com",
+          user_id: user.id,
         })
         expect(response).toEqual({
           changes: 1,
@@ -47,18 +55,98 @@ describe("dataAccessors()", () => {
     })
   })
 
+  describe("getSeizures()", () => {
+    it("retrieves seizure details from the seizures table", () => {
+      // create a user
+      db.prepare("INSERT INTO users (email ) VALUES (@email);").run({
+        email: "test@example.com",
+      })
+      // create a seizure record associated to that user.
+      db.prepare(
+        "INSERT INTO seizures (substance, amount, seized_on, reported_on, user_id ) VALUES (@substance, @amount, @seized_on, @reported_on, @user_id);",
+      ).run(
+        {
+          substance: "iocaine powder",
+          amount: "100",
+          seized_on: "2025-09-16",
+          reported_on: "2025-09-16",
+          user_id: 1,
+        },
+      )
+
+      // create the accessor functions
+      const { getSeizures } = dataAccessors(db)
+
+      // Does it return the seizure record?
+      const response = getSeizures()
+      expect(response).toEqual({
+        err: false,
+        results: [
+          {
+            amount: "100",
+            id: 1,
+            reported_on: "2025-09-16",
+            seized_on: "2025-09-16",
+            substance: "iocaine powder",
+            user_id: 1,
+          },
+        ],
+      })
+    })
+  })
+
+  describe("addSeizure()", () => {
+    it("saves seizure details to the seizurestable", () => {
+      // create a user
+      db.prepare("INSERT INTO users (email ) VALUES (@email);").run({
+        email: "test@example.com",
+      })
+      // create a seizure record associated to that user.
+
+      // create the accessor functions
+      const { addSeizure } = dataAccessors(db)
+
+      // Does it return the seizure record?
+      const response = addSeizure(
+        {
+          substance: "iocaine powder",
+          amount: 100,
+          seized_on: "2025-09-16",
+          reported_on: "2025-09-16",
+          user_id: 1,
+        },
+      )
+      expect(response).toEqual({
+        err: false,
+        results: {
+          changes: 1,
+          lastInsertRowid: 1,
+        },
+      })
+    })
+  })
+
+  // deleteHash is used for expire tokens. It's not returning a user.
   describe("deleteHash()", () => {
-    describe("given an email", () => {
+    describe("given a hash", () => {
       it("deletes it from the magic_links table", () => {
         const hash =
           "f2ca1bb6c7e907d06dafe4687e579fce76b37e4e93b7605022da52e6ccc26fd2"
+
+        // create a user
+        const user = db.prepare(
+          "INSERT INTO users (email) VALUES (@email) RETURNING *;",
+        ).get({
+          email: "test@example.com",
+        }) as User
+
         // insert a test record
         db.prepare(
-          "INSERT INTO magic_links (email, token_hash) VALUES (@email, @hash);",
+          "INSERT INTO magic_links (user_id, token_hash) VALUES (@user_id, @hash);",
         ).run(
           {
             hash,
-            email: "test@example.com",
+            user_id: user.id,
           },
         )
 
@@ -86,13 +174,21 @@ describe("dataAccessors()", () => {
         const hash =
           "f2ca1bb6c7e907d06dafe4687e579fce76b37e4e93b7605022da52e6ccc26fd2"
 
+        // create a user
+        const user = db.prepare(
+          "INSERT INTO users (email, created_at) VALUES (@email, @created_at) RETURNING *;",
+        ).get({
+          email: "test@example.com",
+          created_at: "2025-09-17 18:52:27",
+        }) as User
+
         // insert a test record
         db.prepare(
-          "INSERT INTO magic_links (email, token_hash) VALUES (@email, @hash);",
+          "INSERT INTO magic_links (user_id, token_hash) VALUES (@user_id, @hash);",
         ).run(
           {
             hash,
-            email: "test@example.com",
+            user_id: user.id,
           },
         )
 
@@ -104,7 +200,11 @@ describe("dataAccessors()", () => {
         )
         expect(response).toEqual({
           err: false,
-          results: { email: "test@example.com" },
+          results: {
+            created_at: "2025-09-17 18:52:27",
+            email: "test@example.com",
+            id: 1,
+          },
         })
       })
 
@@ -112,17 +212,24 @@ describe("dataAccessors()", () => {
         const hash =
           "f2ca1bb6c7e907d06dafe4687e579fce76b37e4e93b7605022da52e6ccc26fd2"
 
+        // create a user
+        const user = db.prepare(
+          "INSERT INTO users (email) VALUES (@email) RETURNING *;",
+        ).get({
+          email: "test@example.com",
+        }) as User
+
         // insert a test record
         db.prepare(
-          "INSERT INTO magic_links (email, token_hash) VALUES (@email, @hash);",
-        ).run({ hash, email: "test@example.com" })
+          "INSERT INTO magic_links (user_id, token_hash) VALUES (@user_id, @hash);",
+        ).run({ hash, user_id: user.id })
 
         // We're expecting a 1 record to exist before calling consumeMagicLink
         expect(
           db.prepare(
-            "SELECT * FROM magic_links",
+            "SELECT * FROM magic_links;",
           ).all(),
-        ).toEqual([{ email: "test@example.com", id: 1, token_hash: hash }])
+        ).toEqual([{ id: 1, user_id: 1, token_hash: hash }])
 
         // create the accessor functions and call the consumeMagicLink function
         dataAccessors(db).consumeMagicLink(hash)
@@ -181,7 +288,7 @@ describe("dataAccessors()", () => {
 
         // we don't care about the result here, just the side effects
         findOrCreateUser("test@example.com")
-        // look for side effects: there should only be one user.
+        // look for side effects: there should be one user.
         const records = db.prepare("SELECT COUNT(id) as count FROM users").get()
 
         expect(records?.count).toEqual(1)

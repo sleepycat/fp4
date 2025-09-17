@@ -5,7 +5,7 @@ export default [
       CREATE TABLE users (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         email TEXT NOT NULL UNIQUE,
-        created_at TEXT
+        created_at TEXT NOT NULL DEFAULT current_timestamp
       );
     `)
   },
@@ -14,7 +14,23 @@ export default [
       CREATE TABLE magic_links (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         token_hash TEXT NOT NULL UNIQUE,
-        email TEXT NOT NULL
+        user_id INTEGER NOT NULL,
+        FOREIGN KEY (user_id)
+          REFERENCES users (id)
+      );
+    `)
+  },
+  (db: DatabaseSync) => {
+    db.exec(`
+      CREATE TABLE seizures (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        substance TEXT NOT NULL,
+        amount TEXT NOT NULL,
+        seized_on date NOT NULL,
+        reported_on date NOT NULL,
+        user_id INTEGER NOT NULL,
+        FOREIGN KEY (user_id)
+          REFERENCES users (id)
       );
     `)
   },

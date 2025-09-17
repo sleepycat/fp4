@@ -7,6 +7,11 @@ import { monotonicUlid } from "jsr:@std/ulid"
 import { isExpired } from "./isExpired.ts"
 import { sha256 } from "./sha256.ts"
 
+type User = {
+  id: number
+  email: string
+  created_at: string
+}
 const { rateLimitDirectiveTypeDefs, rateLimitDirectiveTransformer } =
   rateLimitDirective()
 
@@ -48,7 +53,7 @@ export const schema = rateLimitDirectiveTransformer(createSchema({
           return abiguousMessage
         }
         // DONE: Find or create user/email in sqlite
-        db.findOrCreateUser(email)
+        const user = db.findOrCreateUser(email) as User
         // DONE: generate monotonic ulid (monotonicUlid) token: tokens at the same time are still different
         // ulid: embedded timestamp + 80 bits of randomness.
         // This allows us skip storing created_at/expires_at values.
@@ -57,7 +62,7 @@ export const schema = rateLimitDirectiveTransformer(createSchema({
         const hash = await sha256(ulid)
         // DONE: CREATE TABLE magic_links (id: integer primary key autoincrement, token_hash: text, email: string);
         // DONE: Save hashed token (not the token) to sqlite. This prevents leaks of tokens (assuming a breach of the database).
-        db.saveHash({ hash, email })
+        db.saveHash({ hash, user_id: user?.id })
         // TODO: send email using notification.canada.ca. Use client provided by graphql context.
         const _response = await sendMagicLink(email, { code: ulid })
         console.log({ email, isAllowed: isAllowed(email), ulid, hash })
@@ -84,9 +89,6 @@ export const schema = rateLimitDirectiveTransformer(createSchema({
         // * no records == invalid
         // * user_id returned == valid
         // * immediately delete in same transation
-        // XXX: we seem to be able to reuse tokens here.
-        // Write a test that validates the same token twice. It shouldn't be possible.
-        // this should delete what it finds!
         const { err, results } = db.consumeMagicLink(hash)
         console.log({
           err,
@@ -106,7 +108,7 @@ export const schema = rateLimitDirectiveTransformer(createSchema({
         await request.cookieStore?.set({
           // TODO: make this a variable if it's going to be used all over the place.
           name: "__Host-fp4auth", // __Host- prefix attaches the cookie to the host and not the registrable domain and requires https
-          value: await jwt.encrypt({ email: results?.email }), // TODO: need to pass expiry to align with cookie
+          value: await jwt.encrypt({ email: results?.email, user_id: 1 }), // TODO: need to pass expiry to align with cookie
           // expires: without explicit expiry, cookies are deleted when "the current session is over",
           // but browsers keep/restore browsing sessions making it unclear
           // when/if these cookies would expire https://issues.chromium.org/issues/40217179
