@@ -67,7 +67,7 @@ describe("dataAccessors()", () => {
       ).run(
         {
           substance: "iocaine powder",
-          amount: "100",
+          amount: 100,
           seized_on: "2025-09-16",
           reported_on: "2025-09-16",
           user_id: 1,
@@ -83,7 +83,7 @@ describe("dataAccessors()", () => {
         err: false,
         results: [
           {
-            amount: "100",
+            amount: 100,
             id: 1,
             reported_on: "2025-09-16",
             seized_on: "2025-09-16",

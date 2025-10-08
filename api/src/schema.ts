@@ -1,8 +1,13 @@
 import { Context } from "./types/Context.ts"
 import { createSchema } from "npm:graphql-yoga"
+import { GraphQLError } from "npm:graphql"
 import { rateLimitDirective } from "npm:graphql-rate-limit-directive"
-import { EmailAddressResolver } from "npm:graphql-scalars"
+import {
+  EmailAddressResolver,
+  PositiveFloatResolver,
+} from "npm:graphql-scalars"
 import { GraphQLULID } from "./ULID.ts"
+import { ISO8601Date } from "./ISO8601Date.ts"
 import { monotonicUlid } from "jsr:@std/ulid"
 import { isExpired } from "./isExpired.ts"
 import { sha256 } from "./sha256.ts"
@@ -12,6 +17,7 @@ type User = {
   email: string
   created_at: string
 }
+
 const { rateLimitDirectiveTypeDefs, rateLimitDirectiveTransformer } =
   rateLimitDirective()
 
@@ -21,13 +27,30 @@ export const schema = rateLimitDirectiveTransformer(createSchema({
     /* GraphQL */ `
     scalar EmailAddress
     scalar ULID
+    scalar ISO8601Date
+    scalar PositiveFloat
+
+    type DrugSeizureRecord {
+      substance: String
+      seizedOn: ISO8601Date
+      reportedOn: ISO8601Date
+      amount: PositiveFloat
+    }
 
     type Query {
       hello: String
-      seizures: String
+      seizures: [DrugSeizureRecord]
+    }
+
+    input DrugSeizureInput {
+      substance: String!
+      seizedOn: ISO8601Date!
+      reportedOn: ISO8601Date!
+      amount: PositiveFloat!
     }
 
     type Mutation {
+      reportDrugSeizure(input: DrugSeizureInput): String
       # Provide an email address to log in via magic links
       login(email: EmailAddress!): String @rateLimit(limit: 5, duration: 60)
       # Verify the token you recieved to create a session.
@@ -36,9 +59,53 @@ export const schema = rateLimitDirectiveTransformer(createSchema({
   `,
   ],
   resolvers: {
+    ISO8601Date,
     EmailAddress: EmailAddressResolver,
     ULID: GraphQLULID,
+    PositiveFloat: PositiveFloatResolver,
+    DrugSeizureRecord: {
+      // these exist because the column name has an underscore and the GraphQL schema is camelcase.
+      seizedOn: (parent) => parent.seized_on,
+      reportedOn: (parent) => parent.reported_on,
+    },
     Mutation: {
+      // NB: we're choosing a specific name here, instead of something generic
+      // like "reportSeizure" (of what?) or just "report" (anything?). The more
+      // generic the name is, the more likely you are to run into another usage
+      // of the term later... causing conflicts and likely deprecations.
+      reportDrugSeizure: async (
+        _parent,
+        { input },
+        { db, jwt, request }: Context,
+      ) => {
+        // TODO: Do cookie decoding once per request during context creation.
+        const cookie = await request.cookieStore?.get("__Host-fp4auth")
+        console.log({ reportCookie: cookie })
+        if (cookie) {
+          const { err, payload } = await jwt.decrypt(String(cookie?.value))
+          if (err) {
+            await request.cookieStore?.delete("__Host-fp4auth")
+          } else {
+            console.log({
+              authenticated: true,
+              cookie: cookie.value,
+              payload,
+            })
+            const response = db.addSeizure({
+              user_id: 1,
+              substance: input.substance,
+              amount: input.amount,
+              seized_on: input.seizedOn,
+              reported_on: input.reportedOn,
+            })
+            console.log({ input, response })
+            return "👍"
+          }
+        } else {
+          console.log({ authenticated: false, public: true })
+          return "not logged in. Public access only."
+        }
+      },
       login: async (
         _parent,
         { email },
@@ -107,17 +174,19 @@ export const schema = rateLimitDirectiveTransformer(createSchema({
         // * Path: '/'
         await request.cookieStore?.set({
           // TODO: make this a variable if it's going to be used all over the place.
-          name: "__Host-fp4auth", // __Host- prefix attaches the cookie to the host and not the registrable domain and requires https
+          name: "__Host-fp4auth", // __Host- prefix attaches the cookie to the host (foo.example.com) and not the registrable domain (example.com) *and* requires https
+          // XXX: Change this user_id: Hard coding this is just for testing.
           value: await jwt.encrypt({ email: results?.email, user_id: 1 }), // TODO: need to pass expiry to align with cookie
           // expires: without explicit expiry, cookies are deleted when "the current session is over",
           // but browsers keep/restore browsing sessions making it unclear
           // when/if these cookies would expire https://issues.chromium.org/issues/40217179
           // This is creating a unix timestamp + a days worth of milliseconds
-          expires: Date.now() + 60000, // one minute // one day: 86400000, // TODO: this needs some thinking.
+          expires: Date.now() + 86400000, // one day. 60000 is one minute.
           path: "/", // This controls the paths (example.com/foo/bar) the cookie will be sent to. '/' means all of them.
           domain: "", // no domain can be set when using __Host-
           secure: true, // secure (only send when using https)
           sameSite: "lax", // don't send from other sites
+          // XXX: revisit this. Will accessing this this be needed in the UI?
           // httpOnly: true, // do not make this cookie available to Javascript via document.cookie
         })
         return token
@@ -125,20 +194,27 @@ export const schema = rateLimitDirectiveTransformer(createSchema({
     },
     Query: {
       hello: () => "world",
-      seizures: async (_root, _args, { jwt, request }) => {
-        // TODO: simplify this. It's way to complicated.
+      seizures: async (_root, _args, { db, jwt, request }) => {
+        // TODO: Do cookie decoding once per request during context creation.
         const cookie = await request.cookieStore?.get("__Host-fp4auth")
         if (cookie) {
-          const { err, payload } = await jwt.decrypt(String(cookie?.value))
+          const { err } = await jwt.decrypt(String(cookie?.value))
           if (err) {
             await request.cookieStore?.delete("__Host-fp4auth")
           } else {
-            console.log({ authenticated: true, cookie: cookie.value, payload })
-            return "logged in!"
+            const results = db.getSeizures()
+            return results.results
           }
         } else {
-          console.log({ authenticated: false, public: true })
-          return "not logged in. Public access only."
+          throw new GraphQLError(
+            "Authentication required to access this resource.",
+            {
+              extensions: {
+                code: "UNAUTHENTICATED",
+                http: { status: 401 },
+              },
+            },
+          )
         }
       },
     },
