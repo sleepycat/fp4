@@ -150,7 +150,15 @@ export const schema = rateLimitDirectiveTransformer(createSchema({
         if (isExpired({ token, minutesTillExpiry: 15 })) {
           // just delete the old hash.
           db.deleteHash(hash)
-          return "Your token has expired."
+          throw new GraphQLError(
+            "Token expired.",
+            {
+              extensions: {
+                code: "EXPIRED_TOKEN",
+                http: { status: 401 },
+              },
+            },
+          )
         }
         // DONE: Look up hash in magic_links in transaction:
         // * no records == invalid

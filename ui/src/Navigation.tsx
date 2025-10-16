@@ -52,6 +52,15 @@ export default function Navigation() {
               return <NavLink to={translation}>{t`Drug Seizures`}</NavLink>;
             }}
           />
+          <Trans
+            id="/login"
+            render={({ translation }) => {
+              // TODO: This code works but typescript is big mad
+              // about the value assigned to the NavLink to prop
+              // @ts-expect-error Type 'ReactNode' is not assignable to type 'To'
+              return <NavLink to={translation}>{t`Login`}</NavLink>;
+            }}
+          />
         </div>
       </section>
     </nav>

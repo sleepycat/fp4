@@ -19,8 +19,11 @@
     "@lingui/core": "^5.4.1",
     "@lingui/react": "^5.4.1",
     "react": "^19.1.1",
+    "react-aria-components": "^1.13.0",
     "react-dom": "^19.1.1",
-    "react-router": "^7.8.2"
+    "react-error-boundary": "^6.0.0",
+    "react-router": "^7.9.4",
+    "urql": "^5.0.1"
   },
   "devDependencies": {
     "@biomejs/biome": "^2.0.6",
