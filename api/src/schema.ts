@@ -169,7 +169,7 @@ export const schema = rateLimitDirectiveTransformer(createSchema({
           err,
           token,
           hash,
-          email: results?.email,
+          results,
         })
 
         // XXX: Align jwt expiry with cookie expiry
@@ -181,10 +181,12 @@ export const schema = rateLimitDirectiveTransformer(createSchema({
         // * Expires: Set the cookie expiration to match the session's expires_at time.
         // * Path: '/'
         await request.cookieStore?.set({
-          // TODO: make this a variable if it's going to be used all over the place.
           name: "__Host-fp4auth", // __Host- prefix attaches the cookie to the host (foo.example.com) and not the registrable domain (example.com) *and* requires https
-          // XXX: Change this user_id: Hard coding this is just for testing.
-          value: await jwt.encrypt({ email: results?.email, user_id: 1 }), // TODO: need to pass expiry to align with cookie
+          value: await jwt.encrypt({
+            email: results?.email,
+            user_id: results!.id,
+          }),
+          // TODO: need to pass expiry to align with cookie
           // expires: without explicit expiry, cookies are deleted when "the current session is over",
           // but browsers keep/restore browsing sessions making it unclear
           // when/if these cookies would expire https://issues.chromium.org/issues/40217179
@@ -194,8 +196,7 @@ export const schema = rateLimitDirectiveTransformer(createSchema({
           domain: "", // no domain can be set when using __Host-
           secure: true, // secure (only send when using https)
           sameSite: "lax", // don't send from other sites
-          // XXX: revisit this. Will accessing this this be needed in the UI?
-          // httpOnly: true, // do not make this cookie available to Javascript via document.cookie
+          httpOnly: true, // do not make this cookie available to Javascript via document.cookie. Mitigates XXS.
         })
         return token
       },
