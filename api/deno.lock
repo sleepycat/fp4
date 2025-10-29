@@ -5,6 +5,7 @@
     "jsr:@gordonb/sqlite-migrate@0.1": "0.1.0",
     "jsr:@std/assert@^1.0.13": "1.0.14",
     "jsr:@std/assert@^1.0.14": "1.0.14",
+    "jsr:@std/async@^1.0.13": "1.0.15",
     "jsr:@std/crypto@*": "1.0.5",
     "jsr:@std/data-structures@^1.0.9": "1.0.9",
     "jsr:@std/encoding@*": "1.0.10",
@@ -26,7 +27,9 @@
     "npm:graphql-yoga@^5.15.1": "5.15.1_graphql@16.11.0",
     "npm:graphql@*": "16.11.0",
     "npm:jose@*": "6.0.13",
-    "npm:notifications-node-client@*": "8.2.1"
+    "npm:jose@6.1.0": "6.1.0",
+    "npm:notifications-node-client@*": "8.2.1",
+    "npm:notifications-node-client@^8.2.1": "8.2.1"
   },
   "jsr": {
     "@gordonb/sqlite-migrate@0.1.0": {
@@ -37,6 +40,9 @@
       "dependencies": [
         "jsr:@std/internal"
       ]
+    },
+    "@std/async@1.0.15": {
+      "integrity": "55d1d9d04f99403fe5730ab16bdcc3c47f658a6bf054cafb38a50f046238116e"
     },
     "@std/crypto@1.0.5": {
       "integrity": "0dcfbb319fe0bba1bd3af904ceb4f948cde1b92979ec1614528380ed308a3b40"
@@ -82,6 +88,7 @@
       "integrity": "a490169f5ccb0f3ae9c94fbc69d2cd43603f2cffb41713a85f99bbb0e3087cbc",
       "dependencies": [
         "jsr:@std/assert@^1.0.13",
+        "jsr:@std/async",
         "jsr:@std/data-structures",
         "jsr:@std/fs",
         "jsr:@std/internal",
@@ -432,6 +439,9 @@
     "jose@6.0.13": {
       "integrity": "sha512-Yms4GpbmdANamS51kKK6w4hRlKx8KTxbWyAAKT/MhUMtqbIqh5mb2HjhTNUbk7TFL8/MBB5zWSDohL7ed4k/UA=="
     },
+    "jose@6.1.0": {
+      "integrity": "sha512-TTQJyoEoKcC1lscpVDCSsVgYzUDg/0Bt3WE//WiTPK6uOCQC2KZS4MpugbMWt/zyjkopgZoXhZuCi00gLudfUA=="
+    },
     "jsonwebtoken@9.0.2": {
       "integrity": "sha512-PRp66vJ865SSqOlgqS8hujT5U4AOgMfhrwYIuIhfKaoSCZcirrmASQr8CX7cUg+RMih+hgznrjp99o+W4pJLHQ==",
       "dependencies": [
@@ -540,6 +550,7 @@
       "npm:@whatwg-node/server-plugin-cookies@^1.0.5",
       "npm:graphql-scalars@^1.24.2",
       "npm:graphql-yoga@^5.15.1",
+      "npm:jose@6.1.0",
       "npm:notifications-node-client@^8.2.1"
     ]
   }

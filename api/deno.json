@@ -11,6 +11,7 @@
     "@whatwg-node/server-plugin-cookies": "npm:@whatwg-node/server-plugin-cookies@^1.0.5",
     "graphql-scalars": "npm:graphql-scalars@^1.24.2",
     "graphql-yoga": "npm:graphql-yoga@^5.15.1",
+    "jose": "npm:jose@6.1.0",
     "notifications-node-client": "npm:notifications-node-client@^8.2.1"
   },
   "unstable": ["temporal"],
