@@ -1,7 +1,72 @@
-import { Server } from "./src/Server.ts"
+import { createYoga } from "graphql-yoga"
+import { useCookies } from "@whatwg-node/server-plugin-cookies"
+import type { Context } from "./src/types/Context.ts"
+import { GraphQLSchema } from "graphql"
+import type { YogaInitialContext } from "graphql-yoga"
 import { schema } from "./src/schema.ts"
-import { DatabaseSync } from "node:sqlite"
-import { createContext } from "./src/context.ts"
+import type { DatabaseSync } from "node:sqlite"
+import { EmailPersonalisation, NotifyClient } from "notifications-node-client"
+import { dataAccessors } from "./src/db.ts"
+import { useEncryptedJWT } from "./src/useEncryptedJWT.ts"
+import { allowList } from "./src/allowList.ts"
+
+// Define the context factory function type
+type ContextFactory = (initialContext: YogaInitialContext) => Context
+
+export function Server(
+  // The context prop is now a factory function
+  { context, schema }: { context: ContextFactory; schema: GraphQLSchema },
+) {
+  return createYoga({
+    schema,
+    graphiql: true,
+    landingPage: false,
+    plugins: [
+      useCookies(),
+    ],
+    // Pass the factory function directly to Yoga
+    context,
+  })
+}
+
+interface ContextDeps {
+  db: DatabaseSync
+  jwtSecret: string
+  jwtIssuer: string
+  allowedDomains: string
+  notifyApiKey: string
+  notifyTemplateId: string
+}
+
+export function createContext(
+  deps: ContextDeps,
+) {
+  const dbAccess = dataAccessors(deps.db)
+  const jwt = useEncryptedJWT({
+    base64secret: deps.jwtSecret,
+    enforce: { issuer: deps.jwtIssuer, audience: "fp4" },
+  })
+  const isAllowed = allowList(deps.allowedDomains)
+  const notifyClient = new NotifyClient(
+    "https://api.notification.canada.ca",
+    deps.notifyApiKey,
+  )
+
+  return function contextFactory(initialContext: YogaInitialContext): Context {
+    return {
+      ...initialContext,
+      db: dbAccess,
+      // Pass the whole jwt object
+      jwt,
+      isAllowed,
+      sendMagicLink(address: string, variables: EmailPersonalisation) {
+        return notifyClient.sendEmail(deps.notifyTemplateId, address, {
+          personalisation: variables,
+        })
+      },
+    }
+  }
+}
 
 // Functional core, imperative shell pattern:
 // Read from the environment here in the entry point,
