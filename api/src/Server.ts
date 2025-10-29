@@ -1,8 +1,8 @@
-import { createYoga } from "npm:graphql-yoga"
-import { useCookies } from "npm:@whatwg-node/server-plugin-cookies"
+import { createYoga } from "graphql-yoga"
+import { useCookies } from "@whatwg-node/server-plugin-cookies"
 import type { Context } from "../src/types/Context.ts"
-import { GraphQLSchema } from "npm:graphql"
-import type { YogaInitialContext } from "npm:graphql-yoga"
+import { GraphQLSchema } from "graphql"
+import type { YogaInitialContext } from "graphql-yoga"
 
 // Define the context factory function type
 type ContextFactory = (initialContext: YogaInitialContext) => Context

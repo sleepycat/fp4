@@ -10,6 +10,7 @@
     "jsr:@std/data-structures@^1.0.9": "1.0.9",
     "jsr:@std/encoding@*": "1.0.10",
     "jsr:@std/expect@*": "1.0.17",
+    "jsr:@std/expect@^1.0.17": "1.0.17",
     "jsr:@std/fs@^1.0.19": "1.0.19",
     "jsr:@std/internal@^1.0.10": "1.0.12",
     "jsr:@std/internal@^1.0.12": "1.0.12",
@@ -543,6 +544,7 @@
     "dependencies": [
       "jsr:@gordonb/sqlite-migrate@0.1",
       "jsr:@std/assert@^1.0.15",
+      "jsr:@std/expect@^1.0.17",
       "jsr:@std/testing@^1.0.16",
       "jsr:@std/ulid@1",
       "npm:@types/node@^24.9.2",

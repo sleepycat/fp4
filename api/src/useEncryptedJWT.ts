@@ -1,5 +1,4 @@
-import { Buffer } from "node:buffer"
-import * as jose from "npm:jose"
+import * as jose from "jose"
 
 // https://github.com/panva/jose/blob/2c519cce22b73983a00a0da24f4e319050598749/src/key/generate_secret.ts#L47
 type Algorithm =

@@ -1,9 +1,6 @@
-import type { YogaInitialContext } from "npm:graphql-yoga"
+import type { YogaInitialContext } from "graphql-yoga"
 import type { DatabaseSync } from "node:sqlite"
-import {
-  EmailPersonalisation,
-  NotifyClient,
-} from "npm:notifications-node-client"
+import { EmailPersonalisation, NotifyClient } from "notifications-node-client"
 import { dataAccessors } from "./db.ts"
 import { useEncryptedJWT } from "./useEncryptedJWT.ts"
 import { allowList } from "./allowList.ts"

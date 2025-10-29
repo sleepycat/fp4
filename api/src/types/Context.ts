@@ -1,6 +1,6 @@
-import type { YogaInitialContext } from "npm:graphql-yoga"
+import type { YogaInitialContext } from "graphql-yoga"
 import type { AllowListChecker } from "../allowList.ts"
-import { EmailPersonalisation } from "npm:notifications-node-client"
+import { EmailPersonalisation } from "notifications-node-client"
 import type { DataAccessors } from "../db.ts"
 import type { JwtFunctions } from "../useEncryptedJWT.ts"
 

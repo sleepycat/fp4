@@ -1,4 +1,4 @@
-import { GraphQLError, GraphQLScalarType, Kind } from "npm:graphql"
+import { GraphQLError, GraphQLScalarType, Kind } from "graphql"
 
 // Graphql-scalars Date scalar converts the value to a JS Date object at midnight UTC.
 // https://the-guild.dev/graphql/scalars/docs/scalars/date

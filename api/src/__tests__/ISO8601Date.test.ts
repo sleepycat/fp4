@@ -1,13 +1,12 @@
-import { describe, it } from "jsr:@std/testing/bdd"
-import { expect } from "jsr:@std/expect"
+import { describe, it } from "@std/testing/bdd"
+import { expect } from "@std/expect"
 import {
   graphql,
-  GraphQLError,
   GraphQLNonNull,
   GraphQLObjectType,
   GraphQLSchema,
   GraphQLString,
-} from "npm:graphql"
+} from "graphql"
 import { ISO8601Date } from "../ISO8601Date.ts"
 
 const schema = new GraphQLSchema({

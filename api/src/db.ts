@@ -1,5 +1,5 @@
 import { DatabaseSync, SQLOutputValue } from "node:sqlite"
-import { migrate as sqlitemigrate } from "jsr:@gordonb/sqlite-migrate"
+import { migrate as sqlitemigrate } from "@gordonb/sqlite-migrate"
 import migrations from "../migrations.ts"
 import { StatementResultingChanges } from "node:sqlite"
 
