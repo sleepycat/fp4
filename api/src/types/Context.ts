@@ -15,4 +15,5 @@ export interface Context extends YogaInitialContext {
   db: DataAccessors
   jwt: JwtFunctions
   sendMagicLink: SendMagicLink
+  authenticatedUser?: any
 }

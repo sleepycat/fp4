@@ -4,17 +4,17 @@ import type { Context } from "./src/types/Context.ts"
 import { GraphQLSchema } from "graphql"
 import type { YogaInitialContext } from "graphql-yoga"
 import { schema } from "./src/schema.ts"
-import type { DatabaseSync } from "node:sqlite"
+import { DatabaseSync } from "node:sqlite"
 import { EmailPersonalisation, NotifyClient } from "notifications-node-client"
 import { dataAccessors } from "./src/db.ts"
 import { useEncryptedJWT } from "./src/useEncryptedJWT.ts"
 import { allowList } from "./src/allowList.ts"
 
-// Define the context factory function type
-type ContextFactory = (initialContext: YogaInitialContext) => Context
+type ContextFactory = (
+  initialContext: YogaInitialContext,
+) => Context | Promise<Context>
 
 export function Server(
-  // The context prop is now a factory function
   { context, schema }: { context: ContextFactory; schema: GraphQLSchema },
 ) {
   return createYoga({
@@ -24,7 +24,6 @@ export function Server(
     plugins: [
       useCookies(),
     ],
-    // Pass the factory function directly to Yoga
     context,
   })
 }
@@ -52,7 +51,22 @@ export function createContext(
     deps.notifyApiKey,
   )
 
-  return function contextFactory(initialContext: YogaInitialContext): Context {
+  return async function contextFactory(
+    initialContext: YogaInitialContext,
+  ): Promise<Context> {
+    const authenticatedUser = await (async () => {
+      try {
+        const cookie = await initialContext.request.cookieStore?.get(
+          "__Host-fp4auth",
+        )
+        if (cookie === undefined) return undefined
+        const { payload } = await jwt.decrypt(cookie.value)
+        return payload
+      } catch (e) {
+        console.error(e)
+        return undefined
+      }
+    })()
     return {
       ...initialContext,
       db: dbAccess,
@@ -64,6 +78,7 @@ export function createContext(
           personalisation: variables,
         })
       },
+      authenticatedUser,
     }
   }
 }

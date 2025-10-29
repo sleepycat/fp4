@@ -76,31 +76,22 @@ export const schema = rateLimitDirectiveTransformer(createSchema({
       reportDrugSeizure: async (
         _parent,
         { input },
-        { db, jwt, request }: Context,
+        { db, authenticatedUser }: Context,
       ) => {
-        // TODO: Do cookie decoding once per request during context creation.
-        const cookie = await request.cookieStore?.get("__Host-fp4auth")
-        console.log({ reportCookie: cookie })
-        if (cookie) {
-          const { err, payload } = await jwt.decrypt(String(cookie?.value))
-          if (err) {
-            await request.cookieStore?.delete("__Host-fp4auth")
-          } else {
-            console.log({
-              authenticated: true,
-              cookie: cookie.value,
-              payload,
-            })
-            const response = db.addSeizure({
-              user_id: 1,
-              substance: input.substance,
-              amount: input.amount,
-              seized_on: input.seizedOn,
-              reported_on: input.reportedOn,
-            })
-            console.log({ input, response })
-            return "👍"
-          }
+        if (authenticatedUser) {
+          console.log({
+            authenticated: true,
+            payload: authenticatedUser,
+          })
+          const response = db.addSeizure({
+            user_id: authenticatedUser.user_id,
+            substance: input.substance,
+            amount: input.amount,
+            seized_on: input.seizedOn,
+            reported_on: input.reportedOn,
+          })
+          console.log({ input, response })
+          return "👍"
         } else {
           console.log({ authenticated: false, public: true })
           return "not logged in. Public access only."
@@ -203,17 +194,10 @@ export const schema = rateLimitDirectiveTransformer(createSchema({
     },
     Query: {
       hello: () => "world",
-      seizures: async (_root, _args, { db, jwt, request }) => {
-        // TODO: Do cookie decoding once per request during context creation.
-        const cookie = await request.cookieStore?.get("__Host-fp4auth")
-        if (cookie) {
-          const { err } = await jwt.decrypt(String(cookie?.value))
-          if (err) {
-            await request.cookieStore?.delete("__Host-fp4auth")
-          } else {
-            const results = db.getSeizures()
-            return results.results
-          }
+      seizures: (_root, _args, { db, authenticatedUser }) => {
+        if (authenticatedUser) {
+          const results = db.getSeizures()
+          return results.results
         } else {
           throw new GraphQLError(
             "Authentication required to access this resource.",
