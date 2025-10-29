@@ -2,8 +2,11 @@ import { Context } from "./types/Context.ts"
 import { createSchema } from "graphql-yoga"
 import { GraphQLError } from "graphql"
 import { rateLimitDirective } from "graphql-rate-limit-directive"
-import { EmailAddressResolver, PositiveFloatResolver } from "graphql-scalars"
-import { GraphQLULID } from "./ULID.ts"
+import {
+  EmailAddressResolver,
+  PositiveFloatResolver,
+  ULIDResolver,
+} from "graphql-scalars"
 import { ISO8601Date } from "./ISO8601Date.ts"
 import { monotonicUlid } from "@std/ulid"
 import { isExpired } from "./isExpired.ts"
@@ -58,7 +61,7 @@ export const schema = rateLimitDirectiveTransformer(createSchema({
   resolvers: {
     ISO8601Date,
     EmailAddress: EmailAddressResolver,
-    ULID: GraphQLULID,
+    ULID: ULIDResolver,
     PositiveFloat: PositiveFloatResolver,
     DrugSeizureRecord: {
       // these exist because the column name has an underscore and the GraphQL schema is camelcase.
