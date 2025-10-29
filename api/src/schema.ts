@@ -1,14 +1,11 @@
 import { Context } from "./types/Context.ts"
-import { createSchema } from "npm:graphql-yoga"
-import { GraphQLError } from "npm:graphql"
-import { rateLimitDirective } from "npm:graphql-rate-limit-directive"
-import {
-  EmailAddressResolver,
-  PositiveFloatResolver,
-} from "npm:graphql-scalars"
+import { createSchema } from "graphql-yoga"
+import { GraphQLError } from "graphql"
+import { rateLimitDirective } from "graphql-rate-limit-directive"
+import { EmailAddressResolver, PositiveFloatResolver } from "graphql-scalars"
 import { GraphQLULID } from "./ULID.ts"
 import { ISO8601Date } from "./ISO8601Date.ts"
-import { monotonicUlid } from "jsr:@std/ulid"
+import { monotonicUlid } from "@std/ulid"
 import { isExpired } from "./isExpired.ts"
 import { sha256 } from "./sha256.ts"
 
