@@ -1,4 +1,4 @@
-// import TitleBar from "./TitleBar.tsx";
+import TitleBar from "./TitleBar.tsx";
 import LocaleSwitcher from "./LocaleSwitcher.tsx";
 import { t } from "@lingui/core/macro";
 import { Trans } from "@lingui/react/macro";
@@ -43,6 +43,7 @@ export default function Header() {
         </div>
         <LocaleSwitcher />
       </section>
+      <TitleBar />
     </header>
   );
 }
