@@ -19,21 +19,26 @@ msgid "/"
 msgstr "/"
 
 #. js-lingui-explicit-id
-#: src/Navigation.tsx:46
-msgid "drug-seizures"
-msgstr "saisies-de-drogues"
+#: src/Navigation.tsx:43
+msgid "/drug-seizures"
+msgstr "/saisies-de-drogues"
 
-#: src/index.tsx:57
+#. js-lingui-explicit-id
+#: src/Navigation.tsx:49
+msgid "/login"
+msgstr "/se-connecter"
+
+#: src/Footer.tsx:39
+#: src/routes/About.tsx:6
 msgid "About"
 msgstr "A propos"
 
-#: src/index.tsx:29
-#: src/index.tsx:32
-#: src/Navigation.tsx:52
+#: src/Navigation.tsx:46
+#: src/routes/DrugSeizures.tsx:31
 msgid "Drug Seizures"
 msgstr "Saisies de drogues"
 
-#: src/index.tsx:78
+#: src/index.tsx:29
 msgid "drug-seizures"
 msgstr "saisies-de-drogues"
 
@@ -41,35 +46,47 @@ msgstr "saisies-de-drogues"
 msgid "Federal Policing"
 msgstr "Police fédérale"
 
-#: src/index.tsx:60
+#: src/routes/About.tsx:9
 msgid "Federal Policing is a core responsibility of the RCMP that is carried out in every province and territory in Canada, as well as internationally."
 msgstr "Les services de la Police fédérale constituent une responsabilité essentielle de la GRC et sont fournis dans chaque province et territoire au pays ainsi qu'à l'étranger."
 
-#: src/index.tsx:45
+#: src/routes/Home.tsx:10
 msgid "Federal Policing protects Canada, its people, and its interests against the greatest domestic and international criminal threats, including risks to national security, transnational and serious organized crime, and cybercrime."
 msgstr "La Police fédérale protège le Canada, sa population et ses intérêts contre les plus grandes menaces criminelles au pays et à l'étranger, y compris les risques pour la sécurité nationale, le crime organisé et transnational et la cybercriminalité."
 
-#: src/index.tsx:42
-#: src/Navigation.tsx:43
+#: src/Navigation.tsx:40
+#: src/routes/Home.tsx:7
 msgid "Home"
 msgstr "Accueil"
 
-#: src/index.tsx:16
+#: src/Navigation.tsx:52
 msgid "Login"
 msgstr "Se connecter"
 
-#: src/index.tsx:19
-msgid "Please log in."
-msgstr "Veuillez vous connecter."
+#: src/routes/Verify.tsx:29
+msgid "Login Failed"
+msgstr "Échec de connexion"
+
+#: src/routes/Login.tsx:31
+msgid "Please enter your Police service email below to receive a login link."
+msgstr "Veuillez saisir votre adresse e-mail professionnelle de la police ci-dessous pour recevoir un lien de connexion."
+
+#: src/routes/Verify.tsx:33
+msgid "Please try to <0>login</0> again."
+msgstr "Veuillez réessayer de vous <0>connecter</0>."
 
 #: src/Header.tsx:38
 msgid "Royal Canadian<0/>Mounted Police"
 msgstr "Gendarmerie royale<0/>du Canada"
 
-#: src/Footer.tsx:26
+#: src/Footer.tsx:46
 msgid "Symbol of the Government of Canada"
 msgstr "Symbole du gouvernement du Canada"
 
 #: src/Header.tsx:29
 msgid "The logo of the RCMP"
 msgstr "Le logo de la GRC"
+
+#: src/routes/Verify.tsx:63
+msgid "Your authentication token has expired."
+msgstr "Votre jeton d'authentification a expiré."

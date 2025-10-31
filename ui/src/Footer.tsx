@@ -1,14 +1,12 @@
+import { Trans } from "@lingui/react/macro";
+import { NavLink } from "react-router";
 import { t } from "@lingui/core/macro";
 import Wordmark from "./Wordmark.tsx";
 import { css } from "../styled-system/css/css.mjs";
 
 export default function Footer() {
-  const footerClass = css`
-    padding: 2em;
-    /* background-color: #f1f2f3; */
-    border-top: 1px solid rgb(51, 51, 51);
-  `;
   const contentClass = css`
+    padding: 1.3em;
     margin: auto;
     width: 75%;
     display: flex;
@@ -16,18 +14,44 @@ export default function Footer() {
     justify-content: right;
   `;
 
-  const canadaRed = css`
-    fill: #ea2d37;
-  `;
   return (
-    <footer className={footerClass}>
+    <footer>
+      <section
+        className={css`
+          background-color: token(colors.black);
+          width: 100%;
+          color: token(colors.white);
+        `}
+      >
+        <ul
+          className={css`
+            color: token(colors.white);
+            width: 75%;
+            padding: 1.3em;
+            margin: auto;
+            width: 75%;
+            display: flex;
+            flex-shrink: 0;
+          `}
+        >
+          <li>
+            <NavLink to="about">
+              <Trans>About</Trans>
+            </NavLink>
+          </li>
+        </ul>
+      </section>
       <section className={contentClass}>
         <Wordmark.SVG
           aria-label={t`Symbol of the Government of Canada`}
           role="img"
           width="10em"
         >
-          <Wordmark.Flag className={canadaRed} />
+          <Wordmark.Flag
+            className={css`
+              fill: token(colors.canadared);
+            `}
+          />
           <Wordmark.Text />
         </Wordmark.SVG>
       </section>
