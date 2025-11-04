@@ -21,7 +21,9 @@ These design patterns (like the "recognizer pattern" and GraphQL implementation 
 ![Langsec's recognizer pattern and graphql](langsec-recognizer-pattern.svg)
 
 Having these patterns appear in a relatively mainstream technology creates an opportunity to democratize these patterns.
-By adopting GraphQL along with some opinionated usage patterns, it should be possible to build APIs that function like a [cross-domain solution](https://www.canada.ca/en/services/defence/nationalsecurity/sensitive-technology-list.html#:~:text=Cross%20domain%20solutions,from%20connected%20networks.), something this project is hoping to pioneer.
+By adopting GraphQL along with some opinionated usage patterns, it should be possible to build APIs that function like a [cross-domain solution](https://www.canada.ca/en/services/defence/nationalsecurity/sensitive-technology-list.html#:~:text=Cross%20domain%20solutions,from%20connected%20networks.), something this project is hoping to pioneer
+
+Alternatives considered: ReST APIs (standard patterns tend to be a security free-for-all, design is backend focused, mapping urls > sql > json, rather than solving problems that block API users from iterating quickly)
 
 ### Using Javascript
 
@@ -30,9 +32,13 @@ The selection of JavaScript as the implementation language serves a few purposes
 * Lower risk: The use of memory safe languages represents a [significant risk reduction](https://www.memorysafety.org/docs/memory-safety/#how-common-are-memory-safety-vulnerabilities), and even among memory safe languages [JavaScript compares favourably](https://securityflawheatmap.veracode.com/p/1).
 * Modern security features: New JavaScript runtimes are pioneering new security features. This API is built with [Deno](https://deno.com/), which [sandboxes code by default](https://deno.com/blog/deno-protects-npm-exploits#secure-by-default) to protect against supply-chain attacks and other hacks. These security features are not yet built into other languages.
 
+Alternatives considered: Python/Java (Having a different language on the backend creates a hard split in the team between backend and frontend dev, leading to larger teams over all which makes product teams extremely expensive)
+
 ### Using Sqlite
 
 This API is assumed to be a read-heavy workload with low-to-no concurrent writes. This usage profile allows the use of [Sqlite for a simple, operations-free database](https://dev.to/shayy/everyone-is-wrong-about-sqlite-4gjf).
+
+Alternatives considered: [CloudNativePG](https://cloudnative-pg.io/)(operationally complicated), [Rqlite](https://rqlite.io/)(looks promising, didn't love the JavaScript client. Still worth exploring.)
 
 ## Debugging Notifications
 
