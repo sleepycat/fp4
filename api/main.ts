@@ -28,58 +28,20 @@ export function Server(
   })
 }
 
-interface ContextDeps {
-  db: DatabaseSync
-  jwtSecret: string
-  jwtIssuer: string
-  allowedDomains: string
-  notifyApiKey: string
-  notifyTemplateId: string
-}
-
-export function createContext(
-  deps: ContextDeps,
+export async function getAuthenticatedUser(
+  request: YogaInitialContext["request"],
+  jwt: ReturnType<typeof useEncryptedJWT>,
 ) {
-  const dbAccess = dataAccessors(deps.db)
-  const jwt = useEncryptedJWT({
-    base64secret: deps.jwtSecret,
-    enforce: { issuer: deps.jwtIssuer, audience: "fp4" },
-  })
-  const isAllowed = allowList(deps.allowedDomains)
-  const notifyClient = new NotifyClient(
-    "https://api.notification.canada.ca",
-    deps.notifyApiKey,
-  )
-
-  return async function contextFactory(
-    initialContext: YogaInitialContext,
-  ): Promise<Context> {
-    const authenticatedUser = await (async () => {
-      try {
-        const cookie = await initialContext.request.cookieStore?.get(
-          "__Host-fp4auth",
-        )
-        if (cookie === undefined) return undefined
-        const { payload } = await jwt.decrypt(cookie.value)
-        return payload
-      } catch (e) {
-        console.error(e)
-        return undefined
-      }
-    })()
-    return {
-      ...initialContext,
-      db: dbAccess,
-      // Pass the whole jwt object
-      jwt,
-      isAllowed,
-      sendMagicLink(address: string, variables: EmailPersonalisation) {
-        return notifyClient.sendEmail(deps.notifyTemplateId, address, {
-          personalisation: variables,
-        })
-      },
-      authenticatedUser,
-    }
+  try {
+    const cookie = await request.cookieStore?.get(
+      "__Host-fp4auth",
+    )
+    if (cookie === undefined) return undefined
+    const { payload } = await jwt.decrypt(cookie.value)
+    return payload
+  } catch (e) {
+    console.error(e)
+    return undefined
   }
 }
 
@@ -92,7 +54,7 @@ function getEnv(key: string): string {
 }
 
 // Functional core, imperative shell pattern:
-// Read from the environment here in the application entry point,
+// Only read from the environment here in the application entry point,
 // not elsewhere deeper in the application.
 const DB_PATH = getEnv("DB_PATH")
 const jwtSecret = getEnv("JWT_SECRET")
@@ -106,16 +68,38 @@ const HOST = Deno.env.get("HOST") || "0.0.0.0"
 // Dependency Injection for database functions allows for easy testing.
 export const db: DatabaseSync = new DatabaseSync(DB_PATH)
 
+// Helpers that will be injected into the context
+const dbAccess = dataAccessors(db)
+const jwt = useEncryptedJWT({
+  base64secret: jwtSecret,
+  enforce: { issuer: jwtIssuer, audience: "fp4" },
+})
+const isAllowed = allowList(allowedDomains)
+const notifyClient = new NotifyClient(
+  "https://api.notification.canada.ca",
+  notifyApiKey,
+)
+
 const server = Server({
   schema,
-  context: createContext({
-    db,
-    jwtSecret,
-    jwtIssuer,
-    allowedDomains,
-    notifyApiKey,
-    notifyTemplateId,
-  }),
+  context: async (initialContext) => {
+    const authenticatedUser = await getAuthenticatedUser(
+      initialContext.request,
+      jwt,
+    )
+    return {
+      ...initialContext,
+      db: dbAccess,
+      jwt,
+      isAllowed,
+      sendMagicLink(address: string, variables: EmailPersonalisation) {
+        return notifyClient.sendEmail(notifyTemplateId, address, {
+          personalisation: variables,
+        })
+      },
+      authenticatedUser,
+    }
+  },
 })
 
 // @ts-expect-error the types are broken for this function.
