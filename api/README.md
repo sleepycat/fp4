@@ -4,6 +4,9 @@
 
 * In the Government of Canada [APIs are mandatory](https://www.canada.ca/en/government/system/digital-government/policies-standards/government-canada-enterprise-architecture-framework.html#toc04:~:text=expose%20services%2C%20including%20existing%20ones%2C%20through%20APIs).
 * Departments are required to [consume the APIs they build](https://www.canada.ca/en/government/system/digital-government/digital-government-innovations/government-canada-standards-apis.html#:~:text=Consume%20what%20you%20build) in order to validate the API is usable.
+* "[design systems as highly modular and loosely coupled services](https://www.canada.ca/en/government/system/digital-government/policies-standards/government-canada-enterprise-architecture-framework.html#:~:text=design%20systems%20as%20highly%20modular%20and%20loosely%20coupled%20services)"
+* "[ensure automated testing occurs](https://www.canada.ca/en/government/system/digital-government/policies-standards/government-canada-enterprise-architecture-framework.html#:~:text=ensure%20automated%20testing%20occurs)"
+ 
 
 ## Architectural Decisions
 
@@ -23,7 +26,7 @@ By adopting GraphQL along with some opinionated usage patterns, it should be pos
 ### Using Javascript
 
 The selection of JavaScript as the implementation language serves a few purposes:
-* Smaller team size: [Once considered mythical](https://frontendmasters.com/guides/front-end-handbook/2017/practice/myth.html#:~:text=given%20that%20JavaScript%20has%20infiltrated%20all%20layers%20of%20a%20technology%20stack%20(e.g.%20React%2C%20node.js%2C%20express%2C%20couchDB%2C%20gulp.js%20etc...)%20finding%20a%20full%2Dstack%20JS%20developer%20who%20can%20code%20the%20front%2Dend%20and%20back%2Dend%20is%20becoming%20less%20mythical.%20Typically%2C%20these%20full%20stack%20developers%20only%20deal%20with%20JavaScript.), full stack development is achievable wherever you can use a single language for both frontend and backend. This allows for smaller, more agile teams.
+* Smaller team size: [Once considered mythical](https://frontendmasters.com/guides/front-end-handbook/2017/practice/myth.html#:~:text=given%20that%20JavaScript%20has%20infiltrated%20all%20layers%20of%20a%20technology%20stack%20(e.g.%20React%2C%20node.js%2C%20express%2C%20couchDB%2C%20gulp.js%20etc...)%20finding%20a%20full%2Dstack%20JS%20developer%20who%20can%20code%20the%20front%2Dend%20and%20back%2Dend%20is%20becoming%20less%20mythical.%20Typically%2C%20these%20full%20stack%20developers%20only%20deal%20with%20JavaScript.), full stack development is achievable wherever you can use a single language for both frontend and backend. This allows for smaller, more agile teams; important for making the product team model viable.
 * Lower risk: The use of memory safe languages represents a [significant risk reduction](https://www.memorysafety.org/docs/memory-safety/#how-common-are-memory-safety-vulnerabilities), and even among memory safe languages [JavaScript compares favourably](https://securityflawheatmap.veracode.com/p/1).
 * Modern security features: New JavaScript runtimes are pioneering new security features. This API is built with [Deno](https://deno.com/), which [sandboxes code by default](https://deno.com/blog/deno-protects-npm-exploits#secure-by-default) to protect against supply-chain attacks and other hacks. These security features are not yet built into other languages.
 
