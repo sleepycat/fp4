@@ -3,14 +3,6 @@ import { expect } from "@std/expect"
 import { graphql } from "graphql"
 import { schema } from "../schema.ts"
 import type { Context } from "../types/Context.ts"
-import type { CookieStore } from "@whatwg-node/cookie-store/"
-
-// Augment the global Request interface
-declare global {
-  interface Request {
-    cookieStore?: CookieStore
-  }
-}
 
 describe("graphql schema", () => {
   describe("query.seizures", () => {
