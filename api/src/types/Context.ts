@@ -4,6 +4,8 @@ import { EmailPersonalisation } from "notifications-node-client"
 import type { DataAccessors } from "../db.ts"
 import type { JwtFunctions } from "../useEncryptedJWT.ts"
 
+// TODO: Is this used somewhere?
+// Probably this should live somewhere else or be deleted.
 type SendMagicLink = (
   emailAddress: string,
   variables: EmailPersonalisation,
@@ -17,3 +19,7 @@ export interface Context extends YogaInitialContext {
   sendMagicLink: SendMagicLink
   authenticatedUser?: any
 }
+
+export type ContextFactory = (
+  initialContext: YogaInitialContext,
+) => Context | Promise<Context>

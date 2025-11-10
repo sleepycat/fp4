@@ -1,7 +1,3 @@
-import { createYoga } from "graphql-yoga"
-import { useCookies } from "@whatwg-node/server-plugin-cookies"
-import type { Context } from "./src/types/Context.ts"
-import { GraphQLSchema } from "graphql"
 import type { YogaInitialContext } from "graphql-yoga"
 import { schema } from "./src/schema.ts"
 import { DatabaseSync } from "node:sqlite"
@@ -9,41 +5,7 @@ import { EmailPersonalisation, NotifyClient } from "notifications-node-client"
 import { dataAccessors } from "./src/db.ts"
 import { useEncryptedJWT } from "./src/useEncryptedJWT.ts"
 import { allowList } from "./src/allowList.ts"
-
-type ContextFactory = (
-  initialContext: YogaInitialContext,
-) => Context | Promise<Context>
-
-export function Server(
-  { context, schema }: { context: ContextFactory; schema: GraphQLSchema },
-) {
-  return createYoga({
-    schema,
-    graphiql: true,
-    landingPage: false,
-    plugins: [
-      useCookies(),
-    ],
-    context,
-  })
-}
-
-export async function getAuthenticatedUser(
-  request: YogaInitialContext["request"],
-  jwt: ReturnType<typeof useEncryptedJWT>,
-) {
-  try {
-    const cookie = await request.cookieStore?.get(
-      "__Host-fp4auth",
-    )
-    if (cookie === undefined) return undefined
-    const { payload } = await jwt.decrypt(cookie.value)
-    return payload
-  } catch (e) {
-    console.error(e)
-    return undefined
-  }
-}
+import { Server } from "./src/Server.ts"
 
 function getEnv(key: string): string {
   const value = Deno.env.get(key)
@@ -66,10 +28,10 @@ const PORT = Deno.env.get("PORT") || "3000"
 const HOST = Deno.env.get("HOST") || "0.0.0.0"
 
 // Dependency Injection for database functions allows for easy testing.
-export const db: DatabaseSync = new DatabaseSync(DB_PATH)
+export const database: DatabaseSync = new DatabaseSync(DB_PATH)
 
 // Helpers that will be injected into the context
-const dbAccess = dataAccessors(db)
+const db = dataAccessors(database)
 const jwt = useEncryptedJWT({
   base64secret: jwtSecret,
   enforce: { issuer: jwtIssuer, audience: "fp4" },
@@ -80,16 +42,35 @@ const notifyClient = new NotifyClient(
   notifyApiKey,
 )
 
+export async function getAuthenticatedUser(
+  request: YogaInitialContext["request"],
+  jwt: ReturnType<typeof useEncryptedJWT>,
+) {
+  try {
+    const cookie = await request.cookieStore?.get(
+      "__Host-fp4auth",
+    )
+    if (cookie === undefined) return undefined
+    const { payload } = await jwt.decrypt(cookie.value)
+    return payload
+  } catch (e) {
+    console.error(e)
+    return undefined
+  }
+}
+
 const server = Server({
   schema,
   context: async (initialContext) => {
+    // This function is executed *per request*. If a jwt is present
+    // it will be decrypted and placed in the context as "authenticatedUser"
     const authenticatedUser = await getAuthenticatedUser(
       initialContext.request,
       jwt,
     )
     return {
-      ...initialContext,
-      db: dbAccess,
+      ...initialContext, // the usual stuff like request/response
+      db,
       jwt,
       isAllowed,
       sendMagicLink(address: string, variables: EmailPersonalisation) {
