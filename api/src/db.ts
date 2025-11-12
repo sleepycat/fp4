@@ -61,6 +61,10 @@ export function dataAccessors(db: DatabaseSync) {
       const select = db.prepare("SELECT * FROM users WHERE id = @user_id;")
 
       const user_id = consume.get({ hash })
+      // We keep hashes of the tokens we issue.
+      // if we didn't find a matching hash, someone passed a token they just made up themselves.
+      if (!user_id) throw new Error("invalid token")
+
       const user = select.get({ user_id: Number(user_id?.user_id) })
 
       db.exec("COMMIT;")

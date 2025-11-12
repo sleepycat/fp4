@@ -97,7 +97,7 @@ export const schema = createSchema({
         { email },
         { db, isAllowed, sendMagicLink, rateLimiter }: Context,
       ) => {
-        // DONE: Check rate limit for this email. Prevent griefing/spam.
+        // Check rate limit for this email. Prevent griefing/spam.
         try {
           rateLimiter.login.consume(email, 1)
         } catch (_e: unknown) {
@@ -114,45 +114,54 @@ export const schema = createSchema({
 
         const abiguousMessage =
           "If an account exists for this email, a login link has been sent."
-        // DONE: Split user from domain and check if email is on allow-list: Check ALLOWED_DOMAINS env var. return generic message
+
+        // Split user from domain and check if email is on allow-list: Check ALLOWED_DOMAINS env var. return generic message
         if (!isAllowed(email)) {
-          // DONE: Return generic message to prevent user enumeration:
+          // Return generic message to prevent user enumeration:
           return abiguousMessage
         }
-        // DONE: Find or create user/email in sqlite
+
+        // Find or create user/email in sqlite
         const user = db.findOrCreateUser(email) as User
-        // DONE: generate monotonic ulid (monotonicUlid) token: tokens at the same time are still different
+
+        // generate monotonic ulid (monotonicUlid) token: tokens generated at the same time are still different
         // ulid: embedded timestamp + 80 bits of randomness.
         // This allows us skip storing created_at/expires_at values.
-        // DONE: hashed_token = SHA256(monoticUlid())
         const ulid = monotonicUlid()
         const hash = await sha256(ulid)
-        // DONE: CREATE TABLE magic_links (id: integer primary key autoincrement, token_hash: text, email: string);
-        // DONE: Save hashed token (not the token) to sqlite. This prevents leaks of tokens (assuming a breach of the database).
+
+        // Save hashed token (not the token) to sqlite.
+        // This prevents leaks of tokens (assuming a breach of the database)
+        // and serves as a record of the tokens we've issued.
         db.saveHash({ hash, user_id: user?.id })
-        // TODO: send email using notification.canada.ca. Use client provided by graphql context.
+
         const _response = await sendMagicLink(email, { code: ulid })
         // console.log({ email, isAllowed: isAllowed(email), ulid, hash })
-        // DONE: Return generic message to prevent user enumeration:
+        // : Return generic message to prevent user enumeration:
         return abiguousMessage
       },
-      // TODO: change type from string to ulid
       verify: async (
         _parent,
         { token }: { token: string },
         { db, jwt, request },
       ) => {
-        //NOTE: We used to have rate limiting on this function but it's not
+        // NOTE: We used to have rate limiting on this function but it's not
         // super meaningful limiting on the token since the actual threat is guessing which
         // implies rate limiting the source IP.
         // We don't have access to the source IP address (graphql yoga doesn't expose it).
 
-        // DONE: Create a SHA-256 Hash of token
+        // Create a SHA-256 Hash of token: we can store these without worrying about leakage.
         const hash = await sha256(token)
 
-        // Stateless expiry check because of ulid timestamp: decodeTime(token) reject if older than 15 minutes.
+        // First check: Is this old/expired?
+
+        // Stateless expiry check!
+        // Ulids embed a timestamp along with some randomness.
+        // That means that we can simply:
+        // decodeTime(token) and reject if older than 15 minutes.
         if (isExpired({ token, minutesTillExpiry: 15 })) {
-          // just delete the old hash.
+          // It's old.
+          // just delete the old hash if one exists.
           db.deleteHash(hash)
           throw new GraphQLError(
             "Token expired.",
@@ -164,13 +173,15 @@ export const schema = createSchema({
             },
           )
         }
-        // DONE: Look up hash in magic_links in transaction:
-        // * no records == invalid
-        // * user_id returned == valid
+
+        // Second check: Did we issue this token?
+
+        // Look up hash in magic_links in transaction:
+        // * no records == invalid: someone just made thier own ulid and sent it to us
+        // * user_id returned == valid: we issued a token and stored the user id/hash
         // * immediately delete in same transation
         const { err, results } = db.consumeMagicLink(hash)
         if (err) {
-          console.log({ err, token, hash, results })
           throw new GraphQLError(
             "Invalid token.",
             {
@@ -181,6 +192,10 @@ export const schema = createSchema({
             },
           )
         }
+        // If we got here the token was:
+        // 1) issued by us
+        // 2) less than 15 minutes ago.
+
         // console.log({
         //   token,
         //   hash,
@@ -189,7 +204,7 @@ export const schema = createSchema({
 
         // XXX: Align jwt expiry with cookie expiry
         //
-        // DONE: Set cookie with expiry date:
+        // Set auth cookie with expiry date:
         // * HttpOnly: True (prevents JavaScript access, to prevent theft/reuse)
         // * Secure: True (only sent over HTTPS)
         // * SameSite: 'Strict' or 'Lax' (CSRF protection: can't be sent from another site)

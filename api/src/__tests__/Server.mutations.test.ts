@@ -8,7 +8,7 @@ import migrations from "../../migrations.ts"
 import { dataAccessors } from "../db.ts"
 import { DatabaseSync } from "node:sqlite"
 import { sha256 } from "../sha256.ts"
-import { monotonicUlid } from "@std/ulid"
+import { monotonicUlid, ulid } from "@std/ulid"
 import { generateSecret, useEncryptedJWT } from "../useEncryptedJWT.ts"
 
 const key = await generateSecret()
@@ -164,6 +164,54 @@ describe("Server", () => {
         expect(response.headers.getSetCookie()).toMatch(
           /__Host-fp4auth=\w+/,
         )
+      })
+    })
+
+    describe("with no previously issued tokens", () => {
+      it("returns an error", async () => {
+        // Arrange
+
+        // Add collaborator objects to the context
+        const mockContext = {
+          jwt: useEncryptedJWT({
+            base64secret: key,
+            enforce: { issuer: "https://example.com", audience: "fp4" },
+          }),
+          db,
+        } as unknown as Context
+        // make our graphql server
+        const yoga = Server({
+          schema,
+          context: () => mockContext,
+        })
+
+        // Act
+        // Query the api: we expect the response to set a auth cookie in the reponse
+        const response = await yoga.fetch("http://yoga/graphql", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            query: `
+              mutation ($token: ULID!) {
+                verify(token: $token)
+              }
+            `,
+            variables: { token: ulid() }, // Generate one and try!
+          }),
+        })
+
+        const results = await response.json()
+
+        // Assert
+        // expect an auth cookie to have been set
+        expect(results).toMatchObject({
+          data: { verify: null },
+          errors: [
+            expect.objectContaining({
+              message: expect.stringContaining("Invalid token."),
+            }),
+          ],
+        })
       })
     })
   })
