@@ -6,6 +6,14 @@ import { dataAccessors } from "./src/db.ts"
 import { useEncryptedJWT } from "./src/useEncryptedJWT.ts"
 import { allowList } from "./src/allowList.ts"
 import { Server } from "./src/Server.ts"
+import { RateLimiterMemory } from "rate-limiter-flexible"
+
+const rateLimiter = {
+  login: new RateLimiterMemory({
+    points: 5, // 6 points
+    duration: 60, // Per minute
+  }),
+}
 
 function getEnv(key: string): string {
   const value = Deno.env.get(key)
@@ -52,7 +60,7 @@ export async function getAuthenticatedUser(
     )
     if (cookie === undefined) return undefined
     const { payload } = await jwt.decrypt(cookie.value)
-    return payload
+    return payload as { user_id: number; email: string }
   } catch (e) {
     console.error(e)
     return undefined
@@ -68,11 +76,13 @@ const server = Server({
       initialContext.request,
       jwt,
     )
+
     return {
       ...initialContext, // the usual stuff like request/response
       db,
       jwt,
       isAllowed,
+      rateLimiter,
       sendMagicLink(address: string, variables: EmailPersonalisation) {
         return notifyClient.sendEmail(notifyTemplateId, address, {
           personalisation: variables,

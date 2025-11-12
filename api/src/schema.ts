@@ -1,7 +1,6 @@
 import { Context } from "./types/Context.ts"
 import { createSchema } from "graphql-yoga"
 import { GraphQLError } from "graphql"
-import { rateLimitDirective } from "graphql-rate-limit-directive"
 import {
   EmailAddressResolver,
   PositiveFloatResolver,
@@ -18,12 +17,8 @@ type User = {
   created_at: string
 }
 
-const { rateLimitDirectiveTypeDefs, rateLimitDirectiveTransformer } =
-  rateLimitDirective()
-
-export const schema = rateLimitDirectiveTransformer(createSchema({
+export const schema = createSchema({
   typeDefs: [
-    rateLimitDirectiveTypeDefs,
     /* GraphQL */ `
     scalar EmailAddress
     scalar ULID
@@ -52,9 +47,9 @@ export const schema = rateLimitDirectiveTransformer(createSchema({
     type Mutation {
       reportDrugSeizure(input: DrugSeizureInput): String
       # Provide an email address to log in via magic links
-      login(email: EmailAddress!): String @rateLimit(limit: 5, duration: 60)
+      login(email: EmailAddress!): String
       # Verify the token you recieved to create a session.
-      verify(token: ULID!): String @rateLimit(limit: 5, duration: 60)
+      verify(token: ULID!): String
     }
   `,
   ],
@@ -73,7 +68,7 @@ export const schema = rateLimitDirectiveTransformer(createSchema({
       // like "reportSeizure" (of what?) or just "report" (anything?). The more
       // generic the name is, the more likely you are to run into another usage
       // of the term later... causing conflicts and likely deprecations.
-      reportDrugSeizure: async (
+      reportDrugSeizure: (
         _parent,
         { input },
         { db, authenticatedUser }: Context,
@@ -100,9 +95,23 @@ export const schema = rateLimitDirectiveTransformer(createSchema({
       login: async (
         _parent,
         { email },
-        { db, isAllowed, sendMagicLink }: Context,
+        { db, isAllowed, sendMagicLink, rateLimiter }: Context,
       ) => {
-        // DONE: Check rate limit. Handled at the schema level by graphql-rate-limit-directive to prevent brute force guessing.
+        // DONE: Check rate limit for this email. Prevent griefing/spam.
+        try {
+          rateLimiter.login.consume(email, 1)
+        } catch (_e: unknown) {
+          throw new GraphQLError(
+            "Rate limit exceeded. Too many requests.",
+            {
+              extensions: {
+                code: "RATE_LIMITED",
+                http: { status: 429 },
+              },
+            },
+          )
+        }
+
         const abiguousMessage =
           "If an account exists for this email, a login link has been sent."
         // DONE: Split user from domain and check if email is on allow-list: Check ALLOWED_DOMAINS env var. return generic message
@@ -123,7 +132,7 @@ export const schema = rateLimitDirectiveTransformer(createSchema({
         db.saveHash({ hash, user_id: user?.id })
         // TODO: send email using notification.canada.ca. Use client provided by graphql context.
         const _response = await sendMagicLink(email, { code: ulid })
-        console.log({ email, isAllowed: isAllowed(email), ulid, hash })
+        // console.log({ email, isAllowed: isAllowed(email), ulid, hash })
         // DONE: Return generic message to prevent user enumeration:
         return abiguousMessage
       },
@@ -133,11 +142,15 @@ export const schema = rateLimitDirectiveTransformer(createSchema({
         { token }: { token: string },
         { db, jwt, request },
       ) => {
-        // Stateless expiry check because of ulid timestamp: decodeTime(token) reject if older than 15 minutes.
+        //NOTE: We used to have rate limiting on this function but it's not
+        // super meaningful limiting on the token since the actual threat is guessing which
+        // implies rate limiting the source IP.
+        // We don't have access to the source IP address (graphql yoga doesn't expose it).
 
         // DONE: Create a SHA-256 Hash of token
         const hash = await sha256(token)
 
+        // Stateless expiry check because of ulid timestamp: decodeTime(token) reject if older than 15 minutes.
         if (isExpired({ token, minutesTillExpiry: 15 })) {
           // just delete the old hash.
           db.deleteHash(hash)
@@ -156,12 +169,23 @@ export const schema = rateLimitDirectiveTransformer(createSchema({
         // * user_id returned == valid
         // * immediately delete in same transation
         const { err, results } = db.consumeMagicLink(hash)
-        console.log({
-          err,
-          token,
-          hash,
-          results,
-        })
+        if (err) {
+          console.log({ err, token, hash, results })
+          throw new GraphQLError(
+            "Invalid token.",
+            {
+              extensions: {
+                code: "INVALID_TOKEN",
+                http: { status: 401 },
+              },
+            },
+          )
+        }
+        // console.log({
+        //   token,
+        //   hash,
+        //   results,
+        // })
 
         // XXX: Align jwt expiry with cookie expiry
         //
@@ -212,4 +236,4 @@ export const schema = rateLimitDirectiveTransformer(createSchema({
       },
     },
   },
-}))
+})

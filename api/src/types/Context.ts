@@ -3,6 +3,7 @@ import type { AllowListChecker } from "../allowList.ts"
 import { EmailPersonalisation } from "notifications-node-client"
 import type { DataAccessors } from "../db.ts"
 import type { JwtFunctions } from "../useEncryptedJWT.ts"
+import type { RateLimiterMemory } from "rate-limiter-flexible"
 
 // TODO: Is this used somewhere?
 // Probably this should live somewhere else or be deleted.
@@ -17,7 +18,8 @@ export interface Context extends YogaInitialContext {
   db: DataAccessors
   jwt: JwtFunctions
   sendMagicLink: SendMagicLink
-  authenticatedUser?: any
+  rateLimiter: { login: RateLimiterMemory }
+  authenticatedUser?: { user_id: number; email: string }
 }
 
 export type ContextFactory = (

@@ -24,8 +24,6 @@
     "npm:@whatwg-node/cookie-store@~0.2.3": "0.2.3",
     "npm:@whatwg-node/server-plugin-cookies@*": "1.0.5",
     "npm:@whatwg-node/server-plugin-cookies@^1.0.5": "1.0.5",
-    "npm:graphql-rate-limit-directive@*": "2.0.6_@graphql-tools+utils@10.9.1__graphql@16.11.0_graphql@16.11.0_rate-limiter-flexible@5.0.5",
-    "npm:graphql-rate-limit-directive@^2.0.6": "2.0.6_@graphql-tools+utils@10.9.1__graphql@16.11.0_graphql@16.11.0_rate-limiter-flexible@5.0.5",
     "npm:graphql-scalars@*": "1.25.0_graphql@16.11.0",
     "npm:graphql-scalars@^1.25.0": "1.25.0_graphql@16.11.0",
     "npm:graphql-yoga@*": "5.16.0_graphql@16.11.0",
@@ -34,7 +32,8 @@
     "npm:graphql@^16.11.0": "16.11.0",
     "npm:jose@^6.1.0": "6.1.0",
     "npm:notifications-node-client@*": "8.2.1",
-    "npm:notifications-node-client@^8.2.1": "8.2.1"
+    "npm:notifications-node-client@^8.2.1": "8.2.1",
+    "npm:rate-limiter-flexible@^8.2.0": "8.2.0"
   },
   "jsr": {
     "@gordonb/sqlite-migrate@0.1.0": {
@@ -383,14 +382,6 @@
     "gopd@1.2.0": {
       "integrity": "sha512-ZUKRh6/kUFoAiTAtTYPZJ3hw9wNxx+BIBOijnlG9PnrJsCcSjs1wyyD6vJpaYtgnzDrKYRSqf3OO6Rfa93xsRg=="
     },
-    "graphql-rate-limit-directive@2.0.6_@graphql-tools+utils@10.9.1__graphql@16.11.0_graphql@16.11.0_rate-limiter-flexible@5.0.5": {
-      "integrity": "sha512-2EYUwaVEsRfxZFyXEKse+EZ3xxLXHxN7ssIFoBt0GBNagWbIVhP5wG1mv1oEOp9CvDlSdC/hcM5zbhNMwAjYqw==",
-      "dependencies": [
-        "@graphql-tools/utils",
-        "graphql",
-        "rate-limiter-flexible"
-      ]
-    },
     "graphql-scalars@1.25.0_graphql@16.11.0": {
       "integrity": "sha512-b0xyXZeRFkne4Eq7NAnL400gStGqG/Sx9VqX0A05nHyEbv57UJnWKsjNnrpVqv5e/8N1MUxkt0wwcRXbiyKcFg==",
       "dependencies": [
@@ -517,8 +508,8 @@
     "proxy-from-env@1.1.0": {
       "integrity": "sha512-D+zkORCbA9f1tdWRK0RaCR3GPv50cMxcrz4X8k5LTSUD1Dkw47mKJEZQNunItRTkWwgtaUSo1RVFRIG9ZXiFYg=="
     },
-    "rate-limiter-flexible@5.0.5": {
-      "integrity": "sha512-+/dSQfo+3FYwYygUs/V2BBdwGa9nFtakDwKt4l0bnvNB53TNT++QSFewwHX9qXrZJuMe9j+TUaU21lm5ARgqdQ=="
+    "rate-limiter-flexible@8.2.0": {
+      "integrity": "sha512-lzpvMBP6GpCJftWP90RHzhCAAPFnO3BKaE6STNc6tPsu/uF6Y7kZDczV45a4Ms/H+5G2qqPFp8kg0l8gxCxcsw=="
     },
     "safe-buffer@5.2.1": {
       "integrity": "sha512-rp3So07KcdmmKbGvgaNxQSJr7bGVSVk5S9Eq1F+ppbRo70+YeaDxkw5Dd8NPN+GD6bjnYm2VuPuCXmpuYvmCXQ=="
@@ -537,6 +528,26 @@
       "integrity": "sha512-IGjKp/o0NL3Bso1PymYURCJxMPNAf/ILOpendP9f5B6e1rTJgdgiOvgfoT8VxCAdY+Wisb9uhGaJJf3yZ2V9nw=="
     }
   },
+  "redirects": {
+    "https://deno.land/std/http/server.ts": "https://deno.land/std@0.224.0/http/server.ts",
+    "https://esm.sh/graphql-http/lib/use/fetch": "https://esm.sh/graphql-http@1.22.4/lib/use/fetch",
+    "https://esm.sh/graphql@^16.10.0?target=denonext": "https://esm.sh/graphql@16.12.0?target=denonext"
+  },
+  "remote": {
+    "https://deno.land/std@0.224.0/async/delay.ts": "f90dd685b97c2f142b8069082993e437b1602b8e2561134827eeb7c12b95c499",
+    "https://deno.land/std@0.224.0/http/server.ts": "f9313804bf6467a1704f45f76cb6cd0a3396a3b31c316035e6a4c2035d1ea514",
+    "https://dev.jspm.io/npm:@jspm/core@2.0.1/nodelibs/process": "1d9259731556e49ecd4ce8180667577a1bdc68844dc89a5a1e71d34cad4a455d",
+    "https://dev.jspm.io/npm:@jspm/core@2/nodelibs/process": "2b4c3a7c167d15d326b5e420b8a9f9c6ab7e1fedcfd1910b9b5a25ed5bb43579",
+    "https://dev.jspm.io/npm:rate-limiter-flexible@3.0.6!cjs": "1342319a809811e489e6c58a2ba65bc8e5091be841735f9b2e0d8a95b8ab28ae",
+    "https://dev.jspm.io/npm:rate-limiter-flexible@3.0.6/_/-bomCPlA.js": "455ad361d69114b003ad8f63f0925fcacd4c01900ba2c25651012da164d63b12",
+    "https://dev.jspm.io/rate-limiter-flexible": "b5f80e391baa7d53b172dc827a24ad0eda3fcebafc333f625a181682aca4801b",
+    "https://esm.sh/graphql-http@1.22.4/denonext/lib/handler.mjs": "80b59137d7e46002316c719bc13d0643232aca46b896fb1c875ce223fa2de562",
+    "https://esm.sh/graphql-http@1.22.4/denonext/lib/use/fetch.mjs": "efc03d87d545bbc8261fb7a4987e2f13b2e3b62b06a0982666972f90e1ce1848",
+    "https://esm.sh/graphql-http@1.22.4/denonext/lib/utils.mjs": "5fa63765c21523345dd2ab9244f6a47a1dd8a3084043960df647ab7c6d1279a4",
+    "https://esm.sh/graphql-http@1.22.4/lib/use/fetch": "dd2cb68c0bf8197158467cb7af228ea187b2101bcd7e268b77846172196e5dcf",
+    "https://esm.sh/graphql@16.12.0/denonext/graphql.mjs": "38136071c92cef34a730be53b1589200ec3daa434171c5dac4208ee4c69efa2c",
+    "https://esm.sh/graphql@16.12.0?target=denonext": "91e3c6e2aa3a1cbf3ad1ac583a9fa8c19aec6b26c833d68d59d793b6e566e7e2"
+  },
   "workspace": {
     "dependencies": [
       "jsr:@gordonb/sqlite-migrate@0.1",
@@ -547,12 +558,12 @@
       "npm:@types/node@^24.9.2",
       "npm:@whatwg-node/cookie-store@~0.2.3",
       "npm:@whatwg-node/server-plugin-cookies@^1.0.5",
-      "npm:graphql-rate-limit-directive@^2.0.6",
       "npm:graphql-scalars@^1.25.0",
       "npm:graphql-yoga@^5.16.0",
       "npm:graphql@^16.11.0",
       "npm:jose@^6.1.0",
-      "npm:notifications-node-client@^8.2.1"
+      "npm:notifications-node-client@^8.2.1",
+      "npm:rate-limiter-flexible@^8.2.0"
     ]
   }
 }
