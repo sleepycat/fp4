@@ -16,8 +16,9 @@
     "panda:init": "panda init --postcss"
   },
   "dependencies": {
-    "@lingui/core": "^5.4.1",
-    "@lingui/react": "^5.4.1",
+    "@lingui/babel-plugin-lingui-macro": "^5.6.0",
+    "@lingui/core": "^5.6.0",
+    "@lingui/react": "^5.6.0",
     "react": "^19.1.1",
     "react-aria-components": "^1.13.0",
     "react-dom": "^19.1.1",
@@ -27,7 +28,7 @@
   },
   "devDependencies": {
     "@biomejs/biome": "^2.0.6",
-    "@lingui/cli": "^5.4.1",
+    "@lingui/cli": "^5.6.0",
     "@lingui/swc-plugin": "^5.6.1",
     "@pandacss/dev": "^1.2.0",
     "@rsbuild/core": "^1.5.17",
