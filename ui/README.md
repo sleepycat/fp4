@@ -26,19 +26,14 @@ The Single Page Application (SPA) architecture was chosen to reduce complexity a
 
 ### Using Rspack/Rsbuild/Nodejs
 
-[Rspack](https://rspack.rs/)/[Rsbuild](https://rsbuild.rs/) is utilized to manage bundle size issues inherent in SPA architecture, enabling performant inclusion of web fonts and other assets through features like asset preloading. Rspack/Rsbuild need [Nodejs](https://nodejs.org) to run, but it should be possible to standardize on deno across the board.
-
-## Nota Bene
-
-Because of Rspacks support for asset preloading (used in the logo handling) this service uses [Nodejs](https://nodejs.org) instead of using [Deno](https://deno.com/) like the API.
-Ideally this would be resolved in favour of using Deno everywhere, but that will require figuring out a similar preloading scheme with [Denos esbuild based bundler](https://docs.deno.com/runtime/reference/bundling/) and a plugin like [esbuild-plugin-html](https://github.com/craftamap/esbuild-plugin-html)
+[Rspack](https://rspack.rs/)/[Rsbuild](https://rsbuild.rs/) is utilized to manage bundle size issues inherent in SPA architecture, enabling performant inclusion of web fonts and other assets through features like asset preloading.
 
 ## Setup
 
 Install the dependencies:
 
 ```bash
-npm install
+deno install
 ```
 
 ## Get started
@@ -46,19 +41,19 @@ npm install
 Start the dev server, and the app will be available at [http://localhost:3000](http://localhost:3000).
 
 ```bash
-npm dev
+deno task dev
 ```
 
 Build the app for production:
 
 ```bash
-npm build
+deno task build
 ```
 
 Preview the production build locally:
 
 ```bash
-npm preview
+deno task preview
 ```
 
 ## Learn more
