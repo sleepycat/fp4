@@ -1,10 +1,15 @@
-import { defineConfig } from "@rsbuild/core";
-import { pluginReact } from "@rsbuild/plugin-react";
+import { defineConfig } from "@rsbuild/core"
+import { pluginReact } from "@rsbuild/plugin-react"
 
 export default defineConfig({
   plugins: [
     pluginReact(),
   ],
+  dev: {
+    // Deno's node compat layer struggles with the socket optimizations
+    // used by Rspack's lazy compilation.
+    lazyCompilation: false,
+  },
   tools: {
     swc: {
       jsc: {
@@ -30,4 +35,4 @@ export default defineConfig({
       type: "all-assets",
     },
   },
-});
+})
