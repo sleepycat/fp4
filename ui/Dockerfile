@@ -1,8 +1,6 @@
-FROM alpine
-
-RUN apk add --update nodejs npm
+FROM denoland/deno:ubuntu-2.5.6
+# run as a nonroot user
+USER deno
 WORKDIR /app/ui
-COPY --chown=nonroot:nonroot . .
-RUN npm install --ci
-CMD ["npm", "run", "dev"]
-
+COPY --chown=deno:deno . .
+ENTRYPOINT ["/bin/deno"]

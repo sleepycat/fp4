@@ -24,9 +24,10 @@ services:
       target: /app/api
   ui:
     build: ./ui
+    user: "1000:1000"
     expose:
       - 3000
-    command: npm run dev
+    command: task dev
     volumes:
       - type: bind
         source: ./ui/

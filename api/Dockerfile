@@ -1,4 +1,4 @@
-FROM denoland/deno:alpine-2.4.5
+FROM denoland/deno:alpine-2.5.6
 ARG DB_PATH
 # run as a nonroot user
 USER deno
