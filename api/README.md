@@ -21,7 +21,11 @@ These design patterns (like the "recognizer pattern" and GraphQL implementation 
 ![Langsec's recognizer pattern and graphql](langsec-recognizer-pattern.svg)
 
 Having these patterns appear in a relatively mainstream technology creates an opportunity to democratize these patterns.
-By adopting GraphQL along with some opinionated usage patterns, it should be possible to build APIs that function like a [cross-domain solution](https://www.canada.ca/en/services/defence/nationalsecurity/sensitive-technology-list.html#:~:text=Cross%20domain%20solutions,from%20connected%20networks.), something this project is hoping to pioneer
+Using a GraphQL parser as the front door of this application has powerful security implications as described by [Momot, et al. (2016)](https://langsec.org/papers/langsec-cwes-secdev2016.pdf):
+
+> A correctly written parser is essentially equivalent to an application firewall.
+
+By adopting GraphQL along with some opinionated usage patterns (avoiding generic "String" inputs), it is possible to build APIs that function like a [cross-domain solution](https://www.canada.ca/en/services/defence/nationalsecurity/sensitive-technology-list.html#:~:text=Cross%20domain%20solutions,from%20connected%20networks.), something this project is hoping to pioneer.
 
 Alternatives considered: ReST APIs (standard patterns tend to be a security free-for-all, design is backend focused, mapping urls > sql > json, rather than solving problems that block API users from iterating quickly)
 
