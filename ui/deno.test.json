@@ -1,20 +1,8 @@
 {
-  "tasks": {
-    "build": "rsbuild build",
-    "check": "biome check --write",
-    "dev": "deno task rsbuild && deno task css",
-    "rsbuild": "rsbuild dev",
-    "css": "panda --watch",
-    "format": "biome format --write",
-    "preview": "rsbuild preview",
-    "extract": "lingui extract --clean",
-    "compile": "lingui compile",
-    "panda:init": "panda init --postcss",
-    "test": "deno test --allow-all --import-map=deno.test.json"
-  },
   "imports": {
     "@std/expect": "jsr:@std/expect@^1.0.17",
     "@std/testing": "jsr:@std/testing@^1.0.16",
+    "@std/testing/bdd": "jsr:@std/testing@^1.0.16/bdd",
     "@lingui/babel-plugin-lingui-macro": "npm:@lingui/babel-plugin-lingui-macro@^5.6.0",
     "@lingui/core": "npm:@lingui/core@^5.6.0",
     "@lingui/react": "npm:@lingui/react@^5.6.0",
@@ -22,6 +10,7 @@
     "@types/jsdom": "npm:@types/jsdom@^27.0.0",
     "jsdom": "npm:jsdom@^27.2.0",
     "react": "npm:react@19.1.1",
+    "react/jsx-runtime": "npm:react@19.1.1/jsx-runtime",
     "react-aria-components": "npm:react-aria-components@^1.13.0",
     "react-dom": "npm:react-dom@19.1.1",
     "react-error-boundary": "npm:react-error-boundary@^6.0.0",
@@ -34,15 +23,7 @@
     "@testing-library/dom": "npm:@testing-library/dom@^10.4.1",
     "@testing-library/react": "npm:@testing-library/react@^16.3.0",
     "@types/react": "npm:@types/react@^19.1.12",
-    "@types/react-dom": "npm:@types/react-dom@^19.1.9"
-  },
-  "nodeModulesDir": "auto",
-  "fmt": {
-    "options": {
-      "semiColons": false
-    }
-  },
-  "compilerOptions": {
-    "jsx": "react-jsx"
+    "@types/react-dom": "npm:@types/react-dom@^19.1.9",
+    "@lingui/react/macro": "./src/__tests__/mocks/lingui-macro-mock.tsx"
   }
 }

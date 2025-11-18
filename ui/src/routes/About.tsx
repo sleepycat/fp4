@@ -1,6 +1,6 @@
-import { Trans } from "@lingui/react/macro";
+import { Trans } from "@lingui/react/macro"
 
-const About = () => (
+export const About = () => (
   <>
     <h1>
       <Trans>About</Trans>
@@ -13,10 +13,11 @@ const About = () => (
       </Trans>
     </p>
   </>
-);
+)
+
 const AboutRoute = {
   path: "about",
   Component: About,
-};
+}
 
-export default AboutRoute;
+export default AboutRoute
