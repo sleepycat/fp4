@@ -1,4 +1,4 @@
-import type { YogaInitialContext } from "graphql-yoga"
+import { infoPrefix, type YogaInitialContext } from "graphql-yoga"
 import { schema } from "./src/schema.ts"
 import { DatabaseSync } from "node:sqlite"
 import { EmailPersonalisation, NotifyClient } from "notifications-node-client"
@@ -10,6 +10,10 @@ import { RateLimiterMemory } from "rate-limiter-flexible"
 
 const rateLimiter = {
   login: new RateLimiterMemory({
+    points: 5, // 6 points
+    duration: 60, // Per minute
+  }),
+  verify: new RateLimiterMemory({
     points: 5, // 6 points
     duration: 60, // Per minute
   }),
@@ -67,7 +71,7 @@ export async function getAuthenticatedUser(
   }
 }
 
-const server = Server({
+const yoga = Server({
   schema,
   context: async (initialContext) => {
     // This function is executed *per request*. If a jwt is present
@@ -93,16 +97,14 @@ const server = Server({
   },
 })
 
-// @ts-expect-error the types are broken for this function.
 Deno.serve(
-  {
-    hostname: HOST,
-    port: Number(PORT),
-    onListen: ({ hostname, port }: { hostname: string; port: number }) => {
-      console.info(
-        `Server is running on http://${hostname}:${port}${server.graphqlEndpoint} 🚀`,
-      )
-    },
-  },
-  server,
+  { hostname: HOST, port: Number(PORT) },
+  (request: Request, info) =>
+    // @ts-expect-error: request
+    // This second argument to the yoga server will be folded into the
+    // graphql context object. We're including the originating IP so
+    // we can do rate limiting in auth resolver.
+    yoga(request, {
+      remoteAddress: info.remoteAddr.hostname,
+    }),
 )

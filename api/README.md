@@ -54,3 +54,11 @@ curl -H 'Content-Type: application/json' \
  -d '{"template_id":"XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX","email_address":"test@example.com","personalisation":{"myvariable":"foo"}}' \
  'https://api.notification.canada.ca/v2/notifications/email'
 ```
+## Verifying rate limits
+
+Install the [ulid](https://github.com/technosophos/ulid) tool at the command line with `go install github.com/technosophos/ulid@latest`.
+Then you can trigger the rate limiting with this:
+
+```sh
+ for i in {1..20}; do curl 'http://localhost:3000/graphql' -H "content-type: application/json" -d "$(printf '{"query":"mutation ($token: ULID!){verify(token: $token)}","variables":{"token":"%s"}}' "$(ulid)")"; done
+```

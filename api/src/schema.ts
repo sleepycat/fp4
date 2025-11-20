@@ -99,9 +99,9 @@ export const schema = createSchema({
       ) => {
         // Check rate limit for this email. Prevent griefing/spam.
         try {
-          rateLimiter.login.consume(email, 1)
+          await rateLimiter.login.consume(email, 1)
         } catch (_e: unknown) {
-          throw new GraphQLError(
+          return new GraphQLError(
             "Rate limit exceeded. Too many requests.",
             {
               extensions: {
@@ -128,6 +128,7 @@ export const schema = createSchema({
         // ulid: embedded timestamp + 80 bits of randomness.
         // This allows us skip storing created_at/expires_at values.
         const ulid = monotonicUlid()
+        // console.log({ email, ulid })
         const hash = await sha256(ulid)
 
         // Save hashed token (not the token) to sqlite.
@@ -143,12 +144,25 @@ export const schema = createSchema({
       verify: async (
         _parent,
         { token }: { token: string },
-        { db, jwt, request },
+        { db, jwt, request, rateLimiter, remoteAddress },
       ) => {
-        // NOTE: We used to have rate limiting on this function but it's not
-        // super meaningful limiting on the token since the actual threat is guessing which
-        // implies rate limiting the source IP.
-        // We don't have access to the source IP address (graphql yoga doesn't expose it).
+        // remoteAddr will be here in production. If so, rate limit against that.
+        if (remoteAddress) {
+          // rate limit this function to prevent guessing.
+          try {
+            await rateLimiter.login.consume(remoteAddress, 1)
+          } catch (_e: unknown) {
+            return new GraphQLError(
+              "Rate limit exceeded. Too many requests.",
+              {
+                extensions: {
+                  code: "RATE_LIMITED",
+                  http: { status: 429 },
+                },
+              },
+            )
+          }
+        }
 
         // Create a SHA-256 Hash of token: we can store these without worrying about leakage.
         const hash = await sha256(token)

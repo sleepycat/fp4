@@ -18,8 +18,9 @@ export interface Context extends YogaInitialContext {
   db: DataAccessors
   jwt: JwtFunctions
   sendMagicLink: SendMagicLink
-  rateLimiter: { login: RateLimiterMemory }
+  rateLimiter: { login: RateLimiterMemory; verify: RateLimiterMemory }
   authenticatedUser?: { user_id: number; email: string }
+  remoteAddress?: string
 }
 
 export type ContextFactory = (
