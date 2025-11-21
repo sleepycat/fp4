@@ -36,18 +36,20 @@ describe("Server", () => {
         // set up a spy object
         const sendMagicLink = fn(() => {})
 
-        // pass in the collaborator objects
-        const mockContext = {
-          sendMagicLink,
-          isAllowed: () => true, // pretend test@example.com is allowed
-          rateLimiter: {
-            login: { consume: fn() },
-          },
-          db,
-        } as unknown as Context
         const yoga = Server({
           schema,
-          context: () => mockContext,
+          context: () => {
+            // pass in the collaborator objects
+            return {
+              sendMagicLink,
+              remoteAddress: "127.0.0.1",
+              isAllowed: () => true, // pretend test@example.com is allowed
+              rateLimiter: {
+                login: { consume: fn() },
+              },
+              db,
+            } as unknown as Context
+          },
         })
 
         await yoga.fetch("http://yoga/graphql", {
@@ -69,24 +71,88 @@ describe("Server", () => {
   })
 
   describe("mutations.login", () => {
+    describe("when the users email is permitted by isAllowed", () => {
+      describe("when the rate limiter rejects the request", () => {
+        it("returns an error", async () => {
+          const yoga = Server({
+            schema,
+            context: () => {
+              return {
+                sendMagicLink: fn(),
+                isAllowed: () => true, // pretend test@example.com is allowed
+                remoteAddress: "127.0.0.1",
+                rateLimiter: {
+                  login: {
+                    // Mock object mimicing the API of RateLimiterMemory from rate-limiter-flexible:
+                    // https://github.com/animir/node-rate-limiter-flexible?tab=readme-ov-file#basic-example
+                    consume: fn(
+                      // indicating rate limit exceeded.
+                      () => Promise.reject("nope"),
+                    ),
+                  },
+                },
+                db,
+              } as unknown as Context
+            },
+          })
+
+          // This should get blocked:
+          const second = await yoga.fetch("http://yoga/graphql", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              query: `
+              mutation ($email: EmailAddress!) {
+                login(email: $email)
+              }
+            `,
+              variables: { email: "test@example.com" },
+            }),
+          })
+
+          const seconddata = await second.json()
+
+          expect(seconddata.errors).toBeDefined()
+          expect(seconddata.errors[0]).toMatchObject({
+            message: expect.stringContaining("Rate limit"),
+          })
+        })
+      })
+    })
+  })
+
+  describe("mutations.login", () => {
     describe("when the users email domain not allowed", () => {
       it("returns a deliberately ambiguous message to prevent account enumeration", async () => {
-        // pass in the collaborator objects
-        const mockContext = {
-          sendMagicLink: fn(),
-          isAllowed: () => false, //❌ nope!
-          rateLimiter: {
-            login: { consume: fn() },
-            verify: { consume: fn() },
-          },
-          db,
-        } as unknown as Context
-
+        // Arrange
         const yoga = Server({
           schema,
-          context: () => mockContext,
+          context: () => {
+            // pass in the collaborator objects
+            return {
+              sendMagicLink: fn(),
+              isAllowed: () => false, //❌ nope!
+              remoteAddress: "127.0.0.1",
+              rateLimiter: {
+                login: {
+                  // Mock object mimicing the API of RateLimiterMemory from rate-limiter-flexible:
+                  // https://github.com/animir/node-rate-limiter-flexible?tab=readme-ov-file#basic-example
+                  consume: fn(
+                    // first call to consume returns something truthy
+                    () => true,
+                    // second call to consume throws indicating rate limit exceeded.
+                    () => {
+                      throw new Error("nope")
+                    },
+                  ),
+                },
+              },
+              db,
+            } as unknown as Context
+          },
         })
 
+        // Act
         const response = await yoga.fetch("http://yoga/graphql", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -102,6 +168,7 @@ describe("Server", () => {
 
         const results = await response.json()
 
+        // Assert
         expect(results).toEqual(expect.objectContaining({
           data: { login: expect.stringMatching(/If an account exists/) },
         }))
@@ -130,18 +197,19 @@ describe("Server", () => {
           user_id: user!.id,
         })
 
-        // Add collaborator objects to the context
-        const mockContext = {
-          jwt: useEncryptedJWT({
-            base64secret: key,
-            enforce: { issuer: "https://example.com", audience: "fp4" },
-          }),
-          db,
-        } as unknown as Context
         // make our graphql server
         const yoga = Server({
           schema,
-          context: () => mockContext,
+          context: () => {
+            // Add collaborator objects to the context
+            return {
+              jwt: useEncryptedJWT({
+                base64secret: key,
+                enforce: { issuer: "https://example.com", audience: "fp4" },
+              }),
+              db,
+            } as unknown as Context
+          },
         })
 
         // Act
@@ -170,23 +238,22 @@ describe("Server", () => {
     describe("with no previously issued tokens", () => {
       it("returns an error", async () => {
         // Arrange
-
-        // Add collaborator objects to the context
-        const mockContext = {
-          jwt: useEncryptedJWT({
-            base64secret: key,
-            enforce: { issuer: "https://example.com", audience: "fp4" },
-          }),
-          db,
-        } as unknown as Context
-        // make our graphql server
         const yoga = Server({
           schema,
-          context: () => mockContext,
+          context: () => {
+            // Add collaborator objects to the context
+            return {
+              jwt: useEncryptedJWT({
+                base64secret: key,
+                enforce: { issuer: "https://example.com", audience: "fp4" },
+              }),
+              db,
+            } as unknown as Context
+          },
         })
 
         // Act
-        // Query the api: we expect the response to set a auth cookie in the reponse
+        // If we generate our own ulid, will the API set an auth cookie?
         const response = await yoga.fetch("http://yoga/graphql", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -203,7 +270,12 @@ describe("Server", () => {
         const results = await response.json()
 
         // Assert
-        // expect an auth cookie to have been set
+
+        // No auth cookie header should be set
+        expect(response.headers.getSetCookie()).not.toMatch(
+          /__Host-fp4auth=\w+/,
+        )
+        // We should get an error about our self-issued token:
         expect(results).toMatchObject({
           data: { verify: null },
           errors: [

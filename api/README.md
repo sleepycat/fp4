@@ -54,11 +54,22 @@ curl -H 'Content-Type: application/json' \
  -d '{"template_id":"XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX","email_address":"test@example.com","personalisation":{"myvariable":"foo"}}' \
  'https://api.notification.canada.ca/v2/notifications/email'
 ```
-## Verifying rate limits
+## Exploring rate limiting
 
-Install the [ulid](https://github.com/technosophos/ulid) tool at the command line with `go install github.com/technosophos/ulid@latest`.
-Then you can trigger the rate limiting with this:
+This functionality is covered by our automated tests but it is occasionally useful to poke at this manually.
+
+### Manual testing mutation.verify
+
+Install the [ulid](https://github.com/technosophos/ulid) tool at the command line with `go install github.com/technosophos/ulid@latest`. Then you can trigger the rate limiting with this:
 
 ```sh
  for i in {1..20}; do curl 'http://localhost:3000/graphql' -H "content-type: application/json" -d "$(printf '{"query":"mutation ($token: ULID!){verify(token: $token)}","variables":{"token":"%s"}}' "$(ulid)")"; done
 ```
+
+### Manual testing mutation.login
+
+For testing the login function you will want to install the [faker-cli](https://github.com/dacort/faker-cli) with `pip install --user faker-cli` (so it installs the binary in ~/.local/bin) and then use it to generate fake emails in a loop:
+```sh
+ for i in {1..20}; do curl 'http://localhost:3000/graphql' -H "content-type: application/json" -d "$(printf '{"query":"mutation ($email: EmailAddress!){login(email: $email)}","variables":{"email":"%s"}}' "$(fake -f json email | jq -r .email)")"; done
+```
+

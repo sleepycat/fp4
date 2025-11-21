@@ -95,21 +95,23 @@ export const schema = createSchema({
       login: async (
         _parent,
         { email },
-        { db, isAllowed, sendMagicLink, rateLimiter }: Context,
+        { db, isAllowed, sendMagicLink, rateLimiter, remoteAddress }: Context,
       ) => {
-        // Check rate limit for this email. Prevent griefing/spam.
-        try {
-          await rateLimiter.login.consume(email, 1)
-        } catch (_e: unknown) {
-          return new GraphQLError(
-            "Rate limit exceeded. Too many requests.",
-            {
-              extensions: {
-                code: "RATE_LIMITED",
-                http: { status: 429 },
+        if (remoteAddress) {
+          // Check rate limit for this email. Prevent griefing/spam.
+          try {
+            await rateLimiter.login.consume(remoteAddress, 1)
+          } catch (_e: unknown) {
+            throw new GraphQLError(
+              "Rate limit exceeded. Too many requests.",
+              {
+                extensions: {
+                  code: "RATE_LIMITED",
+                  http: { status: 429 },
+                },
               },
-            },
-          )
+            )
+          }
         }
 
         const abiguousMessage =
@@ -136,7 +138,21 @@ export const schema = createSchema({
         // and serves as a record of the tokens we've issued.
         db.saveHash({ hash, user_id: user?.id })
 
-        const _response = await sendMagicLink(email, { code: ulid })
+        try {
+          const _response = await sendMagicLink(email, { code: ulid })
+        } catch (e: unknown) {
+          if (e instanceof Error) {
+            console.error({
+              notify:
+                `Attempted to send magic link to ${email}. Notify responded with: ${e.message}`,
+            })
+          } else {
+            console.error({
+              notify:
+                `Attempted to send magic link to ${email}. Notify responded with: ${e}`,
+            })
+          }
+        }
         // console.log({ email, isAllowed: isAllowed(email), ulid, hash })
         // : Return generic message to prevent user enumeration:
         return abiguousMessage
@@ -152,7 +168,7 @@ export const schema = createSchema({
           try {
             await rateLimiter.login.consume(remoteAddress, 1)
           } catch (_e: unknown) {
-            return new GraphQLError(
+            throw new GraphQLError(
               "Rate limit exceeded. Too many requests.",
               {
                 extensions: {
