@@ -9,6 +9,7 @@ import { seizures } from "./resolvers/seizures.ts"
 import { verify } from "./resolvers/verify.ts"
 import { login } from "./resolvers/login.ts"
 import { reportDrugSeizure } from "./resolvers/reportDrugSeizure.ts"
+import { authenticatedOnly } from "./authenticatedOnly.ts"
 
 export const schema = createSchema({
   typeDefs: [
@@ -61,13 +62,13 @@ export const schema = createSchema({
       // like "reportSeizure" (of what?) or just "report" (anything?). The more
       // generic the name is, the more likely you are to run into another usage
       // of the term later... causing conflicts and likely deprecations.
-      reportDrugSeizure,
+      reportDrugSeizure: authenticatedOnly(reportDrugSeizure),
       login,
       verify,
     },
     Query: {
       hello: () => "world",
-      seizures,
+      seizures: authenticatedOnly(seizures),
     },
   },
 })
