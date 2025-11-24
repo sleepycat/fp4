@@ -31,12 +31,21 @@ Alternatives considered: ReST APIs (standard patterns tend to be a security free
 
 ### Using Javascript
 
+JavaScript is built into every browser by default. It can also be used as a backend programming language if you install a JavaScript runtime on the server, allowing for a single programming language to be used for the majority of the application.
 The selection of JavaScript as the implementation language serves a few purposes:
 * Smaller team size: [Once considered mythical](https://frontendmasters.com/guides/front-end-handbook/2017/practice/myth.html#:~:text=given%20that%20JavaScript%20has%20infiltrated%20all%20layers%20of%20a%20technology%20stack%20(e.g.%20React%2C%20node.js%2C%20express%2C%20couchDB%2C%20gulp.js%20etc...)%20finding%20a%20full%2Dstack%20JS%20developer%20who%20can%20code%20the%20front%2Dend%20and%20back%2Dend%20is%20becoming%20less%20mythical.%20Typically%2C%20these%20full%20stack%20developers%20only%20deal%20with%20JavaScript.), full stack development is achievable wherever you can use a single language for both frontend and backend. This allows for smaller, more agile teams; important for making the product team model viable.
 * Lower risk: The use of memory safe languages represents a [significant risk reduction](https://www.memorysafety.org/docs/memory-safety/#how-common-are-memory-safety-vulnerabilities), and even among memory safe languages [JavaScript compares favourably](https://securityflawheatmap.veracode.com/p/1).
-* Modern security features: New JavaScript runtimes are pioneering new security features. This API is built with [Deno](https://deno.com/), which [sandboxes code by default](https://deno.com/blog/deno-protects-npm-exploits#secure-by-default) to protect against supply-chain attacks and other hacks. These security features are not yet built into other languages.
+* Modern security features: [Language-level features that systemically prevent SQL injection](https://mikewilliamson.wordpress.com/2018/10/22/tagged-template-literals-and-the-hack-that-will-never-go-away/) has been included in JavaScript since 2015. The Python community has taken note and has [recently adopted same thing](https://realpython.com/python-t-strings/) for the same reasons. These security features are not yet built into other languages.
 
 Alternatives considered: Python/Java (Having a different language on the backend creates a hard split in the team between backend and frontend dev, leading to larger teams over all which makes product teams extremely expensive)
+
+### Using Deno as the JavaScript Runtime
+
+JavaScript Runtimes execute JavaScript code on the Server. [Nodejs](https://nodejs.org/en) is the pioneer in this space, but new options like [Bun](https://bun.com/) (more performance focused) and [Deno](https://deno.com) (more security focused) have brought competition to his space.
+This API is built with [Deno](https://deno.com/) the more security focused option, which [sandboxes code by default](https://deno.com/blog/deno-protects-npm-exploits#secure-by-default) to protect against supply-chain attacks and other hacks. These security features are not yet built into other languages.
+
+Deno also allows developers to reduce the number of dependencies by including many common tools like a testing framework, which allows running tests with only Deno, instead of needing to install [jest and it's entire dependency tree](https://npmgraph.js.org/?q=jest). This results in a significant 
+reduction in attack-surface.
 
 ### Using Sqlite
 
