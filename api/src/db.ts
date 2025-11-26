@@ -3,6 +3,8 @@ import { migrate as sqlitemigrate } from "@gordonb/sqlite-migrate"
 import migrations from "../migrations.ts"
 import { StatementResultingChanges } from "node:sqlite"
 import { paginateBackwards, paginateForward } from "./pagination.ts"
+import type { User } from "./types/User.ts"
+import { findOrCreateUser } from "./database/findOrCreateUser.ts"
 
 export function migrate(db: DatabaseSync) {
   const result = sqlitemigrate(db, migrations)
@@ -16,38 +18,9 @@ export function migrate(db: DatabaseSync) {
   db.close()
 }
 
-export type User = {
-  id: number
-  email: string
-  created_at: string
-}
-
 export type DataAccessors = ReturnType<typeof dataAccessors>
 
 export function dataAccessors(db: DatabaseSync) {
-  function findOrCreateUser(
-    email: string,
-  ): User | undefined {
-    let user
-    db.exec("BEGIN TRANSACTION;")
-    try {
-      const insert = db.prepare(
-        "INSERT INTO users (email, created_at) VALUES (@email, DATE('now')) ON CONFLICT(email) DO NOTHING;",
-      )
-      const select = db.prepare("SELECT * FROM users WHERE email = @email;")
-
-      insert.run({ email })
-
-      user = select.get({ email })
-      db.exec("COMMIT;")
-      return user as User
-    } catch (e) {
-      db.exec("ROLLBACK")
-      console.error({ rollback: true, error: e })
-      return undefined
-    }
-  }
-
   function consumeMagicLink(
     hash: string,
   ): {
@@ -129,7 +102,11 @@ export function dataAccessors(db: DatabaseSync) {
           table: "seizures",
           last,
           before: before || -1,
-        }) as { err: false | string; results: Record<string, SQLOutputValue>[] | undefined; hasMore: boolean }
+        }) as {
+          err: false | string
+          results: Record<string, SQLOutputValue>[] | undefined
+          hasMore: boolean
+        }
       }
 
       return paginateForward({
@@ -137,7 +114,11 @@ export function dataAccessors(db: DatabaseSync) {
         table: "seizures",
         first: first || 50,
         after: after || 0,
-      }) as { err: false | string; results: Record<string, SQLOutputValue>[] | undefined; hasMore: boolean }
+      }) as {
+        err: false | string
+        results: Record<string, SQLOutputValue>[] | undefined
+        hasMore: boolean
+      }
     } catch (e: unknown) {
       if (e instanceof Error) {
         return { err: e.message, results: undefined, hasMore: false }
@@ -181,7 +162,7 @@ export function dataAccessors(db: DatabaseSync) {
   }
 
   return {
-    findOrCreateUser,
+    findOrCreateUser: (email: string) => findOrCreateUser(db, email),
     consumeMagicLink,
     getSeizures,
     addSeizure,

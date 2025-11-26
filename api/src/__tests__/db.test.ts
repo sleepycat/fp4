@@ -4,7 +4,7 @@ import { dataAccessors } from "../db.ts"
 import migrate from "@gordonb/sqlite-migrate"
 import migrations from "../../migrations.ts"
 import { DatabaseSync } from "node:sqlite"
-import type { User } from "../db.ts"
+import type { User } from "../types/User.ts"
 
 describe("dataAccessors()", () => {
   let db: DatabaseSync
