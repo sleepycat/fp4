@@ -1,10 +1,12 @@
-import { DatabaseSync, SQLOutputValue } from "node:sqlite"
+import { DatabaseSync } from "node:sqlite"
 import { migrate as sqlitemigrate } from "@gordonb/sqlite-migrate"
 import migrations from "../migrations.ts"
-import { StatementResultingChanges } from "node:sqlite"
-import { paginateBackwards, paginateForward } from "./pagination.ts"
-import type { User } from "./types/User.ts"
 import { findOrCreateUser } from "./database/findOrCreateUser.ts"
+import { consumeMagicLink } from "./database/consumeMagicLink.ts"
+import { addSeizure } from "./database/addSeizure.ts"
+import { getSeizures } from "./database/getSeizures.ts"
+import { deleteHash } from "./database/deleteHash.ts"
+import { saveHash } from "./database/saveHash.ts"
 
 export function migrate(db: DatabaseSync) {
   const result = sqlitemigrate(db, migrations)
@@ -18,155 +20,19 @@ export function migrate(db: DatabaseSync) {
   db.close()
 }
 
+type SaveHashArguments = Parameters<typeof saveHash>[1]
+type SeizureRecord = Parameters<typeof addSeizure>[1]
+type GetSeizuresArgs = Parameters<typeof getSeizures>[1]
+
 export type DataAccessors = ReturnType<typeof dataAccessors>
 
 export function dataAccessors(db: DatabaseSync) {
-  function consumeMagicLink(
-    hash: string,
-  ): {
-    err: false | string
-    results: User | undefined
-  } {
-    db.exec("BEGIN TRANSACTION;")
-    try {
-      const consume = db.prepare(
-        "DELETE FROM magic_links WHERE token_hash = @hash RETURNING user_id;",
-      )
-      const select = db.prepare("SELECT * FROM users WHERE id = @user_id;")
-
-      const user_id = consume.get({ hash })
-      // We keep hashes of the tokens we issue.
-      // if we didn't find a matching hash, someone passed a token they just made up themselves.
-      if (!user_id) throw new Error("invalid token")
-
-      const user = select.get({ user_id: Number(user_id?.user_id) })
-
-      db.exec("COMMIT;")
-      return { err: false, results: user as User }
-    } catch (e: unknown) {
-      db.exec("ROLLBACK")
-      if (e instanceof Error) {
-        return { err: e.message, results: undefined }
-      } else {
-        return { err: String(e), results: undefined }
-      }
-    }
-  }
-
-  function addSeizure(
-    record: {
-      substance: string
-      amount: number
-      seized_on: string
-      reported_on: string
-      user_id: number
-    },
-  ): {
-    err: false | string
-    results: StatementResultingChanges | undefined
-  } {
-    try {
-      const results = db.prepare(
-        "INSERT INTO seizures (substance, amount, seized_on, reported_on, user_id ) VALUES (@substance, @amount, @seized_on, @reported_on, @user_id) RETURNING *;",
-      ).run(record)
-
-      return { err: false, results }
-    } catch (e: unknown) {
-      if (e instanceof Error) {
-        return { err: e.message, results: undefined }
-      } else {
-        return { err: String(e), results: undefined }
-      }
-    }
-  }
-
-  function getSeizures({
-    first,
-    after,
-    last,
-    before,
-  }: {
-    first?: number
-    after?: number
-    last?: number
-    before?: number
-  } = {}): {
-    err: false | string
-    results: Record<string, SQLOutputValue>[] | undefined
-    hasMore: boolean
-  } {
-    try {
-      if (last) {
-        return paginateBackwards({
-          db,
-          table: "seizures",
-          last,
-          before: before || -1,
-        }) as {
-          err: false | string
-          results: Record<string, SQLOutputValue>[] | undefined
-          hasMore: boolean
-        }
-      }
-
-      return paginateForward({
-        db,
-        table: "seizures",
-        first: first || 50,
-        after: after || 0,
-      }) as {
-        err: false | string
-        results: Record<string, SQLOutputValue>[] | undefined
-        hasMore: boolean
-      }
-    } catch (e: unknown) {
-      if (e instanceof Error) {
-        return { err: e.message, results: undefined, hasMore: false }
-      } else {
-        return { err: String(e), results: undefined, hasMore: false }
-      }
-    }
-  }
-
-  function deleteHash(hash: string) {
-    try {
-      const results = db.prepare(
-        "DELETE FROM magic_links WHERE token_hash = ?;",
-      ).run(hash)
-      return { err: false, results }
-    } catch (e: unknown) {
-      if (e instanceof Error) {
-        return { err: e.message, results: {} }
-      } else {
-        return { err: e, results: {} }
-      }
-    }
-  }
-
-  // TODO: this is duplicated in Context.ts. Extract.
-  interface saveHashArguments {
-    hash: string
-    user_id: number
-  }
-
-  function saveHash({ hash, user_id }: saveHashArguments) {
-    try {
-      return db.prepare(
-        "INSERT INTO magic_links (user_id, token_hash) VALUES (@user_id, @hash);",
-      ).run({ user_id, hash })
-    } catch (e) {
-      // TODO: do better here.
-      console.error({ rollback: true, error: e })
-      return undefined
-    }
-  }
-
   return {
     findOrCreateUser: (email: string) => findOrCreateUser(db, email),
-    consumeMagicLink,
-    getSeizures,
-    addSeizure,
-    saveHash,
-    deleteHash,
+    consumeMagicLink: (hash: string) => consumeMagicLink(db, hash),
+    getSeizures: (args: GetSeizuresArgs = {}) => getSeizures(db, args),
+    addSeizure: (record: SeizureRecord) => addSeizure(db, record),
+    saveHash: (args: SaveHashArguments) => saveHash(db, args),
+    deleteHash: (hash: string) => deleteHash(db, hash),
   }
 }
