@@ -20,36 +20,36 @@ describe("Pagination", () => {
     const insert = db.prepare(
       "INSERT INTO seizures (substance, amount, seized_on, reported_on, user_id ) VALUES (@substance, @amount, @seized_on, @reported_on, @user_id);",
     )
-    ;[
-      {
-        substance: "first",
-        amount: 1,
-        seized_on: "2025-01-01",
-        reported_on: "2025-01-01",
-        user_id: 1,
-      },
-      {
-        substance: "second",
-        amount: 2,
-        seized_on: "2025-02-02",
-        reported_on: "2025-02-02",
-        user_id: 1,
-      },
-      {
-        substance: "third",
-        amount: 3,
-        seized_on: "2025-03-03",
-        reported_on: "2025-03-03",
-        user_id: 1,
-      },
-      {
-        substance: "fourth",
-        amount: 4,
-        seized_on: "2025-04-04",
-        reported_on: "2025-04-04",
-        user_id: 1,
-      },
-    ].forEach((record) => insert.run(record))
+      ;[
+        {
+          substance: "first",
+          amount: 1,
+          seized_on: "2025-01-01",
+          reported_on: "2025-01-01",
+          user_id: 1,
+        },
+        {
+          substance: "second",
+          amount: 2,
+          seized_on: "2025-02-02",
+          reported_on: "2025-02-02",
+          user_id: 1,
+        },
+        {
+          substance: "third",
+          amount: 3,
+          seized_on: "2025-03-03",
+          reported_on: "2025-03-03",
+          user_id: 1,
+        },
+        {
+          substance: "fourth",
+          amount: 4,
+          seized_on: "2025-04-04",
+          reported_on: "2025-04-04",
+          user_id: 1,
+        },
+      ].forEach((record) => insert.run(record))
   })
 
   afterEach(() => {
@@ -79,6 +79,7 @@ describe("Pagination", () => {
             user_id: 1,
           },
         ],
+        hasMore: false,
       })
     })
 
@@ -110,6 +111,7 @@ describe("Pagination", () => {
             user_id: 1,
           },
         ],
+        hasMore: true,
       })
     })
   })
@@ -135,6 +137,7 @@ describe("Pagination", () => {
             user_id: 1,
           },
         ],
+        hasMore: true,
       })
     })
 
@@ -166,6 +169,7 @@ describe("Pagination", () => {
             user_id: 1,
           },
         ],
+        hasMore: true,
       })
     })
   })

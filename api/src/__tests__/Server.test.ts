@@ -20,6 +20,7 @@ describe("Server", () => {
               amount: 1.1,
               user_id: 1,
             }],
+            hasMore: false,
           }),
         },
       } as unknown as Context
@@ -36,8 +37,12 @@ describe("Server", () => {
           body: JSON.stringify({
             query: `
               {
-                seizures {
-                  substance
+                seizures(first: 1) {
+                  edges {
+                    node {
+                      substance
+                    }
+                  }
                 }
               }
             `,
@@ -47,7 +52,11 @@ describe("Server", () => {
         const result = await response.json()
 
         expect(result).toEqual({
-          data: { seizures: [{ substance: "playdough" }] },
+          data: {
+            seizures: {
+              edges: [{ node: { substance: "playdough" } }],
+            },
+          },
         })
       })
     })
@@ -68,6 +77,7 @@ describe("Server", () => {
               amount: 1.1,
               user_id: 1,
             }],
+            hasMore: false,
           }),
         },
       } as unknown as Context
@@ -85,7 +95,11 @@ describe("Server", () => {
             query: `
               {
                 seizures {
-                  substance
+                  edges {
+                    node {
+                      substance
+                    }
+                  }
                 }
               }
             `,

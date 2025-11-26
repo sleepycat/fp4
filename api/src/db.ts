@@ -2,6 +2,7 @@ import { DatabaseSync, SQLOutputValue } from "node:sqlite"
 import { migrate as sqlitemigrate } from "@gordonb/sqlite-migrate"
 import migrations from "../migrations.ts"
 import { StatementResultingChanges } from "node:sqlite"
+import { paginateBackwards, paginateForward } from "./pagination.ts"
 
 export function migrate(db: DatabaseSync) {
   const result = sqlitemigrate(db, migrations)
@@ -106,21 +107,42 @@ export function dataAccessors(db: DatabaseSync) {
     }
   }
 
-  // TODO: need to deal with pagination.
-  function getSeizures(): {
+  function getSeizures({
+    first,
+    after,
+    last,
+    before,
+  }: {
+    first?: number
+    after?: number
+    last?: number
+    before?: number
+  } = {}): {
     err: false | string
     results: Record<string, SQLOutputValue>[] | undefined
+    hasMore: boolean
   } {
     try {
-      const results = db.prepare(
-        "SELECT * FROM seizures;",
-      ).all()
-      return { err: false, results }
+      if (last) {
+        return paginateBackwards({
+          db,
+          table: "seizures",
+          last,
+          before: before || -1,
+        }) as { err: false | string; results: Record<string, SQLOutputValue>[] | undefined; hasMore: boolean }
+      }
+
+      return paginateForward({
+        db,
+        table: "seizures",
+        first: first || 50,
+        after: after || 0,
+      }) as { err: false | string; results: Record<string, SQLOutputValue>[] | undefined; hasMore: boolean }
     } catch (e: unknown) {
       if (e instanceof Error) {
-        return { err: e.message, results: undefined }
+        return { err: e.message, results: undefined, hasMore: false }
       } else {
-        return { err: String(e), results: undefined }
+        return { err: String(e), results: undefined, hasMore: false }
       }
     }
   }

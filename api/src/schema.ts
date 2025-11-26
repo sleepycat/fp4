@@ -20,15 +20,33 @@ export const schema = createSchema({
     scalar PositiveFloat
 
     type DrugSeizureRecord {
+      id: ID
       substance: String
       seizedOn: ISO8601Date
       reportedOn: ISO8601Date
       amount: PositiveFloat
     }
 
+    type PageInfo {
+      hasNextPage: Boolean!
+      hasPreviousPage: Boolean!
+      startCursor: ID
+      endCursor: ID
+    }
+
+    type SeizureEdge {
+      cursor: ID!
+      node: DrugSeizureRecord!
+    }
+
+    type SeizureConnection {
+      edges: [SeizureEdge]!
+      pageInfo: PageInfo!
+    }
+
     type Query {
       hello: String
-      seizures: [DrugSeizureRecord]
+      seizures(first: Int, after: ID last: Int, before: ID): SeizureConnection
     }
 
     input DrugSeizureInput {
@@ -53,6 +71,12 @@ export const schema = createSchema({
     ULID: ULIDResolver,
     PositiveFloat: PositiveFloatResolver,
     DrugSeizureRecord: {
+      id: (parent) => {
+        // @ts-ignore: toBase64 is actually a property of TextEncoder
+        return new TextEncoder().encode(`seizures/${parent.id}`).toBase64({
+          alphabet: "base64url",
+        })
+      },
       // these exist because the column name has an underscore and the GraphQL schema is camelcase.
       seizedOn: (parent) => parent.seized_on,
       reportedOn: (parent) => parent.reported_on,

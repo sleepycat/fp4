@@ -54,6 +54,7 @@ export async function login(
   // This prevents leaks of tokens (assuming a breach of the database)
   // and serves as a record of the tokens we've issued.
   db.saveHash({ hash, user_id: user?.id })
+  console.log({ ulid, email })
 
   try {
     const _response = await sendMagicLink(email, { code: ulid })

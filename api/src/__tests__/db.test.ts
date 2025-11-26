@@ -91,6 +91,7 @@ describe("dataAccessors()", () => {
             user_id: 1,
           },
         ],
+        hasMore: false,
       })
     })
   })
