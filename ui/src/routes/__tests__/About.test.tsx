@@ -1,6 +1,6 @@
 // This file defines global objects like document.
 // it must be imported before screen, which uses document.
-import "../setup.ts"
+import "../../setupTests.ts"
 
 import { describe, it } from "@std/testing/bdd"
 import { expect } from "@std/expect"

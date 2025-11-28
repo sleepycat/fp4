@@ -1,5 +1,5 @@
 import { Trans } from "@lingui/react/macro"
-import { ErrorBoundary } from "react-error-boundary"
+import { css } from "../../styled-system/css/css.mjs"
 import { Link, redirect, useLoaderData } from "react-router"
 import type { LoaderFunctionArgs } from "react-router"
 import { gql } from "urql"
@@ -8,7 +8,6 @@ import { UrqlClientContext } from "../context.tsx"
 // TODO this should be an authenticated route.
 export function DrugSeizures() {
   const data = useLoaderData()
-  console.log({ loaderData: data })
   const { edges, pageInfo } = data
 
   const seizures = edges.map((
@@ -23,11 +22,41 @@ export function DrugSeizures() {
       }
     },
   ) => (
-    <li key={el.cursor}>
-      Substance: {el.node.substance}
-      <br />Amount: {el.node.amount}
-      <br />Seized on: {el.node.seizedOn}
-      <br />Reported on: {el.node.reportedOn}
+    <li
+      className={css`
+        padding: 0.5em;
+        border-bottom: 3px solid #ccc;
+      `}
+      key={el.cursor}
+    >
+      <span
+        className={css`
+          font-weight: bold;
+        `}
+      >
+        Substance
+      </span>: {el.node.substance} <br />
+      <span
+        className={css`
+          font-weight: bold;
+        `}
+      >
+        Amount
+      </span>: {el.node.amount} <br />
+      <span
+        className={css`
+          font-weight: bold;
+        `}
+      >
+        Seized on
+      </span>: {el.node.seizedOn} <br />
+      <span
+        className={css`
+          font-weight: bold;
+        `}
+      >
+        Reported on
+      </span>: {el.node.reportedOn}
     </li>
   ))
 
@@ -37,17 +66,37 @@ export function DrugSeizures() {
         <Trans>Drug Seizures</Trans>
       </h1>
 
-      <ErrorBoundary fallback={<div>Please Log in.</div>}>
-        <ul>{seizures}</ul>
-        <div style={{ display: "flex", gap: "1rem" }}>
-          {pageInfo.hasPreviousPage && (
-            <Link to={`?before=${pageInfo.startCursor}&last=10`}>Previous</Link>
-          )}
-          {pageInfo.hasNextPage && (
-            <Link to={`?after=${pageInfo.endCursor}&first=10`}>Next</Link>
-          )}
-        </div>
-      </ErrorBoundary>
+      <ul>{seizures}</ul>
+      <div
+        className={css`
+          display: flex;
+          gap: 1 rem;
+          padding: 1 em;
+        `}
+      >
+        {pageInfo.hasPreviousPage && (
+          <Link
+            className={css`
+              text-decoration: underline;
+              font-weight: bold;
+            `}
+            to={`?before=${pageInfo.startCursor}&last=10`}
+          >
+            Previous
+          </Link>
+        )}
+        {pageInfo.hasNextPage && (
+          <Link
+            className={css`
+              text-decoration: underline;
+              font-weight: bold;
+            `}
+            to={`?after=${pageInfo.endCursor}&first=10`}
+          >
+            Next
+          </Link>
+        )}
+      </div>
     </>
   )
 }
@@ -88,7 +137,7 @@ export async function loader({ context, request }: LoaderFunctionArgs) {
       }
     `,
     {
-      first: !first && !last ? 10 : first,
+      first: !first && !last ? 8 : first,
       after,
       last,
       before,
