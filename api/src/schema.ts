@@ -12,59 +12,9 @@ import { reportDrugSeizure } from "./resolvers/reportDrugSeizure.ts"
 import { authenticatedOnly } from "./authenticatedOnly.ts"
 
 export const schema = createSchema({
-  typeDefs: [
-    /* GraphQL */ `
-    scalar EmailAddress
-    scalar ULID
-    scalar ISO8601Date
-    scalar PositiveFloat
-
-    type DrugSeizureRecord {
-      id: ID
-      substance: String
-      seizedOn: ISO8601Date
-      reportedOn: ISO8601Date
-      amount: PositiveFloat
-    }
-
-    type PageInfo {
-      hasNextPage: Boolean!
-      hasPreviousPage: Boolean!
-      startCursor: ID
-      endCursor: ID
-    }
-
-    type SeizureEdge {
-      cursor: ID!
-      node: DrugSeizureRecord!
-    }
-
-    type SeizureConnection {
-      edges: [SeizureEdge]!
-      pageInfo: PageInfo!
-    }
-
-    type Query {
-      hello: String
-      seizures(first: Int, after: ID last: Int, before: ID): SeizureConnection
-    }
-
-    input DrugSeizureInput {
-      substance: String!
-      seizedOn: ISO8601Date!
-      reportedOn: ISO8601Date!
-      amount: PositiveFloat!
-    }
-
-    type Mutation {
-      reportDrugSeizure(input: DrugSeizureInput): String
-      # Provide an email address to log in via magic links
-      login(email: EmailAddress!): String
-      # Verify the token you recieved to create a session.
-      verify(token: ULID!): String
-    }
-  `,
-  ],
+  typeDefs: await Deno.readTextFile(
+    new URL("./schema.graphql", import.meta.url),
+  ),
   resolvers: {
     ISO8601Date,
     EmailAddress: EmailAddressResolver,
