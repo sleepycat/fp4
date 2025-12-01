@@ -13,6 +13,7 @@
     "test": "deno test --allow-all --import-map=deno.test.json"
   },
   "imports": {
+    "@adobe/react-spectrum": "npm:@adobe/react-spectrum@^3.45.0",
     "@std/expect": "jsr:@std/expect@^1.0.17",
     "@std/testing": "jsr:@std/testing@^1.0.16",
     "@lingui/babel-plugin-lingui-macro": "npm:@lingui/babel-plugin-lingui-macro@^5.6.0",

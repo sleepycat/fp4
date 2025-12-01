@@ -34,11 +34,11 @@ msgid "About"
 msgstr "About"
 
 #: src/Navigation.tsx:46
-#: src/routes/DrugSeizures.tsx:31
+#: src/routes/DrugSeizures.tsx:66
 msgid "Drug Seizures"
 msgstr "Drug Seizures"
 
-#: src/index.tsx:29
+#: src/index.tsx:33
 msgid "drug-seizures"
 msgstr "drug-seizures"
 
@@ -63,15 +63,15 @@ msgstr "Home"
 msgid "Login"
 msgstr "Login"
 
-#: src/routes/Verify.tsx:29
+#: src/routes/Verify.tsx:28
 msgid "Login Failed"
 msgstr "Login Failed"
 
-#: src/routes/Login.tsx:31
+#: src/routes/Login.tsx:39
 msgid "Please enter your Police service email below to receive a login link."
 msgstr "Please enter your Police service email below to receive a login link."
 
-#: src/routes/Verify.tsx:33
+#: src/routes/Verify.tsx:32
 msgid "Please try to <0>login</0> again."
 msgstr "Please try to <0>login</0> again."
 
@@ -87,6 +87,10 @@ msgstr "Symbol of the Government of Canada"
 msgid "The logo of the RCMP"
 msgstr "The logo of the RCMP"
 
-#: src/routes/Verify.tsx:63
+#: src/routes/Verify.tsx:67
+msgid "Verification successful! Logging you in!"
+msgstr "Verification successful! Logging you in!"
+
+#: src/routes/Verify.tsx:62
 msgid "Your authentication token has expired."
 msgstr "Your authentication token has expired."

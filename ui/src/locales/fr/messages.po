@@ -34,11 +34,11 @@ msgid "About"
 msgstr "A propos"
 
 #: src/Navigation.tsx:46
-#: src/routes/DrugSeizures.tsx:31
+#: src/routes/DrugSeizures.tsx:66
 msgid "Drug Seizures"
 msgstr "Saisies de drogues"
 
-#: src/index.tsx:29
+#: src/index.tsx:33
 msgid "drug-seizures"
 msgstr "saisies-de-drogues"
 
@@ -63,15 +63,15 @@ msgstr "Accueil"
 msgid "Login"
 msgstr "Se connecter"
 
-#: src/routes/Verify.tsx:29
+#: src/routes/Verify.tsx:28
 msgid "Login Failed"
 msgstr "Échec de connexion"
 
-#: src/routes/Login.tsx:31
+#: src/routes/Login.tsx:39
 msgid "Please enter your Police service email below to receive a login link."
 msgstr "Veuillez saisir votre adresse e-mail professionnelle de la police ci-dessous pour recevoir un lien de connexion."
 
-#: src/routes/Verify.tsx:33
+#: src/routes/Verify.tsx:32
 msgid "Please try to <0>login</0> again."
 msgstr "Veuillez réessayer de vous <0>connecter</0>."
 
@@ -87,6 +87,10 @@ msgstr "Symbole du gouvernement du Canada"
 msgid "The logo of the RCMP"
 msgstr "Le logo de la GRC"
 
-#: src/routes/Verify.tsx:63
+#: src/routes/Verify.tsx:67
+msgid "Verification successful! Logging you in!"
+msgstr "Vérification réussie! Connexion en cours!"
+
+#: src/routes/Verify.tsx:62
 msgid "Your authentication token has expired."
 msgstr "Votre jeton d'authentification a expiré."

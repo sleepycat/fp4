@@ -1,23 +1,24 @@
-import { Outlet } from "react-router";
-import Header from "./Header.tsx";
-import Footer from "./Footer.tsx";
-import Navigation from "./Navigation.tsx";
-import "./App.css";
-import { css } from "../styled-system/css/css.mjs";
+import { Outlet } from "react-router"
+import Header from "./Header.tsx"
+import Footer from "./Footer.tsx"
+import Navigation from "./Navigation.tsx"
+import "./App.css"
+import { css } from "../styled-system/css/css.mjs"
+import { ToastContainer } from "@adobe/react-spectrum"
 
 const content = css`
   min-height: 100vh;
   min-height: 100dvh;
   display: grid;
   grid-template-rows: auto auto 1fr auto;
-`;
+`
 
 const mainClass = css`
   width: 75%;
   height: 100%;
   margin: auto auto;
   padding: 1em 2em;
-`;
+`
 
 const App = () => {
   return (
@@ -36,8 +37,9 @@ const App = () => {
         <Outlet />
       </main>
       <Footer />
+      <ToastContainer placement="top" />
     </div>
-  );
-};
+  )
+}
 
-export default App;
+export default App

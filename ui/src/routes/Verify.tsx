@@ -1,15 +1,14 @@
-import { Trans } from "@lingui/react/macro";
-import { t } from "@lingui/macro";
-import type { LoaderFunctionArgs } from "react-router";
-import { Link, redirect, useLoaderData, useNavigation } from "react-router";
-// import { Trans } from "@lingui/react/macro";
-import { gql } from "urql";
-import { UrqlClientContext } from "../context.tsx";
+import { Trans } from "@lingui/react/macro"
+import { t } from "@lingui/macro"
+import type { LoaderFunctionArgs } from "react-router"
+import { Link, redirect, useLoaderData, useNavigation } from "react-router"
+import { gql } from "urql"
+import { UrqlClientContext } from "../context.tsx"
+import { ToastQueue } from "@adobe/react-spectrum"
 
 export function Verify() {
-  const loaderData = useLoaderData();
-  const navigation = useNavigation();
-  console.log({ loaderData });
+  const loaderData = useLoaderData()
+  const navigation = useNavigation()
 
   // The loader is running
   if (navigation.state === "loading") {
@@ -18,7 +17,7 @@ export function Verify() {
         <h2>Verifying your login...</h2>
         <p>Please wait a moment. ✨</p>
       </div>
-    );
+    )
   }
 
   // The loader finished and returned an error
@@ -35,19 +34,19 @@ export function Verify() {
           </Trans>
         </p>
       </div>
-    );
+    )
   }
 }
 
 export async function loader({ context, params }: LoaderFunctionArgs) {
-  const { token } = params;
-  console.log({ token });
+  const { token } = params
+  console.log({ token })
   if (!token) {
     // This case is unlikely if the route matches, but good for safety
-    return redirect("/login");
+    return redirect("/login")
   }
 
-  const client = context.get(UrqlClientContext);
+  const client = context.get(UrqlClientContext)
   const result = await client.mutation(
     gql`
        mutation VERIFY ($token: ULID!){
@@ -55,17 +54,20 @@ export async function loader({ context, params }: LoaderFunctionArgs) {
        }
     `,
     { token },
-  );
+  )
 
-  const { error } = result;
+  const { error } = result
   if (error) {
     if (error.message.match(/expired/)) {
-      return { error: t`Your authentication token has expired.` };
+      return { error: t`Your authentication token has expired.` }
     } else {
-      return { error: error.message };
+      return { error: error.message }
     }
   } else {
-    return redirect("/");
+    ToastQueue.positive(t`Verification successful! Logging you in!`, {
+      timeout: 5000,
+    })
+    return redirect("/")
   }
 }
 
@@ -73,6 +75,6 @@ const VerifyRoute = {
   path: "verify/:token",
   Component: Verify,
   loader,
-};
+}
 
-export default VerifyRoute;
+export default VerifyRoute

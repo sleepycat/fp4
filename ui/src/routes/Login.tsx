@@ -1,6 +1,7 @@
-import { useActionData, useNavigation, useSubmit } from "react-router";
-import { Trans } from "@lingui/react/macro";
-import { css } from "../../styled-system/css/css.mjs";
+import { useEffect } from "react"
+import { useActionData, useNavigation, useSubmit } from "react-router"
+import { Trans } from "@lingui/react/macro"
+import { css } from "../../styled-system/css/css.mjs"
 import {
   Button,
   FieldError,
@@ -8,22 +9,29 @@ import {
   Input,
   Label,
   TextField,
-} from "react-aria-components";
-import type { ActionFunctionArgs } from "react-router";
-import { gql } from "urql";
-import { UrqlClientContext } from "../context.tsx";
+} from "react-aria-components"
+import { ToastQueue } from "@adobe/react-spectrum"
+import type { ActionFunctionArgs } from "react-router"
+import { gql } from "urql"
+import { UrqlClientContext } from "../context.tsx"
 
 export function Login() {
-  const navigation = useNavigation();
-  const actionData = useActionData();
-  const submit = useSubmit();
+  const navigation = useNavigation()
+  const actionData = useActionData()
+  const submit = useSubmit()
 
   const onSubmit = (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    submit(e.currentTarget);
-  };
+    e.preventDefault()
+    submit(e.currentTarget)
+  }
 
-  const isSubmitting = navigation.state === "submitting";
+  useEffect(() => {
+    if (actionData?.message) {
+      ToastQueue.neutral(actionData.message, { timeout: 5000 })
+    }
+  }, [actionData])
+
+  const isSubmitting = navigation.state === "submitting"
 
   return (
     <>
@@ -77,24 +85,18 @@ export function Login() {
             Submit
           </Button>
         </Form>
-        {actionData?.message && (
-          <p style={{ color: "green" }}>{actionData.message}</p>
-        )}
-        {actionData?.error && <p style={{ color: "red" }}>{actionData.error}
-        </p>}
       </section>
     </>
-  );
+  )
 }
 
 export async function action({ context, request }: ActionFunctionArgs) {
-  const form = await request.formData();
-  // @ts-expect-error: Typescript doesn't understand this.
-  const formData = Object.fromEntries(form);
+  const form = await request.formData()
+  const formData = Object.fromEntries(form)
   // TODO: validate schema {email: string}
   // although, the field itself also does validation and so does the api...
 
-  const client = context.get(UrqlClientContext);
+  const client = context.get(UrqlClientContext)
   const result = await client.mutation(
     gql`
        mutation LOGIN ($email: EmailAddress!){
@@ -102,13 +104,13 @@ export async function action({ context, request }: ActionFunctionArgs) {
        }
     `,
     formData,
-  );
-  const { data, fetching, error } = result;
-  if (fetching) return [];
+  )
+  const { data, fetching, error } = result
+  if (fetching) return []
   if (error) {
-    return { error: "Something went wrong. Please try again." };
+    return { error: "Something went wrong. Please try again." }
   } else {
-    return { message: data.login };
+    return { message: data.login }
   }
 }
 
@@ -116,6 +118,6 @@ const LoginRoute = {
   path: "login",
   Component: Login,
   action,
-};
+}
 
-export default LoginRoute;
+export default LoginRoute
