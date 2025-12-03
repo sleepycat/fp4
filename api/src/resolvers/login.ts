@@ -14,6 +14,7 @@ export async function login(
   { email }: { email: string },
   { db, isAllowed, sendMagicLink, rateLimiter, remoteAddress }: Context,
 ) {
+  // TODO: extract rate limiting into a wrapping function like auth.
   if (remoteAddress) {
     // Check rate limit for this email. Prevent griefing/spam.
     try {
@@ -71,7 +72,6 @@ export async function login(
       })
     }
   }
-  // console.log({ email, isAllowed: isAllowed(email), ulid, hash })
-  // : Return generic message to prevent user enumeration:
+  // Return generic message to prevent user enumeration:
   return abiguousMessage
 }

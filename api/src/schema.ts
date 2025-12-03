@@ -13,7 +13,7 @@ import { authenticatedOnly } from "./authenticatedOnly.ts"
 
 export const schema = createSchema({
   typeDefs: await Deno.readTextFile(
-    new URL("./schema.graphql", import.meta.url),
+    new URL("../schema.graphql", import.meta.url),
   ),
   resolvers: {
     ISO8601Date,
@@ -27,9 +27,6 @@ export const schema = createSchema({
           alphabet: "base64url",
         })
       },
-      // these exist because the column name has an underscore and the GraphQL schema is camelcase.
-      seizedOn: (parent) => parent.seized_on,
-      reportedOn: (parent) => parent.reported_on,
     },
     Mutation: {
       // NB: we're choosing a specific name here, instead of something generic

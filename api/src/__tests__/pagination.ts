@@ -18,33 +18,33 @@ describe("Pagination", () => {
     })
     // create seizure records associated to that user.
     const insert = db.prepare(
-      "INSERT INTO seizures (substance, amount, seized_on, reported_on, user_id ) VALUES (@substance, @amount, @seized_on, @reported_on, @user_id);",
+      "INSERT INTO seizures (reference, location, seized_on, reported_on, user_id ) VALUES (@reference, @location, @seized_on, @reported_on, @user_id);",
     )
       ;[
         {
-          substance: "first",
-          amount: 1,
+          reference: "REF-001",
+          location: "Location 1",
           seized_on: "2025-01-01",
           reported_on: "2025-01-01",
           user_id: 1,
         },
         {
-          substance: "second",
-          amount: 2,
+          reference: "REF-002",
+          location: "Location 2",
           seized_on: "2025-02-02",
           reported_on: "2025-02-02",
           user_id: 1,
         },
         {
-          substance: "third",
-          amount: 3,
+          reference: "REF-003",
+          location: "Location 3",
           seized_on: "2025-03-03",
           reported_on: "2025-03-03",
           user_id: 1,
         },
         {
-          substance: "fourth",
-          amount: 4,
+          reference: "REF-004",
+          location: "Location 4",
           seized_on: "2025-04-04",
           reported_on: "2025-04-04",
           user_id: 1,
@@ -72,8 +72,8 @@ describe("Pagination", () => {
         results: [
           {
             id: 1,
-            substance: "first",
-            amount: 1,
+            reference: "REF-001",
+            location: "Location 1",
             seized_on: "2025-01-01",
             reported_on: "2025-01-01",
             user_id: 1,
@@ -96,16 +96,16 @@ describe("Pagination", () => {
         results: [
           {
             id: 2,
-            substance: "second",
-            amount: 2,
+            reference: "REF-002",
+            location: "Location 2",
             seized_on: "2025-02-02",
             reported_on: "2025-02-02",
             user_id: 1,
           },
           {
             id: 3,
-            substance: "third",
-            amount: 3,
+            reference: "REF-003",
+            location: "Location 3",
             seized_on: "2025-03-03",
             reported_on: "2025-03-03",
             user_id: 1,
@@ -130,8 +130,8 @@ describe("Pagination", () => {
         results: [
           {
             id: 2,
-            substance: "second",
-            amount: 2,
+            reference: "REF-002",
+            location: "Location 2",
             seized_on: "2025-02-02",
             reported_on: "2025-02-02",
             user_id: 1,
@@ -154,16 +154,16 @@ describe("Pagination", () => {
         results: [
           {
             id: 2,
-            substance: "second",
-            amount: 2,
+            reference: "REF-002",
+            location: "Location 2",
             seized_on: "2025-02-02",
             reported_on: "2025-02-02",
             user_id: 1,
           },
           {
             id: 3,
-            substance: "third",
-            amount: 3,
+            reference: "REF-003",
+            location: "Location 3",
             seized_on: "2025-03-03",
             reported_on: "2025-03-03",
             user_id: 1,

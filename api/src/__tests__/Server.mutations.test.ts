@@ -72,6 +72,53 @@ describe("Server", () => {
 
   describe("mutations.login", () => {
     describe("when the users email is permitted by isAllowed", () => {
+      it("creates a user in the users table", async () => {
+        // Arrange
+        const yoga = Server({
+          schema,
+          context: () => {
+            // pass in the collaborator objects
+            return {
+              sendMagicLink: fn(),
+              remoteAddress: "127.0.0.1",
+              isAllowed: () => true, // pretend test@example.com is allowed
+              rateLimiter: {
+                login: { consume: fn() },
+              },
+              db,
+            } as unknown as Context
+          },
+        })
+
+        // Act
+        const before = database.prepare("select * from users;").all()
+
+        await yoga.fetch("http://yoga/graphql", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            query: `
+              mutation ($email: EmailAddress!) {
+                login(email: $email)
+              }
+            `,
+            variables: { email: "sideeffects@example.com" },
+          }),
+        })
+
+        const after = database.prepare("select * from users;").all()
+
+        // Assert
+        expect(before).toEqual([])
+        expect(after).toMatchObject([{
+          email: "sideeffects@example.com",
+        }])
+      })
+    })
+  })
+
+  describe("mutations.login", () => {
+    describe("when the users email is permitted by isAllowed", () => {
       describe("when the rate limiter rejects the request", () => {
         it("returns an error", async () => {
           const yoga = Server({

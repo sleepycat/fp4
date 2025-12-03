@@ -3,9 +3,11 @@ import type { DatabaseSync } from "node:sqlite"
 export type PaginateForward = ReturnType<typeof paginateForward>
 
 export function paginateForward(
-  { first, after, table = "seizures", db }: {
+  { first, after, table = "seizures", idColumn = "id", select = "*", db }: {
     db: DatabaseSync
-    table: "seizures" | "users"
+    table: string
+    idColumn?: string
+    select?: string
     first: number
     after: number
   },
@@ -13,7 +15,7 @@ export function paginateForward(
   try {
     const results = db.prepare(
       // value of table is never supplied by the user
-      `SELECT * FROM ${table} WHERE id > @after ORDER BY id ASC LIMIT @limit;`,
+      `SELECT ${select} FROM ${table} WHERE ${idColumn} > @after ORDER BY ${idColumn} ASC LIMIT @limit;`,
     ).all({ limit: first + 1, after })
 
     const hasMore = results.length > first
@@ -32,17 +34,19 @@ export function paginateForward(
 }
 
 export function paginateBackwards(
-  { last, before, table = "seizures", db }: {
+  { last, before, table = "seizures", idColumn = "id", select = "*", db }: {
     last: number
     before: number
-    table: "seizures" | "users"
+    table: "seizures" | "users" | string
+    idColumn?: string
+    select?: string
     db: DatabaseSync
   },
 ) {
   try {
     const results = db.prepare(
       // value of table is never supplied by the user
-      `SELECT * FROM ${table} WHERE id < @before ORDER BY id DESC LIMIT @limit;`,
+      `SELECT ${select} FROM ${table} WHERE ${idColumn} < @before ORDER BY ${idColumn} DESC LIMIT @limit;`,
     ).all({ limit: last + 1, before })
 
     const hasMore = results.length > last

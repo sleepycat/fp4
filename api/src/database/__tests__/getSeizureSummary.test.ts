@@ -28,46 +28,65 @@ describe("getSeizureSummary()", () => {
     ).get({
       email: "test@example.com",
     })
-    const insert = db.prepare(
-      "INSERT INTO seizures (substance, amount, reported_on, seized_on, user_id) values (@substance, @amount, @reported_on, @seized_on, @user_id); ",
+    const insertSeizure = db.prepare(
+      "INSERT INTO seizures (reference, location, reported_on, seized_on, user_id) values (@reference, @location, @reported_on, @seized_on, @user_id); ",
     )
-    ;[
-      {
-        substance: "cocaine",
-        amount: 1.0,
-        seized_on: "2025-01-01",
-        reported_on: "2025-01-01",
-        user_id: user!.id,
-      },
-      {
-        substance: "cocaine",
-        amount: 1.0,
-        seized_on: "2025-01-01",
-        reported_on: "2025-01-01",
-        user_id: user!.id,
-      },
-      {
-        substance: "heroin",
-        amount: 1.0,
-        seized_on: "2025-01-01",
-        reported_on: "2025-01-01",
-        user_id: user!.id,
-      },
-      {
-        substance: "cocaine",
-        amount: 1.0,
-        seized_on: "2025-02-01",
-        reported_on: "2025-02-01",
-        user_id: user!.id,
-      },
-      {
-        substance: "fentanyl",
-        amount: 3.0,
-        seized_on: "2025-02-01",
-        reported_on: "2025-02-01",
-        user_id: user!.id,
-      },
-    ].forEach((record) => insert.run(record))
+    const insertSubstance = db.prepare(
+      "INSERT INTO substances (name, category, amount, unit, seizure_id) values (@name, @category, @amount, @unit, @seizure_id); ",
+    )
+
+      ;[
+        {
+          substance: "cocaine",
+          amount: 1.0,
+          seized_on: "2025-01-01",
+          reported_on: "2025-01-01",
+          user_id: user!.id,
+        },
+        {
+          substance: "cocaine",
+          amount: 1.0,
+          seized_on: "2025-01-01",
+          reported_on: "2025-01-01",
+          user_id: user!.id,
+        },
+        {
+          substance: "heroin",
+          amount: 1.0,
+          seized_on: "2025-01-01",
+          reported_on: "2025-01-01",
+          user_id: user!.id,
+        },
+        {
+          substance: "cocaine",
+          amount: 1.0,
+          seized_on: "2025-02-01",
+          reported_on: "2025-02-01",
+          user_id: user!.id,
+        },
+        {
+          substance: "fentanyl",
+          amount: 3.0,
+          seized_on: "2025-02-01",
+          reported_on: "2025-02-01",
+          user_id: user!.id,
+        },
+      ].forEach((record, index) => {
+        insertSeizure.run({
+          reference: `REF-${index}`,
+          location: "Test Location",
+          reported_on: record.reported_on,
+          seized_on: record.seized_on,
+          user_id: record.user_id,
+        })
+        insertSubstance.run({
+          name: record.substance,
+          category: "controlled",
+          amount: record.amount,
+          unit: "grams",
+          seizure_id: index + 1, // Assuming auto-increment starts at 1
+        })
+      })
 
     const response = getSeizureSummary(db)
     expect(response).toEqual([

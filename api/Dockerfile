@@ -5,4 +5,4 @@ USER deno
 WORKDIR /app/api
 COPY --chown=deno:deno . .
 ENTRYPOINT ["/bin/deno"]
-CMD ["run", "--allow-read=/app/api/data/seizures.db", "--allow-write=/app/api/data/seizures.db", "--allow-env", "--allow-net", "--unstable-temporal", "main.ts" ]
+CMD ["run", "--allow-read=/app/api/data/seizures.db", "--allow-read=/app/api/schema.graphql", "--allow-write=/app/api/data/seizures.db", "--allow-env", "--allow-net", "--unstable-temporal", "main.ts" ]

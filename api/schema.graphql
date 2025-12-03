@@ -1,6 +1,6 @@
-scalar ISO8601Date
 scalar EmailAddress
 scalar ULID
+scalar ISO8601Date
 scalar PositiveFloat
 
 type DrugSeizureRecord {
@@ -33,15 +33,42 @@ type Query {
   seizures(first: Int, after: ID last: Int, before: ID): SeizureConnection
 }
 
-input DrugSeizureInput {
-  substance: String!
-  seizedOn: ISO8601Date!
-  reportedOn: ISO8601Date!
+enum SubstanceCategory {
+  CONTROLLED_SUBSTANCES
+  PRECURSORS
+  CHEMICAL_OFFENCE_RELATED
+  CANNABIS
+  CHEMICAL_PROPERTY
+}
+
+enum UnitOfMeasure {
+  GRAMS
+  KILOGRAMS
+  MICROGRAMS
+  MILLIGRAMS
+  MILLILITERS
+  PATCH
+  TABLETS
+  CAPSULES
+}
+
+input SeizedSubstanceInput {
+  name: String!
+  category: SubstanceCategory!
   amount: PositiveFloat!
+  unit: UnitOfMeasure!
+}
+
+input SeizureInput {
+  # Police File number, police exhibit report number, HC or CBSA file number
+  reference: String!
+  seizedOn: ISO8601Date!
+  location: String!
+  substances: [SeizedSubstanceInput!]!
 }
 
 type Mutation {
-  reportDrugSeizure(input: DrugSeizureInput): String
+  reportDrugSeizure(input: SeizureInput): String
   # Provide an email address to log in via magic links
   login(email: EmailAddress!): String
   # Verify the token you recieved to create a session.

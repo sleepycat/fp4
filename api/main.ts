@@ -1,4 +1,4 @@
-import { infoPrefix, type YogaInitialContext } from "graphql-yoga"
+import type { YogaInitialContext } from "graphql-yoga"
 import { schema } from "./src/schema.ts"
 import { DatabaseSync } from "node:sqlite"
 import { EmailPersonalisation, NotifyClient } from "notifications-node-client"

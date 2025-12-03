@@ -5,7 +5,7 @@ export function getSeizureSummary(
 ) {
   try {
     return db.prepare(
-      "SELECT substance, sum(amount) as total, strftime('%m-%Y', seized_on) AS month FROM seizures GROUP BY substance, month ORDER BY month, substance;",
+      "SELECT substances.name as substance, sum(substances.amount) as total, strftime('%m-%Y', seizures.seized_on) AS month FROM substances JOIN seizures ON substances.seizure_id = seizures.id GROUP BY substance, month ORDER BY month, substance;",
     ).all()
   } catch (e) {
     // TODO: do better here.

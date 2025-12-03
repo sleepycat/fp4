@@ -24,13 +24,27 @@ export default [
     db.exec(`
       CREATE TABLE seizures (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
-        substance TEXT NOT NULL,
-        amount FLOAT NOT NULL,
+        reference TEXT NOT NULL,
+        location TEXT NOT NULL,
         seized_on date NOT NULL,
-        reported_on date NOT NULL,
+        reported_on date NOT NULL DEFAULT ( strftime('%Y-%m-%d') ),
         user_id INTEGER NOT NULL,
         FOREIGN KEY (user_id)
           REFERENCES users (id)
+      );
+    `)
+  },
+  (db: DatabaseSync) => {
+    db.exec(`
+      CREATE TABLE substances (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        name TEXT NOT NULL,
+        category TEXT NOT NULL,
+        amount FLOAT NOT NULL,
+        unit TEXT NOT NULL,
+        seizure_id INTEGER NOT NULL,
+        FOREIGN KEY (seizure_id)
+          REFERENCES seizures (id)
       );
     `)
   },
