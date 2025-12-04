@@ -11,6 +11,7 @@ import HomeRoute from "./routes/Home.tsx"
 import AboutRoute from "./routes/About.tsx"
 import VerifyRoute from "./routes/Verify.tsx"
 import DrugSeizuresRoute, { DrugSeizures } from "./routes/DrugSeizures.tsx"
+import ReportSeizure from "./routes/ReportSeizure.tsx"
 import { client, UrqlClientContext } from "./context.tsx"
 import { Provider } from "urql"
 import {
@@ -31,12 +32,14 @@ const router = createBrowserRouter([
       DrugSeizuresRoute,
       VerifyRoute,
       { path: t`drug-seizures`, Component: DrugSeizures },
+      { path: "report-seizure", Component: ReportSeizure },
     ],
   },
 ], {
   // This context object will be available in all the loaders and actions.
   // By adding our initialized GraphQL client in there we can use it everywhere.
   getContext() {
+    i18n.activate("en")
     const context = new RouterContextProvider()
     context.set(UrqlClientContext, client)
     return context

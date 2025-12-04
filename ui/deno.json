@@ -19,6 +19,7 @@
     "@lingui/babel-plugin-lingui-macro": "npm:@lingui/babel-plugin-lingui-macro@^5.6.0",
     "@lingui/core": "npm:@lingui/core@^5.6.0",
     "@lingui/react": "npm:@lingui/react@^5.6.0",
+    "@lingui/macro": "npm:@lingui/macro@^5.6.0",
     "@rsbuild/core": "npm:@rsbuild/core@1.5.17",
     "@types/jsdom": "npm:@types/jsdom@^27.0.0",
     "jsdom": "npm:jsdom@^27.2.0",

@@ -25,6 +25,11 @@ msgstr "/drug-seizures"
 
 #. js-lingui-explicit-id
 #: src/Navigation.tsx:49
+msgid "/report-seizure"
+msgstr "/report-seizure"
+
+#. js-lingui-explicit-id
+#: src/Navigation.tsx:55
 msgid "/login"
 msgstr "/login"
 
@@ -33,12 +38,20 @@ msgstr "/login"
 msgid "About"
 msgstr "About"
 
+#: src/routes/ReportSeizure.tsx:283
+msgid "Amount"
+msgstr "Amount"
+
+#: src/routes/ReportSeizure.tsx:232
+msgid "Category"
+msgstr "Category"
+
 #: src/Navigation.tsx:46
 #: src/routes/DrugSeizures.tsx:66
 msgid "Drug Seizures"
 msgstr "Drug Seizures"
 
-#: src/index.tsx:33
+#: src/index.tsx:34
 msgid "drug-seizures"
 msgstr "drug-seizures"
 
@@ -59,7 +72,11 @@ msgstr "Federal Policing protects Canada, its people, and its interests against 
 msgid "Home"
 msgstr "Home"
 
-#: src/Navigation.tsx:52
+#: src/routes/ReportSeizure.tsx:189
+msgid "Location"
+msgstr "Location"
+
+#: src/Navigation.tsx:58
 msgid "Login"
 msgstr "Login"
 
@@ -75,9 +92,37 @@ msgstr "Please enter your Police service email below to receive a login link."
 msgid "Please try to <0>login</0> again."
 msgstr "Please try to <0>login</0> again."
 
+#: src/routes/ReportSeizure.tsx:146
+msgid "Reference Number"
+msgstr "Reference Number"
+
+#: src/routes/ReportSeizure.tsx:129
+msgid "Report Drug Seizure"
+msgstr "Report Drug Seizure"
+
+#: src/Navigation.tsx:52
+msgid "Report Seizure"
+msgstr "Report Seizure"
+
 #: src/Header.tsx:38
 msgid "Royal Canadian<0/>Mounted Police"
 msgstr "Royal Canadian<0/>Mounted Police"
+
+#: src/routes/ReportSeizure.tsx:159
+msgid "Seized On"
+msgstr "Seized On"
+
+#: src/routes/ReportSeizure.tsx:348
+msgid "Submit Report"
+msgstr "Submit Report"
+
+#: src/routes/ReportSeizure.tsx:214
+msgid "Substance Details"
+msgstr "Substance Details"
+
+#: src/routes/ReportSeizure.tsx:219
+msgid "Substance Name"
+msgstr "Substance Name"
 
 #: src/Footer.tsx:46
 msgid "Symbol of the Government of Canada"
@@ -86,6 +131,10 @@ msgstr "Symbol of the Government of Canada"
 #: src/Header.tsx:29
 msgid "The logo of the RCMP"
 msgstr "The logo of the RCMP"
+
+#: src/routes/ReportSeizure.tsx:302
+msgid "Unit"
+msgstr "Unit"
 
 #: src/routes/Verify.tsx:67
 msgid "Verification successful! Logging you in!"

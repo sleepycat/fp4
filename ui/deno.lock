@@ -13,9 +13,11 @@
     "jsr:@std/path@^1.1.3": "1.1.3",
     "jsr:@std/testing@^1.0.16": "1.0.16",
     "npm:@adobe/react-spectrum@^3.45.0": "3.45.0_react@19.1.1_react-dom@19.1.1__react@19.1.1_@react-spectrum+provider@3.10.11__react@19.1.1__react-dom@19.1.1___react@19.1.1",
+    "npm:@internationalized/date@*": "3.10.0",
     "npm:@lingui/babel-plugin-lingui-macro@^5.6.0": "5.6.1",
     "npm:@lingui/cli@^5.6.0": "5.6.1_@lingui+babel-plugin-lingui-macro@5.6.1",
     "npm:@lingui/core@^5.6.0": "5.6.1_@lingui+babel-plugin-lingui-macro@5.6.1",
+    "npm:@lingui/macro@^5.6.0": "5.6.1_@lingui+babel-plugin-lingui-macro@5.6.1_react@19.1.1",
     "npm:@lingui/react@^5.6.0": "5.6.1_@lingui+babel-plugin-lingui-macro@5.6.1_react@19.1.1",
     "npm:@lingui/swc-plugin@^5.6.1": "5.6.1_@lingui+core@5.6.1__@lingui+babel-plugin-lingui-macro@5.6.1_@lingui+babel-plugin-lingui-macro@5.6.1",
     "npm:@pandacss/dev@^1.2.0": "1.5.1_jsdom@27.2.0",
@@ -728,6 +730,17 @@
         "@lingui/message-utils",
         "date-fns",
         "pofile"
+      ]
+    },
+    "@lingui/macro@5.6.1_@lingui+babel-plugin-lingui-macro@5.6.1_react@19.1.1": {
+      "integrity": "sha512-c7g5v8lZt2ImtFhxoSsvINFtC6JLfHmss4MFRIJRfQjAmX29fIGPOVki7Nrj9T/7n4ZUs64wbwITInqeEYA1fA==",
+      "dependencies": [
+        "@lingui/babel-plugin-lingui-macro",
+        "@lingui/core",
+        "@lingui/react"
+      ],
+      "optionalPeers": [
+        "@lingui/babel-plugin-lingui-macro"
       ]
     },
     "@lingui/message-utils@5.6.1": {
@@ -5308,6 +5321,7 @@
       "npm:@lingui/babel-plugin-lingui-macro@^5.6.0",
       "npm:@lingui/cli@^5.6.0",
       "npm:@lingui/core@^5.6.0",
+      "npm:@lingui/macro@^5.6.0",
       "npm:@lingui/react@^5.6.0",
       "npm:@lingui/swc-plugin@^5.6.1",
       "npm:@pandacss/dev@^1.2.0",

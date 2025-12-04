@@ -24,6 +24,7 @@
     "@testing-library/react": "npm:@testing-library/react@^16.3.0",
     "@types/react": "npm:@types/react@^19.1.12",
     "@types/react-dom": "npm:@types/react-dom@^19.1.9",
-    "@lingui/react/macro": "./src/__tests__/mocks/lingui-macro-mock.tsx"
+    "@lingui/react/macro": "./src/__tests__/mocks/lingui-macro-mock.tsx",
+    "@lingui/macro": "./src/__tests__/mocks/lingui-macro-mock.tsx"
   }
 }

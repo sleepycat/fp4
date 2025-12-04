@@ -25,6 +25,11 @@ msgstr "/saisies-de-drogues"
 
 #. js-lingui-explicit-id
 #: src/Navigation.tsx:49
+msgid "/report-seizure"
+msgstr "/rapport-saisie"
+
+#. js-lingui-explicit-id
+#: src/Navigation.tsx:55
 msgid "/login"
 msgstr "/se-connecter"
 
@@ -33,12 +38,20 @@ msgstr "/se-connecter"
 msgid "About"
 msgstr "A propos"
 
+#: src/routes/ReportSeizure.tsx:283
+msgid "Amount"
+msgstr ""
+
+#: src/routes/ReportSeizure.tsx:232
+msgid "Category"
+msgstr ""
+
 #: src/Navigation.tsx:46
 #: src/routes/DrugSeizures.tsx:66
 msgid "Drug Seizures"
 msgstr "Saisies de drogues"
 
-#: src/index.tsx:33
+#: src/index.tsx:34
 msgid "drug-seizures"
 msgstr "saisies-de-drogues"
 
@@ -59,7 +72,11 @@ msgstr "La Police fédérale protège le Canada, sa population et ses intérêts
 msgid "Home"
 msgstr "Accueil"
 
-#: src/Navigation.tsx:52
+#: src/routes/ReportSeizure.tsx:189
+msgid "Location"
+msgstr "Emplacement"
+
+#: src/Navigation.tsx:58
 msgid "Login"
 msgstr "Se connecter"
 
@@ -75,9 +92,37 @@ msgstr "Veuillez saisir votre adresse e-mail professionnelle de la police ci-des
 msgid "Please try to <0>login</0> again."
 msgstr "Veuillez réessayer de vous <0>connecter</0>."
 
+#: src/routes/ReportSeizure.tsx:146
+msgid "Reference Number"
+msgstr "Numéro de référence"
+
+#: src/routes/ReportSeizure.tsx:129
+msgid "Report Drug Seizure"
+msgstr "Signaler une saisie de drogue"
+
+#: src/Navigation.tsx:52
+msgid "Report Seizure"
+msgstr "Rapport saisie"
+
 #: src/Header.tsx:38
 msgid "Royal Canadian<0/>Mounted Police"
 msgstr "Gendarmerie royale<0/>du Canada"
+
+#: src/routes/ReportSeizure.tsx:159
+msgid "Seized On"
+msgstr "Date de saisie"
+
+#: src/routes/ReportSeizure.tsx:348
+msgid "Submit Report"
+msgstr "Soumettre le rapport"
+
+#: src/routes/ReportSeizure.tsx:214
+msgid "Substance Details"
+msgstr "Détails sur la substance"
+
+#: src/routes/ReportSeizure.tsx:219
+msgid "Substance Name"
+msgstr "Nom de la substance"
 
 #: src/Footer.tsx:46
 msgid "Symbol of the Government of Canada"
@@ -86,6 +131,10 @@ msgstr "Symbole du gouvernement du Canada"
 #: src/Header.tsx:29
 msgid "The logo of the RCMP"
 msgstr "Le logo de la GRC"
+
+#: src/routes/ReportSeizure.tsx:302
+msgid "Unit"
+msgstr "Unité de mesure"
 
 #: src/routes/Verify.tsx:67
 msgid "Verification successful! Logging you in!"
