@@ -18,10 +18,13 @@ import {
   SelectValue,
   TextField,
 } from "react-aria-components"
-import { gql, useMutation } from "urql"
-import { useNavigate } from "react-router"
+import { gql } from "urql"
+import { redirect, useActionData, useNavigation, useSubmit } from "react-router"
+import type { ActionFunctionArgs } from "react-router"
 import { css } from "../../styled-system/css/css.mjs"
-import { useState } from "react"
+import { useEffect, useState } from "react"
+import { ToastQueue } from "@adobe/react-spectrum"
+import { UrqlClientContext } from "../context.tsx"
 
 const REPORT_SEIZURE_MUTATION = gql`
   mutation ReportDrugSeizure($input: SeizureInput) {
@@ -29,12 +32,17 @@ const REPORT_SEIZURE_MUTATION = gql`
   }
 `
 
-
-
-export default function ReportSeizure() {
-  const [_result, reportSeizure] = useMutation(REPORT_SEIZURE_MUTATION)
-  const navigate = useNavigate()
+export function ReportSeizure() {
+  const submit = useSubmit()
+  const actionData = useActionData()
+  const navigation = useNavigation()
   const [error, setError] = useState<string | null>(null)
+
+  useEffect(() => {
+    if (actionData?.error) {
+      setError(actionData.error)
+    }
+  }, [actionData])
 
   const SUBSTANCE_CATEGORIES = [
     { id: "CONTROLLED_SUBSTANCES", name: t`Controlled Substances` },
@@ -55,33 +63,9 @@ export default function ReportSeizure() {
     { id: "CAPSULES", name: t`Capsules` },
   ]
 
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
-    const formData = new FormData(e.currentTarget)
-
-    const seizedOn = formData.get("seizedOn") as string
-
-    const input = {
-      reference: formData.get("reference") as string,
-      seizedOn: seizedOn,
-      location: formData.get("location") as string,
-      substances: [
-        {
-          name: formData.get("substanceName") as string,
-          category: formData.get("substanceCategory") as string,
-          amount: parseFloat(formData.get("substanceAmount") as string),
-          unit: formData.get("substanceUnit") as string,
-        },
-      ],
-    }
-
-    const res = await reportSeizure({ input })
-
-    if (res.error) {
-      setError(res.error.message)
-    } else {
-      navigate("/drug-seizures")
-    }
+    submit(e.currentTarget)
   }
 
   const fieldClass = css`
@@ -115,6 +99,8 @@ export default function ReportSeizure() {
     }
   `
 
+  const isSubmitting = navigation.state === "submitting"
+
   return (
     <div
       className={css`
@@ -143,7 +129,7 @@ export default function ReportSeizure() {
         </div>
       )}
 
-      <Form onSubmit={handleSubmit}>
+      <Form onSubmit={handleSubmit} method="post">
         <TextField name="reference" isRequired className={fieldClass}>
           <Label className={labelClass}>
             <Trans>Reference Number</Trans>
@@ -347,10 +333,48 @@ export default function ReportSeizure() {
           </Select>
         </div>
 
-        <Button type="submit" className={buttonClass}>
+        <Button type="submit" className={buttonClass} isDisabled={isSubmitting}>
           <Trans>Submit Report</Trans>
         </Button>
       </Form>
     </div>
   )
 }
+
+export async function action({ context, request }: ActionFunctionArgs) {
+  const formData = await request.formData()
+  const seizedOn = formData.get("seizedOn") as string
+
+  const input = {
+    reference: formData.get("reference") as string,
+    seizedOn: seizedOn,
+    location: formData.get("location") as string,
+    substances: [
+      {
+        name: formData.get("substanceName") as string,
+        category: formData.get("substanceCategory") as string,
+        amount: parseFloat(formData.get("substanceAmount") as string),
+        unit: formData.get("substanceUnit") as string,
+      },
+    ],
+  }
+
+  const client = context.get(UrqlClientContext)
+  const result = await client.mutation(REPORT_SEIZURE_MUTATION, { input })
+
+  const { error } = result
+  if (error) {
+    return { error: error.message }
+  }
+
+  ToastQueue.positive(t`Seizure reported successfully!`, { timeout: 5000 })
+  return redirect("/drug-seizures")
+}
+
+const ReportSeizureRoute = {
+  path: "report-seizure",
+  Component: ReportSeizure,
+  action,
+}
+
+export default ReportSeizureRoute

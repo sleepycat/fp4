@@ -142,6 +142,7 @@ export async function loader({ context, request }: LoaderFunctionArgs) {
       last,
       before,
     },
+    { requestPolicy: "network-only" },
   )
   const { data, fetching, error } = result
   if (fetching) return { edges: [], pageInfo: {} }

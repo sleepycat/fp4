@@ -32,7 +32,7 @@ const router = createBrowserRouter([
       DrugSeizuresRoute,
       VerifyRoute,
       { path: t`drug-seizures`, Component: DrugSeizures },
-      { path: "report-seizure", Component: ReportSeizure },
+      ReportSeizure,
     ],
   },
 ], {
