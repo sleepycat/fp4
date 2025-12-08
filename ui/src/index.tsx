@@ -39,7 +39,6 @@ const router = createBrowserRouter([
   // This context object will be available in all the loaders and actions.
   // By adding our initialized GraphQL client in there we can use it everywhere.
   getContext() {
-    i18n.activate("en")
     const context = new RouterContextProvider()
     context.set(UrqlClientContext, client)
     return context
