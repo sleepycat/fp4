@@ -1,5 +1,5 @@
 import { Trans } from "@lingui/react/macro"
-import { t } from "@lingui/macro"
+import { t } from "@lingui/core/macro"
 import {
   Button,
   DateField,
@@ -21,16 +21,10 @@ import {
 import { gql } from "urql"
 import { redirect, useActionData, useNavigation, useSubmit } from "react-router"
 import type { ActionFunctionArgs } from "react-router"
-import { css } from "../../styled-system/css/css.mjs"
+import { css } from "../../styled-system/css/index.mjs"
 import { useEffect, useState } from "react"
 import { ToastQueue } from "@adobe/react-spectrum"
 import { UrqlClientContext } from "../context.tsx"
-
-const REPORT_SEIZURE_MUTATION = gql`
-  mutation ReportDrugSeizure($input: SeizureInput) {
-    reportDrugSeizure(input: $input)
-  }
-`
 
 export function ReportSeizure() {
   const submit = useSubmit()
@@ -343,24 +337,30 @@ export function ReportSeizure() {
 
 export async function action({ context, request }: ActionFunctionArgs) {
   const formData = await request.formData()
-  const seizedOn = formData.get("seizedOn") as string
 
   const input = {
-    reference: formData.get("reference") as string,
-    seizedOn: seizedOn,
-    location: formData.get("location") as string,
+    reference: formData.get("reference"),
+    seizedOn: formData.get("seizedOn"),
+    location: formData.get("location"),
     substances: [
       {
-        name: formData.get("substanceName") as string,
-        category: formData.get("substanceCategory") as string,
+        name: formData.get("substanceName"),
+        category: formData.get("substanceCategory"),
         amount: parseFloat(formData.get("substanceAmount") as string),
-        unit: formData.get("substanceUnit") as string,
+        unit: formData.get("substanceUnit"),
       },
     ],
   }
 
   const client = context.get(UrqlClientContext)
-  const result = await client.mutation(REPORT_SEIZURE_MUTATION, { input })
+  const result = await client.mutation(
+    gql`
+      mutation ReportDrugSeizure($input: SeizureInput) {
+        reportDrugSeizure(input: $input)
+      }
+    `,
+    { input },
+  )
 
   const { error } = result
   if (error) {
