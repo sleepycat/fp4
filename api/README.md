@@ -47,11 +47,13 @@ This API is built with [Deno](https://deno.com/) the more security focused optio
 Deno also allows developers to reduce the number of dependencies by including many common tools like a testing framework, which allows running tests with Deno, instead of needing to install a separate testing framework like [Jest](https://jestjs.io/) along with it's entire [dependency tree](https://npmgraph.js.org/?q=jest). This results in a significant 
 reduction in attack-surface.
 
+Deno includes [built in support](https://docs.deno.com/examples/basic_opentelemetry_tutorial/#step-2%3A-run-the-server-with-opentelemetry-enabled) for [OpenTelemetry](https://opentelemetry.io), which allows for distributed tracing and metrics collection. This feature can provide an unheard of level of visibility for developers and also the SOC team (especially when paired with [GraphQL Yoga's opentelemetry support](https://the-guild.dev/graphql/envelop/plugins/use-open-telemetry)).
+
 ### Using Sqlite
 
 This API is assumed to be a read-heavy workload with low-to-no concurrent writes. This usage profile allows the use of [Sqlite for a simple, operations-free database](https://dev.to/shayy/everyone-is-wrong-about-sqlite-4gjf). This approach means that backups can be handled by [simple filesync to S3](https://litestream.io/) for near zero cost.
 
-Alternatives considered: [CloudNativePG](https://cloudnative-pg.io/) (operationally complicated), [Rqlite](https://rqlite.io/) (looks promising, didn't love the JavaScript client. Still worth exploring.)
+Alternatives considered: [CloudNativePG](https://cloudnative-pg.io/) (requires comfort with Kubernetes, but produces an HA configuration substantially cheaper than CSP database offerings), [Rqlite](https://rqlite.io/) (looks very promising, but didn't love the JavaScript client. Still worth exploring since the single file database is likely something this project will outgrow.)
 
 ## Debugging Notifications
 
