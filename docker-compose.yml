@@ -30,7 +30,12 @@ services:
       source: ./api/
       target: /app/api
   ui:
-    build: ./ui
+    build:
+      context: ./ui
+      dockerfile_inline: |
+        FROM denoland/deno:alpine
+        USER deno
+        WORKDIR /app/ui
     user: "1000:1000"
     expose:
       - 3000
