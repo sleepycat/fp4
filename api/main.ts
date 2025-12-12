@@ -97,7 +97,7 @@ const yoga = Server({
   },
 })
 
-Deno.serve(
+const server = Deno.serve(
   { hostname: HOST, port: Number(PORT) },
   (request: Request, info) =>
     // @ts-expect-error: request
@@ -108,3 +108,9 @@ Deno.serve(
       remoteAddress: info.remoteAddr.hostname,
     }),
 )
+
+Deno.addSignalListener("SIGINT", async () => {
+  console.log("Recieved SIGINT")
+  database.close()
+  await server.shutdown()
+})
