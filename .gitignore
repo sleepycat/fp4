@@ -3,3 +3,4 @@
 **/*.sqlite
 **/*.env
 */coverage
+api/api

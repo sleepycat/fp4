@@ -14,11 +14,18 @@ services:
       - "3000:3000"
       - "3001:3001"
   api:
-    build: ./api
+    build:
+      context: ./api
+      dockerfile_inline: |
+        FROM denoland/deno:alpine
+        USER deno
+        WORKDIR /app/api
+        CMD ["run", "-P", "main.ts" ]
     env_file: ./api/.env
     expose:
       - 3000
     volumes:
+    # bind mount the contents of the current directory into the container
     - type: bind
       source: ./api/
       target: /app/api

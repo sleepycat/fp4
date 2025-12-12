@@ -13,7 +13,7 @@ import { authenticatedOnly } from "./authenticatedOnly.ts"
 
 export const schema = createSchema({
   typeDefs: await Deno.readTextFile(
-    new URL("../schema.graphql", import.meta.url),
+    "schema.graphql",
   ),
   resolvers: {
     ISO8601Date,

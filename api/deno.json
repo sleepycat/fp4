@@ -25,5 +25,13 @@
     "options": {
       "semiColons": false
     }
+  },
+  "permissions": {
+    "default": {
+      "read": ["./data/seizures.db", "schema.graphql"],
+      "write": ["./data/seizures.db"],
+      "env": true,
+      "net": true
+    }
   }
 }
