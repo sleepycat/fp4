@@ -64,3 +64,26 @@ To learn more about Rsbuild, check out the following resources:
 
 - [Rsbuild documentation](https://rsbuild.rs) - explore Rsbuild features and APIs.
 - [Rsbuild GitHub repository](https://github.com/web-infra-dev/rsbuild) - your feedback and contributions are welcome!
+
+## Docker notes
+
+These are commands that are needed to build and push images.
+To set yourself up to use the GitHub Container Registry (ghcr.io) you will need [create a classic token](https://github.com/settings/tokens/new) with a `write:packages` scope.
+Save the resulting token into a file called `github-token` and then run the following commands (obviously changing the username):
+(this little "cat + read from stdin" dance is to prevent the token from ending up in your bash history)
+
+```
+# Install the credential helper
+$ go install github.com/docker/docker-credential-helpers@latest
+$ cat github-token | docker login --username sleepycat --password-stdin ghcr.io
+Login Succeeded
+```
+With that done, you can now push and pull images to your account (not the repo itself) with the following commands:
+```
+$ docker build -t ghcr.io/sleepycat/fp4-ui:latest .
+$ docker push ghcr.io/sleepycat/fp4-ui:latest
+```
+When building images, make sure you inspect the contents of the images with [dive](https://github.com/wagoodman/dive) before pushing them anywhere.
+```
+$ dive ghcr.io/sleepycat/fp4-ui:latest
+```
