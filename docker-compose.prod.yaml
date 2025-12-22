@@ -1,0 +1,47 @@
+name: fp4
+
+services:
+  # This temporary service ensures the caddy volumes are writable by UID 1000
+  init-permissions:
+    image: alpine
+    user: "root"
+    volumes:
+      - caddy_data:/data
+      - caddy_config:/config
+    command: chown -R 1000:1000 /data /config
+
+  caddy:
+    # NB: Our internet facing server is Caddy. It's written in GO, so it's memory safe.
+    # Memory safety vulnerabilities account for 70%+ of all vulnerabilities, but
+    # controls in ITSG-33 aren't weighted.
+    # https://www.memorysafety.org/docs/memory-safety/#how-common-are-memory-safety-vulnerabilities
+    image: caddy
+    # restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+    # Enforce non-root user
+    user: "1000:1000"
+    security_opt:
+    # Prevent process from gaining additional privileges
+    - no-new-privileges:true
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile
+      - caddy_data:/data
+      - caddy_config:/config
+    depends_on:
+      init-permissions:
+        condition: service_completed_successfully
+      api:
+        condition: service_started
+      ui:
+        condition: service_started
+  api:
+    image: ghcr.io/sleepycat/fp4-api:latest
+    env_file: ./api/.env
+  ui:
+    image: ghcr.io/sleepycat/fp4-ui:latest
+
+volumes:
+  caddy_data:
+  caddy_config:
