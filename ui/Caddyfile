@@ -1,0 +1,11 @@
+{
+	default_bind 0.0.0.0
+}
+
+:3000 {
+	handle {
+		root * ./dist
+		try_files {path} /index.html
+		file_server
+	}
+}

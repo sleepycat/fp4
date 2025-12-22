@@ -1,9 +1,9 @@
-FROM denoland/deno:latest AS deno
+FROM denoland/deno:latest AS buildenv
 WORKDIR /app
 COPY --chown=deno:deno . .
 RUN deno task build
 
-FROM alpine
+FROM alpine:latest
 
 RUN apk add --no-cache \
 	ca-certificates \
@@ -17,10 +17,11 @@ RUN addgroup -g 1000 nonroot && \
 
 WORKDIR /home/nonroot
 # And now the app:
-COPY --from=deno --chown=nonroot:nonroot /app/dist .
+COPY --from=buildenv --chown=nonroot:nonroot /app/dist ./dist
+COPY --from=buildenv --chown=nonroot:nonroot /app/Caddyfile /etc/caddy/Caddyfile
 
 EXPOSE 3000
 # Run as a non-root user
 USER nonroot
-CMD ["caddy", "file-server", "--listen", ":3000",  "--root", "/home/nonroot/"]
-
+ENTRYPOINT ["caddy"]
+CMD ["run", "--config", "/etc/caddy/Caddyfile"]
