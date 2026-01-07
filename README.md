@@ -32,3 +32,29 @@ This application takes a  minimalist approach to microservices and distributed s
 This approach allows teams to ease themselves into the shallow end of an area that is considered [complex](https://how.complexsystems.fail) and [hard](https://www.youtube.com/watch?v=w9GP7MNbaRc) but with a large (and much needed) security and availability payoff.
 Working in this style requires different [team structures](https://teamtopologies.com/key-concepts), tools and [patterns](https://microservices.io/) which TBS has tried to articulate in it's [Digital Standards](https://www.canada.ca/en/government/system/digital-government/government-canada-digital-standards.html).
 
+## Running the project
+
+### Dev mode
+
+Since this application has a few different parts, we need something to run all of them.
+We currently use [Docker Compose](https://docs.docker.com/compose/) (but this should probably switched to [Podman Compose](https://podman-desktop.io/docs/compose) in the future) and describe what "running everything" looks like in the `docker-compose.yaml`.
+
+Docker compose will read that file by default and run the application with the following command:
+```sh
+docker compose up
+```
+That file uses some simple docker containers, [inline `Dockerfile` statements](https://docs.docker.com/reference/compose-file/build/#dockerfile_inline) and [bind mounts](https://docs.docker.com/engine/storage/bind-mounts/) to create a nice dev experience.
+
+### Production
+
+It still being early days , it's actually viable to use Docker Compose in production.
+There is a second Docker Compose file for that purpose. Since it's not using the default name, you'll have to specify it with the `-f` flag. Note that we've added the `-d` option here to detach the process from the terminal so you can log out and let this run on it's own.
+
+```sh
+docker compose -f docker-compose.prod.yaml up -d
+```
+You'll note that this file is pulling and running containers based on prebuilt [images hosted on GitHub](https://github.com/sleepycat?tab=packages). These images are based on [Googles distroless base images](https://github.com/GoogleContainerTools/distroless?tab=readme-ov-file#distroless-container-images).
+We use [`deno compile`](https://docs.deno.com/runtime/reference/cli/compile/) to create a standalone binary, but unfortunately it's not statically compiled, so it needs [glibc](https://www.gnu.org/software/libc/) to run, which leads us to the [distroless cc image](https://github.com/GoogleContainerTools/distroless/tree/main/cc).
+The core idea is that these images do not contain a viable operating system, and do not even include a shell, making them largely useless for attackers.
+
+The two images are fronted by an instance of [Caddy](https://caddyserver.com/) running in [reverse proxy mode](https://caddyserver.com/docs/caddyfile/patterns#reverse-proxy). Caddy is interesting because [it automates https](https://caddyserver.com/docs/quick-starts/https).
