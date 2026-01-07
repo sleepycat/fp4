@@ -29,7 +29,7 @@ type SeizureConnection {
 }
 
 type Query {
-  hello: String
+  loggedIn: Boolean!
   seizures(first: Int, after: ID last: Int, before: ID): SeizureConnection
 }
 

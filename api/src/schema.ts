@@ -10,6 +10,7 @@ import { verify } from "./resolvers/verify.ts"
 import { login } from "./resolvers/login.ts"
 import { reportDrugSeizure } from "./resolvers/reportDrugSeizure.ts"
 import { authenticatedOnly } from "./authenticatedOnly.ts"
+import { loggedIn } from "./resolvers/loggedIn.ts"
 
 export const schema = createSchema({
   typeDefs: await Deno.readTextFile(
@@ -38,7 +39,7 @@ export const schema = createSchema({
       verify,
     },
     Query: {
-      hello: () => "world",
+      loggedIn,
       seizures: authenticatedOnly(seizures),
     },
   },
