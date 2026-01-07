@@ -9,6 +9,7 @@ if (DB_PATH === undefined || DB_PATH == "") {
   )
 }
 const db = new DatabaseSync(DB_PATH)
+db.exec("PRAGMA foreign_keys = ON;")
 
 const result = migrate(db, migrations)
 

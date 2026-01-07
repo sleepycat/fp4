@@ -30,7 +30,7 @@ export default [
         reported_on date NOT NULL DEFAULT ( strftime('%Y-%m-%d') ),
         user_id INTEGER NOT NULL,
         FOREIGN KEY (user_id)
-          REFERENCES users (id)
+          REFERENCES users (id) ON DELETE CASCADE
       );
     `)
   },

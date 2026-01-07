@@ -42,6 +42,9 @@ const HOST = Deno.env.get("HOST") || "0.0.0.0"
 // Dependency Injection for database functions allows for easy testing.
 export const database: DatabaseSync = new DatabaseSync(DB_PATH)
 
+// Enable foreign key constraints
+database.exec("PRAGMA foreign_keys = ON;")
+
 // Helpers that will be injected into the context
 const db = dataAccessors(database)
 const jwt = useEncryptedJWT({
