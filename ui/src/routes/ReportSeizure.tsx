@@ -20,7 +20,7 @@ import {
 } from "react-aria-components"
 import { gql } from "urql"
 import { redirect, useActionData, useNavigation, useSubmit } from "react-router"
-import type { ActionFunctionArgs } from "react-router"
+import type { ActionFunctionArgs, LoaderFunctionArgs } from "react-router"
 import { css } from "../../styled-system/css/index.mjs"
 import { useEffect, useState } from "react"
 import { ToastQueue } from "@adobe/react-spectrum"
@@ -335,6 +335,24 @@ export function ReportSeizure() {
   )
 }
 
+export async function loader({ context }: LoaderFunctionArgs) {
+  const client = context.get(UrqlClientContext)
+  const result = await client.query(
+    gql`
+      query LoggedIn {
+        loggedIn
+      }
+    `,
+    {},
+  )
+
+  if (!result.data?.loggedIn) {
+    return redirect("/login")
+  }
+
+  return null
+}
+
 export async function action({ context, request }: ActionFunctionArgs) {
   const formData = await request.formData()
 
@@ -375,6 +393,7 @@ const ReportSeizureRoute = {
   path: "report-seizure",
   Component: ReportSeizure,
   action,
+  loader,
 }
 
 export default ReportSeizureRoute
