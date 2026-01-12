@@ -1,7 +1,7 @@
 import { describe, it } from "@std/testing/bdd"
 import { expect } from "@std/expect"
-import { schema } from "../schema.ts"
-import type { Context } from "../types/Context.ts"
+import { schema } from "../../schema.ts"
+import type { Context } from "../../types/Context.ts"
 import { Server } from "../Server.ts"
 
 describe("Server", () => {

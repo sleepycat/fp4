@@ -22,6 +22,8 @@
     "@lingui/macro": "npm:@lingui/macro@^5.6.0",
     "@rsbuild/core": "npm:@rsbuild/core@1.5.17",
     "@types/jsdom": "npm:@types/jsdom@^27.0.0",
+    "ag-charts-community": "npm:ag-charts-community@^13.0.0",
+    "ag-charts-react": "npm:ag-charts-react@^13.0.0",
     "jsdom": "npm:jsdom@^27.2.0",
     "react": "npm:react@19.1.1",
     "react-aria-components": "npm:react-aria-components@^1.13.0",

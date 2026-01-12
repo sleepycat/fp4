@@ -2,6 +2,8 @@ scalar EmailAddress
 scalar ULID
 scalar ISO8601Date
 scalar PositiveFloat
+scalar ReportingYear
+scalar JSON
 
 type DrugSeizureRecord {
   id: ID
@@ -31,6 +33,14 @@ type SeizureConnection {
 type Query {
   loggedIn: Boolean!
   seizures(first: Int, after: ID last: Int, before: ID): SeizureConnection
+  seizureStatistics(year: ReportingYear): [SeizureStatistic!]!
+}
+
+type SeizureStatistic {
+  id: ID!
+  month: Int!
+  drugType: String!
+  amount: Float!
 }
 
 enum SubstanceCategory {

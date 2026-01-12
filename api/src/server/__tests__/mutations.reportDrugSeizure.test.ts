@@ -1,14 +1,14 @@
 import { afterEach, beforeEach, describe, it } from "@std/testing/bdd"
 import { expect, fn } from "@std/expect"
-import { schema } from "../schema.ts"
-import type { Context } from "../types/Context.ts"
+import { schema } from "../../schema.ts"
+import type { Context } from "../../types/Context.ts"
 import { Server } from "../Server.ts"
 import migrate from "@gordonb/sqlite-migrate"
-import migrations from "../../migrations.ts"
-import { dataAccessors } from "../db.ts"
+import migrations from "../../../migrations.ts"
+import { dataAccessors } from "../../db.ts"
 import { DatabaseSync } from "node:sqlite"
-import { generateSecret, useEncryptedJWT } from "../useEncryptedJWT.ts"
-import { reportDrugSeizure } from "../resolvers/reportDrugSeizure.ts"
+import { generateSecret, useEncryptedJWT } from "../../useEncryptedJWT.ts"
+import { reportDrugSeizure } from "../../resolvers/reportDrugSeizure.ts"
 
 const key = await generateSecret()
 

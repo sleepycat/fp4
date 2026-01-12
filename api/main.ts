@@ -5,7 +5,7 @@ import { EmailPersonalisation, NotifyClient } from "notifications-node-client"
 import { dataAccessors } from "./src/db.ts"
 import { useEncryptedJWT } from "./src/useEncryptedJWT.ts"
 import { allowList } from "./src/allowList.ts"
-import { Server } from "./src/Server.ts"
+import { Server } from "./src/server/Server.ts"
 import { RateLimiterMemory } from "rate-limiter-flexible"
 
 const rateLimiter = {

@@ -1,42 +1,13 @@
-CREATE TABLE IF NOT EXISTS users (
-  id INTEGER PRIMARY KEY AUTOINCREMENT,
-  email TEXT NOT NULL UNIQUE,
-  created_at TEXT NOT NULL DEFAULT current_timestamp
-);
+-- Insert a default user
+INSERT INTO users (email) values ('michael.williamson@rcmp-grc.gc.ca');
 
-CREATE TABLE IF NOT EXISTS magic_links (
-  id INTEGER PRIMARY KEY AUTOINCREMENT,
-  token_hash TEXT NOT NULL UNIQUE,
-  user_id INTEGER NOT NULL,
-  FOREIGN KEY (user_id)
-    REFERENCES users (id)
-);
-
-CREATE TABLE IF NOT EXISTS seizures (
-  id INTEGER PRIMARY KEY AUTOINCREMENT,
-  reference TEXT NOT NULL,
-  location TEXT NOT NULL,
-  seized_on date NOT NULL,
-  reported_on date NOT NULL DEFAULT ( strftime('%Y-%m-%d') ),
-  user_id INTEGER NOT NULL,
-  FOREIGN KEY (user_id)
-    REFERENCES users (id)
-);
-
-CREATE TABLE IF NOT EXISTS substances (
-  id INTEGER PRIMARY KEY AUTOINCREMENT,
-  name TEXT NOT NULL,
-  category TEXT NOT NULL,
-  amount FLOAT NOT NULL,
-  unit TEXT NOT NULL,
-  seizure_id INTEGER NOT NULL,
-  FOREIGN KEY (seizure_id)
-    REFERENCES seizures (id)
-);
-
-INSERT INTO users (email) values ('test@example.com');
-
+-- Create two seizure reports attributed to that users user_id
 INSERT INTO seizures (reference, location, reported_on, seized_on, user_id) VALUES ('#12345', '123 Main St.', '2025-09-18','2025-09-18', 1);
+INSERT INTO seizures (reference, location, reported_on, seized_on, user_id) VALUES ('#12346', '123 Other St.', '2026-01-12','2026-01-12', 1);
 
-INSERT INTO substances (name, category, amount, unit, seizure_id) VALUES ('iocaine powder', 'controlled substance', 4.9, 'grams', 1);
-INSERT INTO substances (name, category, amount, unit, seizure_id) VALUES ('phlogiston', 'controlled substance', 7, 'capsules', 1);
+-- Each seizure event potentially seized many substances. Make some and referencing the seizure ids.
+INSERT INTO substances (name, category, amount, unit, seizure_id) VALUES ('fentanyl', 'controlled substance', 4.9, 'kilograms', 1);
+INSERT INTO substances (name, category, amount, unit, seizure_id) VALUES ('cocaine', 'controlled substance', 157, 'grams', 1);
+INSERT INTO substances (name, category, amount, unit, seizure_id) VALUES ('fentanyl', 'controlled substance', 11.9, 'kilograms', 2);
+INSERT INTO substances (name, category, amount, unit, seizure_id) VALUES ('cocaine', 'controlled substance', 67, 'kilograms', 2);
+INSERT INTO substances (name, category, amount, unit, seizure_id) VALUES ('cannabis', 'cannabis', 20, 'kilograms', 2);

@@ -28,6 +28,8 @@
     "npm:@types/jsdom@27": "27.0.0",
     "npm:@types/react-dom@^19.1.9": "19.2.3_@types+react@19.2.7",
     "npm:@types/react@^19.1.12": "19.2.7",
+    "npm:ag-charts-community@13": "13.0.0",
+    "npm:ag-charts-react@13": "13.0.0_react@19.1.1",
     "npm:jsdom@^27.2.0": "27.2.0",
     "npm:react-aria-components@^1.13.0": "1.13.0_react@19.1.1_react-dom@19.1.1__react@19.1.1",
     "npm:react-dom@19.1.1": "19.1.1_react@19.1.1",
@@ -623,7 +625,7 @@
         "@jest/schemas",
         "@types/istanbul-lib-coverage",
         "@types/istanbul-reports",
-        "@types/node@24.2.0",
+        "@types/node",
         "@types/yargs",
         "chalk"
       ]
@@ -3627,19 +3629,13 @@
     "@types/jsdom@27.0.0": {
       "integrity": "sha512-NZyFl/PViwKzdEkQg96gtnB8wm+1ljhdDay9ahn4hgb+SfVtPCbm3TlmDUFXTA+MGN3CijicnMhG18SI5H3rFw==",
       "dependencies": [
-        "@types/node@24.2.0",
+        "@types/node",
         "@types/tough-cookie",
         "parse5@7.3.0"
       ]
     },
     "@types/node@17.0.45": {
       "integrity": "sha512-w+tIMs3rq2afQdsPJlODhoUEKzFP1ayaoyl1CcnwtIlsVe7K7bA1NGm4s3PraqTLlXnbIN84zuBlxBWo1u9BLw=="
-    },
-    "@types/node@24.2.0": {
-      "integrity": "sha512-3xyG3pMCq3oYCNg7/ZP+E1ooTaGB4cG8JWRsqqOYQdbWNY4zbaV0Ennrd7stjiJEFZCaybcIgpTjJWHRfBSIDw==",
-      "dependencies": [
-        "undici-types"
-      ]
     },
     "@types/react-dom@19.2.3_@types+react@19.2.7": {
       "integrity": "sha512-jp2L/eY6fn+KgVVQAOqYItbF0VY/YApe5Mz2F0aykSO8gx31bYCZyvSeYxCHKvzHG5eZjc+zyaS5BrBWya2+kQ==",
@@ -3712,6 +3708,33 @@
     },
     "@vue/shared@3.5.22": {
       "integrity": "sha512-F4yc6palwq3TT0u+FYf0Ns4Tfl9GRFURDN2gWG7L1ecIaS/4fCIuFOjMTnCyjsu/OK6vaDKLCrGAa+KvvH+h4w=="
+    },
+    "ag-charts-community@13.0.0": {
+      "integrity": "sha512-zIBokGrkvpySdksjCFVC/gOrtQSFeJ8j8n1WT7XV4UW1qvEeBIlme6Ng0srWS0HaACwNg9hn9WDEhnBDldbRTg==",
+      "dependencies": [
+        "ag-charts-core",
+        "ag-charts-locale",
+        "ag-charts-types"
+      ]
+    },
+    "ag-charts-core@13.0.0": {
+      "integrity": "sha512-OFN6aDhKDKzez8sSN1NEO/j/rNa0C5G/9EH5FkNFdVh4T96Ul19xpyZupZZl4kTvENN+ayGwRU6Ui8zau71Rog==",
+      "dependencies": [
+        "ag-charts-types"
+      ]
+    },
+    "ag-charts-locale@13.0.0": {
+      "integrity": "sha512-QUJsinNJIQgtaOiz+DvnCPynux3UwYrk9TIdXl0x3dH9OjSWPrF38cshDD7CZ8qJVR4YJloRyJ1aWGYOUBipUQ=="
+    },
+    "ag-charts-react@13.0.0_react@19.1.1": {
+      "integrity": "sha512-oQ8ds+AYnTPmOTfVe+8cOxSaomjXA9gwiM9Pq1DuOG8F/I/2QH89+KzNVuoxOktfKNxiUaJwsQKRDFNN/VlkbQ==",
+      "dependencies": [
+        "ag-charts-community",
+        "react"
+      ]
+    },
+    "ag-charts-types@13.0.0": {
+      "integrity": "sha512-mqOmKS0q4s2tt/C+CBG2Z+HWrSKYvRUCAlQzcKXKfARE3v/KdnBuxfjafa2c8ivElTTywdVdOe0q52Cow2Oggw=="
     },
     "agent-base@7.1.4": {
       "integrity": "sha512-MnA+YT8fwfJPgBx3m60MNqakm30XOkyIoH1y6huTQvC0PwZG7ki8NacLBcrPbNoo8vEZy7Jpuk7+jMO+CUovTQ=="
@@ -3954,7 +3977,7 @@
     "crosspath@2.0.0": {
       "integrity": "sha512-ju88BYCQ2uvjO2bR+SsgLSTwTSctU+6Vp2ePbKPgSCZyy4MWZxYsT738DlKVRE5utUjobjPRm1MkTYKJxCmpTA==",
       "dependencies": [
-        "@types/node@17.0.45"
+        "@types/node"
       ]
     },
     "css-tree@3.1.0": {
@@ -5188,9 +5211,6 @@
       "integrity": "sha512-jl1vZzPDinLr9eUt3J/t7V6FgNEw9QjvBPdysz9KfQDD41fQrC2Y4vKQdiaUpFT4bXlb1RHhLpp8wtm6M5TgSw==",
       "bin": true
     },
-    "undici-types@7.10.0": {
-      "integrity": "sha512-t5Fy/nfn+14LuOc2KNYg75vZqClpAiqscVvMygNnlsHBFpSXdJaYtXMcdNLpl/Qvc3P2cB3s6lOV51nqsFq4ag=="
-    },
     "universalify@2.0.1": {
       "integrity": "sha512-gptHNQghINnc/vTGIk0SOFGFNXw7JVrlRUtConJRlvaw6DuX0wO5Jeko9sWrMBhh+PsYAZ7oXAiOnf/UKogyiw=="
     },
@@ -5332,6 +5352,8 @@
       "npm:@types/jsdom@27",
       "npm:@types/react-dom@^19.1.9",
       "npm:@types/react@^19.1.12",
+      "npm:ag-charts-community@13",
+      "npm:ag-charts-react@13",
       "npm:jsdom@^27.2.0",
       "npm:react-aria-components@^1.13.0",
       "npm:react-dom@19.1.1",

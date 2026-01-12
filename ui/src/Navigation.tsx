@@ -53,6 +53,12 @@ export default function Navigation() {
             }}
           />
           <Trans
+            id="/seizure-statistics"
+            render={({ translation }) => {
+              return <NavLink to={translation}>{t`seizure statistics`}</NavLink>
+            }}
+          />
+          <Trans
             id="/login"
             render={({ translation }) => {
               return <NavLink to={translation}>{t`Login`}</NavLink>

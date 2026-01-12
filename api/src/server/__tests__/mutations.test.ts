@@ -1,15 +1,15 @@
 import { afterEach, beforeEach, describe, it } from "@std/testing/bdd"
 import { expect, fn } from "@std/expect"
-import { schema } from "../schema.ts"
-import type { Context } from "../types/Context.ts"
+import { schema } from "../../schema.ts"
+import type { Context } from "../../types/Context.ts"
 import { Server } from "../Server.ts"
 import migrate from "@gordonb/sqlite-migrate"
-import migrations from "../../migrations.ts"
-import { dataAccessors } from "../db.ts"
+import migrations from "../../../migrations.ts"
+import { dataAccessors } from "../../db.ts"
 import { DatabaseSync } from "node:sqlite"
-import { sha256 } from "../sha256.ts"
+import { sha256 } from "../../sha256.ts"
 import { monotonicUlid, ulid } from "@std/ulid"
-import { generateSecret, useEncryptedJWT } from "../useEncryptedJWT.ts"
+import { generateSecret, useEncryptedJWT } from "../../useEncryptedJWT.ts"
 
 const key = await generateSecret()
 
@@ -34,7 +34,7 @@ describe("Server", () => {
     describe("when the users email is permitted by isAllowed", () => {
       it("calls the Notify API via the sendMagicLink function", async () => {
         // set up a spy object
-        const sendMagicLink = fn(() => {})
+        const sendMagicLink = fn(() => { })
 
         const yoga = Server({
           schema,

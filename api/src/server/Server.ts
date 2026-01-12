@@ -1,4 +1,4 @@
-import type { ContextFactory } from "./types/Context.ts"
+import type { ContextFactory } from "../types/Context.ts"
 import { GraphQLSchema } from "graphql"
 import { createYoga } from "graphql-yoga"
 import { useCookies } from "@whatwg-node/server-plugin-cookies"

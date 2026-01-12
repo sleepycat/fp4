@@ -83,4 +83,17 @@ For testing the login function you will want to install the [faker-cli](https://
 ```sh
  for i in {1..20}; do curl 'http://localhost:3000/graphql' -H "content-type: application/json" -d "$(printf '{"query":"mutation ($email: EmailAddress!){login(email: $email)}","variables":{"email":"%s"}}' "$(fake -f json email | jq -r .email)")"; done
 ```
+## Database stuff
 
+This project uses sqlite, which makes the database cheap and easy to deal with.
+
+```sh
+# It's sqlite so you can just delete and recreate the database file.
+$ rm data/seizures.db
+# Rerunning the migrations will create the database file, and the table structure within.
+$ deno task migrate
+Task migrate deno run --env-file=.env --allow-env=NODE_ENV,DB_PATH --allow-write=./data/seizures.db --allow-read=./data/seizures.db migrate.ts
+Migrated to version 4
+# Now execute the sql file with the insert statements for the demo data.
+$ sqlite3 data/seizures.db < demo-data.sql
+```

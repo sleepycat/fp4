@@ -7,6 +7,7 @@ import { addSeizure } from "./database/addSeizure.ts"
 import { getSeizures } from "./database/getSeizures.ts"
 import { deleteHash } from "./database/deleteHash.ts"
 import { saveHash } from "./database/saveHash.ts"
+import { getSeizureStatistics } from "./database/getSeizureStatistics.ts"
 
 export function migrate(db: DatabaseSync) {
   const result = sqlitemigrate(db, migrations)
@@ -34,5 +35,6 @@ export function dataAccessors(db: DatabaseSync) {
     addSeizure: (record: SeizureRecord) => addSeizure(db, record),
     saveHash: (args: SaveHashArguments) => saveHash(db, args),
     deleteHash: (hash: string) => deleteHash(db, hash),
+    getSeizureStatistics: (year: number) => getSeizureStatistics(db, year),
   }
 }

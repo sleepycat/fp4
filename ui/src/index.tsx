@@ -12,6 +12,7 @@ import AboutRoute from "./routes/About.tsx"
 import VerifyRoute from "./routes/Verify.tsx"
 import DrugSeizuresRoute, { DrugSeizures } from "./routes/DrugSeizures.tsx"
 import ReportSeizure from "./routes/ReportSeizure.tsx"
+import SeizureStatisticsRoute from "./routes/SeizureStatistics.tsx"
 import { client, UrqlClientContext } from "./context.tsx"
 import { Provider } from "urql"
 import {
@@ -33,6 +34,7 @@ const router = createBrowserRouter([
       VerifyRoute,
       { path: t`drug-seizures`, Component: DrugSeizures },
       ReportSeizure,
+      SeizureStatisticsRoute,
     ],
   },
 ], {

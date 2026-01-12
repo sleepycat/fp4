@@ -3,9 +3,12 @@ import {
   EmailAddressResolver,
   PositiveFloatResolver,
   ULIDResolver,
+  JSONResolver,
 } from "graphql-scalars"
 import { ISO8601Date } from "./ISO8601Date.ts"
+import { ReportingYear } from "./ReportingYear.ts"
 import { seizures } from "./resolvers/seizures.ts"
+import { seizureStatistics } from "./resolvers/seizureStatistics.ts"
 import { verify } from "./resolvers/verify.ts"
 import { login } from "./resolvers/login.ts"
 import { reportDrugSeizure } from "./resolvers/reportDrugSeizure.ts"
@@ -21,6 +24,16 @@ export const schema = createSchema({
     EmailAddress: EmailAddressResolver,
     ULID: ULIDResolver,
     PositiveFloat: PositiveFloatResolver,
+    ReportingYear,
+    JSON: JSONResolver,
+    SeizureStatistic: {
+      id: (parent) => {
+        // @ts-ignore: toBase64 is actually a property of TextEncoder
+        return new TextEncoder().encode(`${parent.year}-${parent.month}-${parent.drugType}`).toBase64({
+          alphabet: "base64url",
+        })
+      },
+    },
     DrugSeizureRecord: {
       id: (parent) => {
         // @ts-ignore: toBase64 is actually a property of TextEncoder
@@ -41,6 +54,7 @@ export const schema = createSchema({
     Query: {
       loggedIn,
       seizures: authenticatedOnly(seizures),
+      seizureStatistics, // Unauthenticated: Summary data intended for public consumption
     },
   },
 })
