@@ -14,6 +14,11 @@ msgstr ""
 "Plural-Forms: \n"
 
 #. js-lingui-explicit-id
+#: src/Navigation.tsx:55
+msgid "/seizure-statistics"
+msgstr "/seizure-statistics"
+
+#. js-lingui-explicit-id
 #: src/Navigation.tsx:37
 msgid "/"
 msgstr "/"
@@ -29,7 +34,7 @@ msgid "/report-seizure"
 msgstr "/report-seizure"
 
 #. js-lingui-explicit-id
-#: src/Navigation.tsx:55
+#: src/Navigation.tsx:61
 msgid "/login"
 msgstr "/login"
 
@@ -38,20 +43,40 @@ msgstr "/login"
 msgid "About"
 msgstr "About"
 
-#: src/routes/ReportSeizure.tsx:283
+#: src/routes/ReportSeizure.tsx:266
 msgid "Amount"
 msgstr "Amount"
 
-#: src/routes/ReportSeizure.tsx:232
+#: src/routes/ReportSeizure.tsx:45
+msgid "Cannabis"
+msgstr "Cannabis"
+
+#: src/routes/ReportSeizure.tsx:57
+msgid "Capsules"
+msgstr "Capsules"
+
+#: src/routes/ReportSeizure.tsx:215
 msgid "Category"
 msgstr "Category"
+
+#: src/routes/ReportSeizure.tsx:44
+msgid "Chemical Offence Related"
+msgstr "Chemical Offence Related"
+
+#: src/routes/ReportSeizure.tsx:46
+msgid "Chemical Property"
+msgstr "Chemical Property"
+
+#: src/routes/ReportSeizure.tsx:42
+msgid "Controlled Substances"
+msgstr "Controlled Substances"
 
 #: src/Navigation.tsx:46
 #: src/routes/DrugSeizures.tsx:66
 msgid "Drug Seizures"
 msgstr "Drug Seizures"
 
-#: src/index.tsx:34
+#: src/index.tsx:35
 msgid "drug-seizures"
 msgstr "drug-seizures"
 
@@ -67,22 +92,46 @@ msgstr "Federal Policing is a core responsibility of the RCMP that is carrie
 msgid "Federal Policing protects Canada, its people, and its interests against the greatest domestic and international criminal threats, including risks to national security, transnational and serious organized crime, and cybercrime."
 msgstr "Federal Policing protects Canada, its people, and its interests against the greatest domestic and international criminal threats, including risks to national security, transnational and serious organized crime, and cybercrime."
 
+#: src/routes/ReportSeizure.tsx:50
+msgid "Grams"
+msgstr "Grams"
+
 #: src/Navigation.tsx:40
 #: src/routes/Home.tsx:7
 msgid "Home"
 msgstr "Home"
 
-#: src/routes/ReportSeizure.tsx:189
+#: src/routes/ReportSeizure.tsx:51
+msgid "Kilograms"
+msgstr "Kilograms"
+
+#: src/routes/ReportSeizure.tsx:172
 msgid "Location"
 msgstr "Location"
 
-#: src/Navigation.tsx:58
+#: src/Navigation.tsx:64
 msgid "Login"
 msgstr "Login"
 
 #: src/routes/Verify.tsx:28
 msgid "Login Failed"
 msgstr "Login Failed"
+
+#: src/routes/ReportSeizure.tsx:52
+msgid "Micrograms"
+msgstr "Micrograms"
+
+#: src/routes/ReportSeizure.tsx:53
+msgid "Milligrams"
+msgstr "Milligrams"
+
+#: src/routes/ReportSeizure.tsx:54
+msgid "Milliliters"
+msgstr "Milliliters"
+
+#: src/routes/ReportSeizure.tsx:55
+msgid "Patch"
+msgstr "Patch"
 
 #: src/routes/Login.tsx:39
 msgid "Please enter your Police service email below to receive a login link."
@@ -92,11 +141,15 @@ msgstr "Please enter your Police service email below to receive a login link."
 msgid "Please try to <0>login</0> again."
 msgstr "Please try to <0>login</0> again."
 
-#: src/routes/ReportSeizure.tsx:146
+#: src/routes/ReportSeizure.tsx:43
+msgid "Precursors"
+msgstr "Precursors"
+
+#: src/routes/ReportSeizure.tsx:129
 msgid "Reference Number"
 msgstr "Reference Number"
 
-#: src/routes/ReportSeizure.tsx:129
+#: src/routes/ReportSeizure.tsx:112
 msgid "Report Drug Seizure"
 msgstr "Report Drug Seizure"
 
@@ -108,19 +161,31 @@ msgstr "Report Seizure"
 msgid "Royal Canadian<0/>Mounted Police"
 msgstr "Royal Canadian<0/>Mounted Police"
 
-#: src/routes/ReportSeizure.tsx:159
+#: src/routes/ReportSeizure.tsx:142
 msgid "Seized On"
 msgstr "Seized On"
 
-#: src/routes/ReportSeizure.tsx:348
+#: src/routes/ReportSeizure.tsx:388
+msgid "Seizure reported successfully!"
+msgstr "Seizure reported successfully!"
+
+#: src/Navigation.tsx:58
+msgid "seizure statistics"
+msgstr "seizure statistics"
+
+#: src/routes/SeizureStatistics.tsx:107
+msgid "Seizure Statistics"
+msgstr "Seizure Statistics"
+
+#: src/routes/ReportSeizure.tsx:331
 msgid "Submit Report"
 msgstr "Submit Report"
 
-#: src/routes/ReportSeizure.tsx:214
+#: src/routes/ReportSeizure.tsx:197
 msgid "Substance Details"
 msgstr "Substance Details"
 
-#: src/routes/ReportSeizure.tsx:219
+#: src/routes/ReportSeizure.tsx:202
 msgid "Substance Name"
 msgstr "Substance Name"
 
@@ -128,11 +193,15 @@ msgstr "Substance Name"
 msgid "Symbol of the Government of Canada"
 msgstr "Symbol of the Government of Canada"
 
+#: src/routes/ReportSeizure.tsx:56
+msgid "Tablets"
+msgstr "Tablets"
+
 #: src/Header.tsx:29
 msgid "The logo of the RCMP"
 msgstr "The logo of the RCMP"
 
-#: src/routes/ReportSeizure.tsx:302
+#: src/routes/ReportSeizure.tsx:285
 msgid "Unit"
 msgstr "Unit"
 
