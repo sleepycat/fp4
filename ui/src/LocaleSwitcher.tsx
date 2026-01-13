@@ -1,8 +1,8 @@
-import { useLingui } from "@lingui/react";
-import { dynamicActivate } from "./i18n.ts";
+import { useLingui } from "@lingui/react"
+import { dynamicActivate } from "./i18n.ts"
 
 function LocaleSwitcher() {
-  const { i18n } = useLingui();
+  const { i18n } = useLingui()
   return (
     <div>
       {i18n.locale === "en"
@@ -23,7 +23,7 @@ function LocaleSwitcher() {
           </button>
         )}
     </div>
-  );
+  )
 }
 
-export default LocaleSwitcher;
+export default LocaleSwitcher

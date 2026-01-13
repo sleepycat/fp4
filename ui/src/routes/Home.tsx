@@ -1,4 +1,4 @@
-import { Trans } from "@lingui/react/macro";
+import { Trans } from "@lingui/react/macro"
 
 export function Home() {
   return (
@@ -15,12 +15,12 @@ export function Home() {
         </Trans>
       </p>
     </>
-  );
+  )
 }
 
 const HomeRoute = {
   index: true,
   Component: Home,
-};
+}
 
-export default HomeRoute;
+export default HomeRoute

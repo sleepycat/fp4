@@ -1,7 +1,11 @@
 import { Trans } from "@lingui/react/macro"
 import { AgCharts } from "ag-charts-react"
-import { AgChartOptions, AllCommunityModule, ModuleRegistry } from "ag-charts-community"
-import { useState, useMemo } from "react"
+import {
+  AgChartOptions,
+  AllCommunityModule,
+  ModuleRegistry,
+} from "ag-charts-community"
+import { useMemo, useState } from "react"
 import { useQuery } from "urql"
 
 ModuleRegistry.registerModules([AllCommunityModule])
@@ -43,8 +47,18 @@ export const SeizureStatistics = () => {
     // Wide: [{ month: 'Jan', Cannabis: 10, LSD: 5 }, ...]
 
     const months = [
-      "Jan", "Feb", "Mar", "Apr", "May", "Jun",
-      "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"
+      "Jan",
+      "Feb",
+      "Mar",
+      "Apr",
+      "May",
+      "Jun",
+      "Jul",
+      "Aug",
+      "Sep",
+      "Oct",
+      "Nov",
+      "Dec",
     ]
 
     const grouped = new Map<number, Record<string, string | number>>()
@@ -66,7 +80,7 @@ export const SeizureStatistics = () => {
 
   const substanceNames = useMemo(() => {
     if (!data?.seizureStatistics) return []
-    const names = new Set(data.seizureStatistics.map(s => s.drugType))
+    const names = new Set(data.seizureStatistics.map((s) => s.drugType))
     return Array.from(names)
   }, [data])
 
@@ -75,7 +89,7 @@ export const SeizureStatistics = () => {
       text: "Seizures by Substance",
     },
     data: chartData,
-    series: substanceNames.map(name => ({
+    series: substanceNames.map((name) => ({
       type: "bar",
       xKey: "month",
       yKey: name,

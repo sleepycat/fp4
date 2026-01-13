@@ -1,8 +1,8 @@
-import { Trans } from "@lingui/react/macro";
-import { NavLink } from "react-router";
-import { t } from "@lingui/core/macro";
-import Wordmark from "./Wordmark.tsx";
-import { css } from "../styled-system/css/css.mjs";
+import { Trans } from "@lingui/react/macro"
+import { NavLink } from "react-router"
+import { t } from "@lingui/core/macro"
+import Wordmark from "./Wordmark.tsx"
+import { css } from "../styled-system/css/css.mjs"
 
 export default function Footer() {
   const contentClass = css`
@@ -12,7 +12,7 @@ export default function Footer() {
     display: flex;
     flex-shrink: 0;
     justify-content: right;
-  `;
+  `
 
   return (
     <footer>
@@ -56,5 +56,5 @@ export default function Footer() {
         </Wordmark.SVG>
       </section>
     </footer>
-  );
+  )
 }
