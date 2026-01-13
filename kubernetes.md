@@ -5,7 +5,7 @@ portable across the RCMP's many environments. The US DoD has a similarly broad
 range of environments, and uses Kubernetes to ensure workloads can be moved
 between them.
 
-The [US DoD describes how Kubernetes enables portability](https://dodcio.defense.gov/Portals/0/Documents/Library/DoD Enterprise DevSecOps Reference Design - CNCF Kubernetes w-DD1910_cleared_20211022.pdf):
+The [US DoD describes how Kubernetes enables portability](https://dodcio.defense.gov/Portals/0/Documents/Library/DoD%20Enterprise%20DevSecOps%20Reference%20Design%20-%20CNCF%20Kubernetes%20w-DD1910_cleared_20211022.pdf):
 > Kubernetes provides an API that ensures total abstraction of orchestration,
 > compute, storage, networking, and other core services that guarantees software
 > can run in any environment, from the Cloud to being embedded inside platforms
