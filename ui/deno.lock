@@ -24,10 +24,11 @@
     "npm:@rsbuild/core@1.5.17": "1.5.17_@swc+helpers@0.5.17",
     "npm:@rsbuild/plugin-react@^1.4.2": "1.4.2_@rsbuild+core@1.5.17__@swc+helpers@0.5.17_react-refresh@0.18.0",
     "npm:@testing-library/dom@^10.4.1": "10.4.1",
-    "npm:@testing-library/react@^16.3.0": "16.3.0_@testing-library+dom@10.4.1_@types+react@19.2.7_@types+react-dom@19.2.3__@types+react@19.2.7_react@19.1.1_react-dom@19.1.1__react@19.1.1",
+    "npm:@testing-library/react@^16.3.0": "16.3.0_@testing-library+dom@10.4.1_@types+react@19.2.8_@types+react-dom@19.2.3__@types+react@19.2.8_react@19.1.1_react-dom@19.1.1__react@19.1.1",
     "npm:@types/jsdom@27": "27.0.0",
-    "npm:@types/react-dom@^19.1.9": "19.2.3_@types+react@19.2.7",
-    "npm:@types/react@^19.1.12": "19.2.7",
+    "npm:@types/react-dom@^19.1.9": "19.2.3_@types+react@19.2.8",
+    "npm:@types/react@*": "19.2.8",
+    "npm:@types/react@^19.2.8": "19.2.8",
     "npm:ag-charts-community@13": "13.0.0",
     "npm:ag-charts-react@13": "13.0.0_react@19.1.1",
     "npm:jsdom@^27.2.0": "27.2.0",
@@ -3619,7 +3620,7 @@
         "pretty-format@27.5.1"
       ]
     },
-    "@testing-library/react@16.3.0_@testing-library+dom@10.4.1_@types+react@19.2.7_@types+react-dom@19.2.3__@types+react@19.2.7_react@19.1.1_react-dom@19.1.1__react@19.1.1": {
+    "@testing-library/react@16.3.0_@testing-library+dom@10.4.1_@types+react@19.2.8_@types+react-dom@19.2.3__@types+react@19.2.8_react@19.1.1_react-dom@19.1.1__react@19.1.1": {
       "integrity": "sha512-kFSyxiEDwv1WLl2fgsq6pPBbw5aWKrsY2/noi1Id0TK0UParSF62oFQFGHXIyaG4pp2tEub/Zlel+fjjZILDsw==",
       "dependencies": [
         "@babel/runtime",
@@ -3677,14 +3678,14 @@
     "@types/node@17.0.45": {
       "integrity": "sha512-w+tIMs3rq2afQdsPJlODhoUEKzFP1ayaoyl1CcnwtIlsVe7K7bA1NGm4s3PraqTLlXnbIN84zuBlxBWo1u9BLw=="
     },
-    "@types/react-dom@19.2.3_@types+react@19.2.7": {
+    "@types/react-dom@19.2.3_@types+react@19.2.8": {
       "integrity": "sha512-jp2L/eY6fn+KgVVQAOqYItbF0VY/YApe5Mz2F0aykSO8gx31bYCZyvSeYxCHKvzHG5eZjc+zyaS5BrBWya2+kQ==",
       "dependencies": [
         "@types/react"
       ]
     },
-    "@types/react@19.2.7": {
-      "integrity": "sha512-MWtvHrGZLFttgeEj28VXHxpmwYbor/ATPYbBfSFZEIRK0ecCFLl2Qo55z52Hss+UV9CRN7trSeq1zbgx7YDWWg==",
+    "@types/react@19.2.8": {
+      "integrity": "sha512-3MbSL37jEchWZz2p2mjntRZtPt837ij10ApxKfgmXCTuHWagYg7iA5bqPw6C8BMPfwidlvfPI/fxOc42HLhcyg==",
       "dependencies": [
         "csstype"
       ]
@@ -5791,7 +5792,8 @@
       "npm:@testing-library/react@^16.3.0",
       "npm:@types/jsdom@27",
       "npm:@types/react-dom@^19.1.9",
-      "npm:@types/react@^19.1.12",
+      "npm:@types/react@*",
+      "npm:@types/react@^19.2.8",
       "npm:ag-charts-community@13",
       "npm:ag-charts-react@13",
       "npm:jsdom@^27.2.0",

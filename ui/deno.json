@@ -37,7 +37,7 @@
     "@rsbuild/plugin-react": "npm:@rsbuild/plugin-react@^1.4.2",
     "@testing-library/dom": "npm:@testing-library/dom@^10.4.1",
     "@testing-library/react": "npm:@testing-library/react@^16.3.0",
-    "@types/react": "npm:@types/react@^19.1.12",
+    "@types/react": "npm:@types/react@^19.2.8",
     "@types/react-dom": "npm:@types/react-dom@^19.1.9"
   },
   "nodeModulesDir": "auto",
@@ -47,6 +47,8 @@
     }
   },
   "compilerOptions": {
-    "jsx": "react-jsx"
+    "jsx": "react-jsx",
+    "jsxImportSource": "react",
+    "types": ["@types/react"]
   }
 }
