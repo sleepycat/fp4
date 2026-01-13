@@ -33,7 +33,7 @@ type SeizureConnection {
 type Query {
   loggedIn: Boolean!
   seizures(first: Int, after: ID last: Int, before: ID): SeizureConnection
-  seizureStatistics(year: ReportingYear): [SeizureStatistic!]!
+  seizureStatistics(year: ReportingYear!): [SeizureStatistic!]!
 }
 
 type SeizureStatistic {
