@@ -1,0 +1,20 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  annotations:
+    caddy.ingress.kubernetes.io/disable-ssl-redirect: "true"
+  name: apirule
+  namespace: api
+spec:
+  rules:
+  - http:
+      paths:
+      - backend:
+          service:
+            name: api
+            port:
+              number: 3000
+        path: /graphql
+        pathType: Exact
+status:
+  loadBalancer: {}

@@ -1,0 +1,25 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: ui
+  name: ui
+  namespace: ui
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: ui
+  strategy: {}
+  template:
+    metadata:
+      labels:
+        app: ui
+    spec:
+      containers:
+      - image: ghcr.io/sleepycat/fp4-ui:latest
+        name: fp4-ui
+        ports:
+        - containerPort: 3000
+        resources: {}
+status: {}
