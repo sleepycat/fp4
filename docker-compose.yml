@@ -33,7 +33,7 @@ services:
     build:
       context: ./ui
       dockerfile_inline: |
-        FROM denoland/deno:alpine
+        FROM denoland/deno:latest
         USER deno
         WORKDIR /app/ui
     user: "1000:1000"
