@@ -71,10 +71,5 @@ export async function loader({ context, params }: LoaderFunctionArgs) {
   }
 }
 
-const VerifyRoute = {
-  path: "verify/:token",
-  Component: Verify,
-  loader,
-}
+export { Verify as Component }
 
-export default VerifyRoute

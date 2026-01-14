@@ -114,10 +114,5 @@ export async function action({ context, request }: ActionFunctionArgs) {
   }
 }
 
-const LoginRoute = {
-  path: "login",
-  Component: Login,
-  action,
-}
+export { Login as Component }
 
-export default LoginRoute

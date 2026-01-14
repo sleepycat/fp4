@@ -113,9 +113,5 @@ export const SeizureStatistics = () => {
   )
 }
 
-const SeizureStatisticsRoute = {
-  path: "seizure-statistics",
-  Component: SeizureStatistics,
-}
+export { SeizureStatistics as Component }
 
-export default SeizureStatisticsRoute

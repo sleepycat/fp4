@@ -6,13 +6,7 @@ import { I18nProvider } from "@lingui/react"
 import { defaultLocale, dynamicActivate } from "./i18n.ts"
 import { createBrowserRouter, RouterContextProvider } from "react-router"
 import { RouterProvider } from "react-router/dom"
-import LoginRoute from "./routes/Login.tsx"
-import HomeRoute from "./routes/Home.tsx"
-import AboutRoute from "./routes/About.tsx"
-import VerifyRoute from "./routes/Verify.tsx"
-import DrugSeizuresRoute, { DrugSeizures } from "./routes/DrugSeizures.tsx"
-import ReportSeizure from "./routes/ReportSeizure.tsx"
-import SeizureStatisticsRoute from "./routes/SeizureStatistics.tsx"
+
 import { client, UrqlClientContext } from "./context.tsx"
 import { Provider } from "urql"
 import {
@@ -27,14 +21,38 @@ const router = createBrowserRouter([
     path: "/",
     Component: Layout,
     children: [
-      HomeRoute,
-      AboutRoute,
-      LoginRoute,
-      DrugSeizuresRoute,
-      VerifyRoute,
-      { path: t`drug-seizures`, Component: DrugSeizures },
-      ReportSeizure,
-      SeizureStatisticsRoute,
+      {
+        index: true,
+        lazy: () => import("./routes/Home.tsx"),
+      },
+      {
+        path: "about",
+        lazy: () => import("./routes/About.tsx"),
+      },
+      {
+        path: "login",
+        lazy: () => import("./routes/Login.tsx"),
+      },
+      {
+        path: "drug-seizures",
+        lazy: () => import("./routes/DrugSeizures.tsx"),
+      },
+      {
+        path: "verify/:token",
+        lazy: () => import("./routes/Verify.tsx"),
+      },
+      {
+        path: t`drug-seizures`,
+        lazy: () => import("./routes/DrugSeizures.tsx"),
+      },
+      {
+        path: "report-seizure",
+        lazy: () => import("./routes/ReportSeizure.tsx"),
+      },
+      {
+        path: "seizure-statistics",
+        lazy: () => import("./routes/SeizureStatistics.tsx"),
+      },
     ],
   },
 ], {

@@ -389,11 +389,5 @@ export async function action({ context, request }: ActionFunctionArgs) {
   return redirect("/drug-seizures")
 }
 
-const ReportSeizureRoute = {
-  path: "report-seizure",
-  Component: ReportSeizure,
-  action,
-  loader,
-}
+export { ReportSeizure as Component }
 
-export default ReportSeizureRoute

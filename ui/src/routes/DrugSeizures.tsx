@@ -161,12 +161,5 @@ export async function loader({ context, request }: LoaderFunctionArgs) {
   return data.seizures
 }
 
-const DrugSeizuresRoute = {
-  path: "drug-seizures",
-  // TODO: does this need to read from document.cookies?
-  // middleware: [Authentication]
-  Component: DrugSeizures,
-  loader,
-}
+export { DrugSeizures as Component }
 
-export default DrugSeizuresRoute

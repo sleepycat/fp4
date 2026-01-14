@@ -18,9 +18,5 @@ export function Home() {
   )
 }
 
-const HomeRoute = {
-  index: true,
-  Component: Home,
-}
+export { Home as Component }
 
-export default HomeRoute

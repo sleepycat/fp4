@@ -15,9 +15,5 @@ export const About = () => (
   </>
 )
 
-const AboutRoute = {
-  path: "about",
-  Component: About,
-}
+export { About as Component }
 
-export default AboutRoute
