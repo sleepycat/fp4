@@ -1,5 +1,6 @@
 import { defineConfig } from "@rsbuild/core"
 import { pluginReact } from "@rsbuild/plugin-react"
+import RspackDenoPlugin from "rspack-deno-plugin"
 
 export default defineConfig({
   plugins: [
@@ -11,12 +12,22 @@ export default defineConfig({
     lazyCompilation: false,
   },
   tools: {
+    rspack: {
+      // This allows rspack to handle code with deno import specifiers
+      // like npm:react
+      plugins: [new RspackDenoPlugin()],
+    },
     swc: {
       jsc: {
         experimental: {
           plugins: [["@lingui/swc-plugin", {}]],
         },
       },
+    },
+  },
+  resolve: {
+    alias: {
+      "@sleepycat/headless-goc-wordmark": "@jsr/sleepycat__headless-goc-wordmark",
     },
   },
   server: {

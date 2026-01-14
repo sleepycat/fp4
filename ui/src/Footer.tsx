@@ -1,8 +1,8 @@
 import { Trans } from "@lingui/react/macro"
 import { NavLink } from "react-router"
 import { t } from "@lingui/core/macro"
-import Wordmark from "./Wordmark.tsx"
 import { css } from "../styled-system/css/css.mjs"
+import Wordmark from "@sleepycat/headless-goc-wordmark"
 
 export default function Footer() {
   const contentClass = css`
