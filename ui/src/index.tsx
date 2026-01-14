@@ -1,6 +1,6 @@
 import React from "react"
 import ReactDOM from "react-dom/client"
-import { t } from "@lingui/macro"
+import { t } from "@lingui/core/macro"
 import Layout from "./Layout.tsx"
 import { I18nProvider } from "@lingui/react"
 import { defaultLocale, dynamicActivate } from "./i18n.ts"
