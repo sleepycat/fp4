@@ -14,11 +14,6 @@ msgstr ""
 "Plural-Forms: \n"
 
 #. js-lingui-explicit-id
-#: src/Navigation.tsx:55
-msgid "/seizure-statistics"
-msgstr "/statistiques-saisies"
-
-#. js-lingui-explicit-id
 #: src/Navigation.tsx:37
 msgid "/"
 msgstr "/"
@@ -32,6 +27,11 @@ msgstr "/saisies-de-drogues"
 #: src/Navigation.tsx:49
 msgid "/report-seizure"
 msgstr "/rapport-saisie"
+
+#. js-lingui-explicit-id
+#: src/Navigation.tsx:55
+msgid "/seizure-statistics"
+msgstr "/statistiques-saisies"
 
 #. js-lingui-explicit-id
 #: src/Navigation.tsx:61
@@ -167,12 +167,9 @@ msgstr "Date de saisie"
 
 #: src/routes/ReportSeizure.tsx:388
 msgid "Seizure reported successfully!"
-msgstr "Saisie signalée avec succès !"
+msgstr "Saisie signalée avec succès!"
 
 #: src/Navigation.tsx:58
-msgid "seizure statistics"
-msgstr "statistiques sur les saisies"
-
 #: src/routes/SeizureStatistics.tsx:107
 msgid "Seizure Statistics"
 msgstr "Statistiques sur les saisies"
