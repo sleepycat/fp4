@@ -1,4 +1,4 @@
-import { defineConfig } from "@pandacss/dev"
+import { defineConfig, defineGlobalStyles } from "@pandacss/dev"
 
 export default defineConfig({
   // Whether to use css reset
@@ -59,6 +59,22 @@ export default defineConfig({
 
   // The JSX framework to use
   jsxFramework: "react",
+
+  // Global CSS to replace App.css
+  globalCss: defineGlobalStyles({
+    "@font-face": {
+      fontFamily: "Overused Grotesk",
+      src: 'url("/static/font/OverusedGrotesk-VF.woff2") format("woff2")',
+      fontWeight: "300 900",
+      fontStyle: "normal",
+      fontDisplay: "fallback",
+    },
+    ":root, :host, .spectrum, body": {
+      fontFamily: "Overused Grotesk",
+      "--spectrum-global-font-family-base": "Overused Grotesk",
+      "--spectrum-alias-body-text-font-family": "Overused Grotesk",
+    },
+  }),
 
   // The CSS Syntax to use to use
   syntax: "template-literal",

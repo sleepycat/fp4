@@ -2,7 +2,6 @@ import { Outlet } from "react-router"
 import Header from "./Header.tsx"
 import Footer from "./Footer.tsx"
 import Navigation from "./Navigation.tsx"
-import "./App.css"
 import { css } from "../styled-system/css/css.mjs"
 import { ToastContainer } from "@adobe/react-spectrum"
 

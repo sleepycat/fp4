@@ -13,6 +13,7 @@ import {
   defaultTheme,
   Provider as SpectrumProvider,
 } from "@adobe/react-spectrum"
+import "../styled-system/styles.css"
 
 const i18n = await dynamicActivate(defaultLocale)
 
